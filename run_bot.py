@@ -15,6 +15,7 @@ def main():
     while not game.is_game_done:
         orders = yield {power_name: player.get_orders(game, power_name) for power_name in game.powers}
         for power_name, power_orders in orders.items():
+            # send out message randomly - to random powers
             game.set_orders(power_name, power_orders)
         game.process()
 
