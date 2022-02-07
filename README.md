@@ -1,4 +1,4 @@
-# Supervised and RL Models for No Press Diplomacy
+# Supervised and RL Models for No Press Diplomacy + press
 
 This repository contains the source code used to develop a supervised and RL agent that can play the No Press version of Diplomacy.  
 
