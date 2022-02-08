@@ -29,14 +29,14 @@ def main():
                 if len(order_token) > 2:
                     for power2 in game.powers:
                         #check if the order's unit is in power unit list
-                        if power2 != power_name and not power2.is_eliminated() and order_token[2] in power2.units:
+                        if power2 != power_name and not game.powers[power2].is_eliminated() and order_token[2] in game.powers[power2].units:
                             rec_power = power2
                             
                 # An order is to Support other power
                 if order_token[1] =='S':
                     # send fact - support message
                     press_message = order
-                    power_name.game.new_power_message(rec_power, press_message)
+                    game.powers[power_name].game.new_power_message(rec_power, press_message)
             game.set_orders(power_name, power_orders)
         game.process()
 
