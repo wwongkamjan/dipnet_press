@@ -5,6 +5,7 @@ from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.players.benchmark_player import DipNetSLPlayer
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 from diplomacy_research.models.state_space import get_order_tokens
+from diplomacy.server.server_game import ServerGame
 import random
 
 @gen.coroutine
@@ -12,6 +13,7 @@ def main():
     """ Plays a local game with 7 bots """
     player = DipNetSLPlayer()
     game = Game()
+    server_game = ServerGame(game)
 
     # Playing game
     while not game.is_game_done:
@@ -37,7 +39,7 @@ def main():
                 if order_token[1] =='S' and rec_power != None:
                     # send fact - support message
                     press_message = order
-                    game.new_power_message(rec_power, press_message)
+                    server_game.new_power_message(rec_power, press_message)
             game.set_orders(power_name, power_orders)
         game.process()
 
