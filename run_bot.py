@@ -13,6 +13,7 @@ def main():
     """ Plays a local game with 7 bots """
     player = DipNetSLPlayer()
     game = Game()
+    game.remove_rule('NO_PRESS')
 #     server_game = ServerGame(game)
 
     # Playing game
