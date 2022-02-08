@@ -41,7 +41,8 @@ def main():
                     # send fact - support message
                     press_message = "press_msg from:"+power_name +" to:" + rec_power +" info: "+order
 #                     print(game.powers[power_name].game.role)
-                    game.new_power_message(power_name,rec_power, press_message)
+                    msg = game.new_power_message(power_name,rec_power, press_message)
+                    game.add_message(msg)
             game.set_orders(power_name, power_orders)
         game.process()
 
