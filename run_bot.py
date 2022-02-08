@@ -39,7 +39,7 @@ def main():
                 if order_token[1] =='S' and rec_power != None:
                     # send fact - support message
                     press_message = order
-                    print(game.powers[power_name].game.role)
+#                     print(game.powers[power_name].game.role)
                     game.new_power_message(power_name,rec_power, press_message)
             game.set_orders(power_name, power_orders)
         game.process()
