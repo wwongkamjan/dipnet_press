@@ -13,7 +13,7 @@ def main():
     """ Plays a local game with 7 bots """
     player = DipNetSLPlayer()
     game = Game()
-    server_game = ServerGame(game)
+#     server_game = ServerGame(game)
 
     # Playing game
     while not game.is_game_done:
@@ -39,7 +39,8 @@ def main():
                 if order_token[1] =='S' and rec_power != None:
                     # send fact - support message
                     press_message = order
-                    server_game.new_power_message(rec_power, press_message)
+                    print(game.role)
+                    power.new_power_message(rec_power, press_message)
             game.set_orders(power_name, power_orders)
         game.process()
 
