@@ -24,6 +24,7 @@ def main():
 #             press_message = press(power_name, rec_power, power_orders)
             # send out every support order
             for order in power_orders:
+                rec_power = None
                 order_token = get_order_tokens(order)
                 # find if an order is for self or other power
                 if len(order_token) > 2:
@@ -33,7 +34,7 @@ def main():
                             rec_power = power2
                             
                 # An order is to Support other power
-                if order_token[1] =='S':
+                if order_token[1] =='S' and rec_power != None:
                     # send fact - support message
                     press_message = order
                     game.powers[power_name].game.new_power_message(rec_power, press_message)
