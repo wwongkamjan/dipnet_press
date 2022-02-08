@@ -8,7 +8,7 @@ import csv
 with open('game.json') as json_file:
     data = json.load(json_file)
  
-game_data = data['game_details']
+game_data = data
  
 # now we will open a file for writing
 data_file = open('game.csv', 'w')
