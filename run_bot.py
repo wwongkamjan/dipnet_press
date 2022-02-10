@@ -24,32 +24,36 @@ def main():
         for power_name, power_orders in orders.items():
             # send out every non-attacking order
             for order in power_orders:
-#                 rec_power = None
-#                 order_token = get_order_tokens(order)
-#                 # find if an order is for self or other power
+                rec_power = None
+                order_token = get_order_tokens(order)
+                # find if an order is for self or other power
 #                 if len(order_token) > 2:
+#                     # check for support msg
 #                     for power2 in game.powers:
 #                         #check if the order's unit is in power unit list
+#                         
 #                         if power2 != power_name and not game.powers[power2].is_eliminated() and order_token[2] in game.powers[power2].units:
 #                             rec_power = power2
                             
-
-# #                 if len(order_token) < 2:
-# #                     print(order_token)
-#                 # filter for non-attacking orders
-#                 if not ('-' in order_token[1] and rec_power != None):
+                # filter for non-attacking orders
+                order_token2 = order_token[1].split() 
+                for power2 in game.powers:
+                    if power2 != power_name and not game.powers[power2].is_eliminated() and order_token2[1] in game.powers[power2].units:
+                        continue
+                            
                     
-#                     if rec_power == None: 
-                        # send non-attacking message / move, hold, (self-)support, convoy - randomly to other powers
-                rec_power = random.choice(list(game.powers.keys()))
-                while rec_power == power_name or game.powers[rec_power].is_eliminated():
+#               send non-attacking message / move, hold, (self-)support, convoy - randomly to other powers with prob e
+                e = 0.3
+                if e >= random.uniform(0, 1):
                     rec_power = random.choice(list(game.powers.keys()))
-                press_message = "SND ( "+power_name+" ) ( "+rec_power+" ) FCT ( "+order+" )" 
-                msg = Message(sender=power_name,
-                              recipient=rec_power,
-                              message=press_message,
-                              phase=game.get_current_phase())
-                game.add_message(msg)
+                    while rec_power == power_name or game.powers[rec_power].is_eliminated():
+                        rec_power = random.choice(list(game.powers.keys()))
+                    press_message = "SND ( "+power_name+" ) ( "+rec_power+" ) FCT ( "+order+" )" 
+                    msg = Message(sender=power_name,
+                                  recipient=rec_power,
+                                  message=press_message,
+                                  phase=game.get_current_phase())
+                    game.add_message(msg)
 #                 print("add new message")
                 
             game.set_orders(power_name, power_orders)
