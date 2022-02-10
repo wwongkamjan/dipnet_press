@@ -50,6 +50,7 @@ def main():
                         
     #                     print(game.powers[power_name].game.role)
     #                     msg = game.new_power_message(power_name,rec_power, press_message)
+                        press_message = "SND ( "+power_name+" ) ( "+rec_power+" ) FCT ( "+order+" )" 
                         msg = Message(sender=power_name,
                                       recipient=rec_power,
                                       message=press_message,
