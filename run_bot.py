@@ -44,10 +44,9 @@ def main():
                         press_message = "press_msg from:"+power_name +" to:" + rec_power +" info: "+order
                     else:
                         # send non-attacking message / move, hold, (self-)support, convoy - randomly to other powers
-                        print(list(game.powers.keys()))
-                        rec_power = random.choice(game.powers.keys())
-                        while rec_power == power_name or rec_power.is_eliminated():
-                            rec_power = random.choice(game.powers.keys())
+                        rec_power = random.choice(list(game.powers.keys()))
+                        while rec_power == power_name or game.powers[rec_power].is_eliminated():
+                            rec_power = random.choice(list(game.powers.keys()))
                         
     #                     print(game.powers[power_name].game.role)
     #                     msg = game.new_power_message(power_name,rec_power, press_message)
