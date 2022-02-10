@@ -61,6 +61,7 @@ def main():
                                   phase=game.get_current_phase())
                     game.add_message(msg)
                     msg_byte = str.encode(press_message)
+                    print(msg_byte[:3])
                     daide_req = req.from_bytes(msg_byte)
                     print(daide_req.__str__())
 #                 print("add new message")
