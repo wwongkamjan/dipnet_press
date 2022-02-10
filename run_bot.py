@@ -37,18 +37,19 @@ def main():
                         if power2 != power_name and not game.powers[power2].is_eliminated() and order_token[2] in game.powers[power2].units:
                             rec_power = power2
                             
-                # An order is to Support other power
-                if order_token[1] =='S' and rec_power != None:
+                # filter for non-attacking orders
+                if not (order_token[1] =='-' and rec_power != None):
                     # send fact - support message
-                    press_message = "press_msg from:"+power_name +" to:" + rec_power +" info: "+order
-#                     print(game.powers[power_name].game.role)
-#                     msg = game.new_power_message(power_name,rec_power, press_message)
-                    msg = Message(sender=power_name,
-                                  recipient=rec_power,
-                                  message=press_message,
-                                  phase=game.get_current_phase(),
-                                  time_sent=int(time.time()))
-                    game.add_message(msg)
+                    if rec_power != None: 
+                        press_message = "press_msg from:"+power_name +" to:" + rec_power +" info: "+order
+    #                     print(game.powers[power_name].game.role)
+    #                     msg = game.new_power_message(power_name,rec_power, press_message)
+                        msg = Message(sender=power_name,
+                                      recipient=rec_power,
+                                      message=press_message,
+                                      phase=game.get_current_phase(),
+                                      time_sent=int(time.time()))
+                        game.add_message(msg)
             game.set_orders(power_name, power_orders)
         game.process()
 
