@@ -7,6 +7,7 @@ from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 from diplomacy_research.models.state_space import get_order_tokens
 from diplomacy.server.server_game import ServerGame
 import random
+import time
 
 @gen.coroutine
 def main():
@@ -41,7 +42,12 @@ def main():
                     # send fact - support message
                     press_message = "press_msg from:"+power_name +" to:" + rec_power +" info: "+order
 #                     print(game.powers[power_name].game.role)
-                    msg = game.new_power_message(power_name,rec_power, press_message)
+#                     msg = game.new_power_message(power_name,rec_power, press_message)
+                    msg = Message(sender=power_name,
+                                  recipient=rec_power,
+                                  message=press_message,
+                                  phase=game.get_current_phase(),
+                                  time_sent=int(time.time()))
                     game.add_message(msg)
             game.set_orders(power_name, power_orders)
         game.process()
