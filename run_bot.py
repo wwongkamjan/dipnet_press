@@ -56,7 +56,7 @@ def main():
             game.set_orders(power_name, power_orders)
 #         for m in game.messages.values():
 #             print(m)
-        print(filter_messages(game.__class__,game.messages))
+        print(game.filter_messages(game.__class__,game.messages))
         game.process()
 
     # Saving to disk
