@@ -57,6 +57,7 @@ def main():
 #         for m in game.messages.values():
 #             print(m)
         message_in_phase = game.filter_messages(messages=game.messages, game_role="FRANCE")
+        print(get_current_phase())
         for m in message_in_phase.values():
             print(m)
         game.process()
