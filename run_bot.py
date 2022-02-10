@@ -52,7 +52,7 @@ def main():
                               time_sent=int(time.time()))
                 game.add_message(msg)
                 print("add new message")
-                print(game.messages)
+                print(game.messages.items())
             game.set_orders(power_name, power_orders)
         game.process()
 
