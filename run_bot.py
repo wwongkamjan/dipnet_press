@@ -41,6 +41,7 @@ def main():
                 for power2 in game.powers:
                     if power2 != power_name and not game.powers[power2].is_eliminated() and order_token2[1] in game.powers[power2].units:
                         attack=True
+                # skip attacking order
                 if attack:
                     continue
                              
