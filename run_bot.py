@@ -59,7 +59,7 @@ def main():
         message_in_phase = game.filter_messages(messages=game.messages, game_role="FRANCE")
         print(game.get_current_phase())
         for m in message_in_phase.values():
-            print(m)
+            print(m.values())
         game.process()
 
     # Saving to disk
