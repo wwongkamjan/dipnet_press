@@ -54,8 +54,8 @@ def main():
 #                 print("add new message")
                 
             game.set_orders(power_name, power_orders)
-        for m in game.messages.values():
-            print(m)
+#         for m in game.messages.values():
+#             print(m)
         message_in_phase = game.filter_messages(messages=game.messages, game_role="FRANCE")
         print(game.get_current_phase())
         for m in message_in_phase.values():
