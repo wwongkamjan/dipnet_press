@@ -39,17 +39,11 @@ def main():
                 # filter for non-attacking orders
                 if not ('-' in order_token[1] and rec_power != None):
                     
-                    if rec_power != None: 
-                        # send recipient power support message
-                        press_message = "press_msg from:"+power_name +" to:" + rec_power +" info: "+order
-                    else:
+                    if rec_power == None: 
                         # send non-attacking message / move, hold, (self-)support, convoy - randomly to other powers
                         rec_power = random.choice(list(game.powers.keys()))
                         while rec_power == power_name or game.powers[rec_power].is_eliminated():
                             rec_power = random.choice(list(game.powers.keys()))
-                        
-    #                     print(game.powers[power_name].game.role)
-    #                     msg = game.new_power_message(power_name,rec_power, press_message)
                     press_message = "SND ( "+power_name+" ) ( "+rec_power+" ) FCT ( "+order+" )" 
                     msg = Message(sender=power_name,
                                   recipient=rec_power,
