@@ -1,6 +1,7 @@
 from tornado import gen
 import ujson as json
 from diplomacy import Game
+from diplomacy.engine.message import Message
 from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.players.benchmark_player import DipNetSLPlayer
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
