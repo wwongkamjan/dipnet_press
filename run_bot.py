@@ -22,37 +22,35 @@ def main():
     while not game.is_game_done:
         orders = yield {power_name: player.get_orders(game, power_name) for power_name in game.powers}
         for power_name, power_orders in orders.items():
-            print(power_name)
-            print(power_orders)
             # send out every non-attacking order
             for order in power_orders:
-                rec_power = None
-                order_token = get_order_tokens(order)
-                # find if an order is for self or other power
-                if len(order_token) > 2:
-                    for power2 in game.powers:
-                        #check if the order's unit is in power unit list
-                        if power2 != power_name and not game.powers[power2].is_eliminated() and order_token[2] in game.powers[power2].units:
-                            rec_power = power2
+#                 rec_power = None
+#                 order_token = get_order_tokens(order)
+#                 # find if an order is for self or other power
+#                 if len(order_token) > 2:
+#                     for power2 in game.powers:
+#                         #check if the order's unit is in power unit list
+#                         if power2 != power_name and not game.powers[power2].is_eliminated() and order_token[2] in game.powers[power2].units:
+#                             rec_power = power2
                             
 
-#                 if len(order_token) < 2:
-#                     print(order_token)
-                # filter for non-attacking orders
-                if not ('-' in order_token[1] and rec_power != None):
+# #                 if len(order_token) < 2:
+# #                     print(order_token)
+#                 # filter for non-attacking orders
+#                 if not ('-' in order_token[1] and rec_power != None):
                     
-                    if rec_power == None: 
+#                     if rec_power == None: 
                         # send non-attacking message / move, hold, (self-)support, convoy - randomly to other powers
-                        rec_power = random.choice(list(game.powers.keys()))
-                        while rec_power == power_name or game.powers[rec_power].is_eliminated():
-                            rec_power = random.choice(list(game.powers.keys()))
-                    press_message = "SND ( "+power_name+" ) ( "+rec_power+" ) FCT ( "+order+" )" 
-                    msg = Message(sender=power_name,
-                                  recipient=rec_power,
-                                  message=press_message,
-                                  phase=game.get_current_phase(),
-                                  time_sent=int(time.time()))
-                    game.add_message(msg)
+                rec_power = random.choice(list(game.powers.keys()))
+                while rec_power == power_name or game.powers[rec_power].is_eliminated():
+                    rec_power = random.choice(list(game.powers.keys()))
+                press_message = "SND ( "+power_name+" ) ( "+rec_power+" ) FCT ( "+order+" )" 
+                msg = Message(sender=power_name,
+                              recipient=rec_power,
+                              message=press_message,
+                              phase=game.get_current_phase(),
+                              time_sent=int(time.time()))
+                game.add_message(msg)
             game.set_orders(power_name, power_orders)
         game.process()
 
