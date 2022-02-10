@@ -24,6 +24,7 @@ def main():
         for power_name, power_orders in orders.items():
             # send out every non-attacking order
             for order in power_orders:
+                attack = False
                 rec_power = None
                 order_token = get_order_tokens(order)
                 # find if an order is for self or other power
@@ -39,9 +40,10 @@ def main():
                 order_token2 = order_token[1].split() 
                 for power2 in game.powers:
                     if power2 != power_name and not game.powers[power2].is_eliminated() and order_token2[1] in game.powers[power2].units:
-                        continue
-                            
-                    
+                        attack=True
+                if attack:
+                    continue
+                             
 #               send non-attacking message / move, hold, (self-)support, convoy - randomly to other powers with prob e
                 e = 0.3
                 if e >= random.uniform(0, 1):
