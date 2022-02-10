@@ -51,8 +51,9 @@ def main():
                               phase=game.get_current_phase(),
                               time_sent=int(time.time()))
                 game.add_message(msg)
+                print("add new message")
+                print(game.messages)
             game.set_orders(power_name, power_orders)
-        print(game.messages)
         game.process()
 
     # Saving to disk
