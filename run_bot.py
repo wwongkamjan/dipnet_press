@@ -33,10 +33,10 @@ def main():
                         if power2 != power_name and not game.powers[power2].is_eliminated() and order_token[2] in game.powers[power2].units:
                             rec_power = power2
                             
+
+#                 if len(order_token) < 2:
+#                     print(order_token)
                 # filter for non-attacking orders
-#                 print(order_token)
-                if len(order_token) < 2:
-                    print(order_token)
                 if not ('-' in order_token[1] and rec_power != None):
                     
                     if rec_power != None: 
@@ -50,13 +50,13 @@ def main():
                         
     #                     print(game.powers[power_name].game.role)
     #                     msg = game.new_power_message(power_name,rec_power, press_message)
-                        press_message = "SND ( "+power_name+" ) ( "+rec_power+" ) FCT ( "+order+" )" 
-                        msg = Message(sender=power_name,
-                                      recipient=rec_power,
-                                      message=press_message,
-                                      phase=game.get_current_phase(),
-                                      time_sent=int(time.time()))
-                        game.add_message(msg)
+                    press_message = "SND ( "+power_name+" ) ( "+rec_power+" ) FCT ( "+order+" )" 
+                    msg = Message(sender=power_name,
+                                  recipient=rec_power,
+                                  message=press_message,
+                                  phase=game.get_current_phase(),
+                                  time_sent=int(time.time()))
+                    game.add_message(msg)
             game.set_orders(power_name, power_orders)
         game.process()
 
