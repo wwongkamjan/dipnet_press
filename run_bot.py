@@ -48,8 +48,7 @@ def main():
                 msg = Message(sender=power_name,
                               recipient=rec_power,
                               message=press_message,
-                              phase=game.get_current_phase(),
-                              time_sent=int(time.time()))
+                              phase=game.get_current_phase())
                 game.add_message(msg)
 #                 print("add new message")
                 
