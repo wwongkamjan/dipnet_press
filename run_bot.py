@@ -22,12 +22,7 @@ def main():
     while not game.is_game_done:
         orders = yield {power_name: player.get_orders(game, power_name) for power_name in game.powers}
         for power_name, power_orders in orders.items():
-            # send out message randomly - to random powers
-#             rec_power = random.choice(game.powers)
-#             while rec_power == power_name or rec_power.is_eliminated():
-#                 rec_power = random.choice(game.powers)
-#             press_message = press(power_name, rec_power, power_orders)
-            # send out every support order
+            # send out every non-attacking order
             for order in power_orders:
                 rec_power = None
                 order_token = get_order_tokens(order)
@@ -43,9 +38,16 @@ def main():
                 if len(order_token) < 2:
                     print(order_token)
                 if not ('-' in order_token[1] and rec_power != None):
-                    # send fact - support message
+                    
                     if rec_power != None: 
+                        # send recipient power support message
                         press_message = "press_msg from:"+power_name +" to:" + rec_power +" info: "+order
+                    else:
+                        # send non-attacking message / move, hold, (self-)support, convoy - randomly to other powers
+                        rec_power = random.choice(game.powers)
+                        while rec_power == power_name or rec_power.is_eliminated():
+                            rec_power = random.choice(game.powers)
+                        
     #                     print(game.powers[power_name].game.role)
     #                     msg = game.new_power_message(power_name,rec_power, press_message)
                         msg = Message(sender=power_name,
