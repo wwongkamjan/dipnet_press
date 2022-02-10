@@ -39,6 +39,7 @@ def main():
                             rec_power = power2
                             
                 # filter for non-attacking orders
+                print(order_token)
                 if not (order_token[1] =='-' and rec_power != None):
                     # send fact - support message
                     if rec_power != None: 
