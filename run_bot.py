@@ -63,12 +63,8 @@ def main():
                     msg_byte = bytes(press_message, encoding='utf8')
                     print(msg_byte[:3])
                     daide_req = req.from_bytes(msg_byte)
-                    print(daide_req.__str__())
-#                 print("add new message")
-                
+                    print(daide_req.__str__())   
             game.set_orders(power_name, power_orders)
-#         for m in game.messages.values():
-#             print(m)
         message_in_phase = game.filter_messages(messages=game.messages, game_role="FRANCE")
         print(game.get_current_phase())
         for m in message_in_phase.values():
