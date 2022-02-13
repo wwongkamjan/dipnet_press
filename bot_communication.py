@@ -14,6 +14,7 @@
 
 Class Diplomacy_Press():
 """  Class for setting up players to play Diplomacy """
+ """ Return True if this game has given power name. """
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.sent = {}
     self.received = {}
