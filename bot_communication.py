@@ -21,9 +21,15 @@ Class Diplomacy_Press():
     self.game = Game() 
     self.powers = powers
     self.number_msg_limitation = number_msg_limitation
-    self.power_dict = {}
-    for i in range(len(powers)):
-      power_dict[powers[i]] = i
+    self.number_sent_msg = {}
+#     self.power_dict = {}
+#     for i in range(len(powers)):
+#       power_dict[powers[i]] = i
+            
+    for power in powers:
+      self.sent[power] = {power_name: None for power_name in self.powers}
+      self.received[power] = {power_name: None for power_name in self.powers}
+      self.number_sent_msg[power] = 0
       
   def get_power_messages(self, power_name):
     return self.game.filter_messages(messages=self.game.messages, game_role=power_name)
@@ -43,63 +49,52 @@ Class Diplomacy_Press():
     
   def get_all_possible_message(self, sender, recipient):
     # include no message!
-
     possible_messages = []
     return possible_messages
   
   def get_all_possible_replies(self, sender, recipient):
-    # include no message!
-#     msg = Message(sender=sender,
-#               recipient=recipient,
-#               message=message,
-#               phase=self.game.get_current_phase())
+    # include no reply, ignore the recieved message from this sender!
     possible_replies = []
     return possible_replies
-  
-#   def random_messages(self, possible_messages):
-#     # we can set weights for groups of messages (later)
-#     return random.choice(possible_messages)
-  
-  def send_message(self, sender, recipient):
-#     if agent_type =="NO_PRESS":
-#       # choose arbitrary messages (e.g. random, )
-#       message = self.random_messages(self.get_all_possible_message(sender,recipient))
-#     else:
-    message = self.player.get_message(self.game, sender, recipient)
 
-    msg = Message(sender=sender,
-         recipient=recipient,
-         message=message,
-         phase=self.game.get_current_phase())
-      
-    if not self.sent[sender]:
-      self.sent[sender] = {}
-      
-    self.sent[sender][recipient] = message
+  def send_message(self, sender, recipient):
+    # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
+    if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
+      msg_list = get_all_possible_message(sender, recipient)
+      message = self.player.get_message(self.game, msg_list, sender, recipient)
+
+      msg = Message(sender=sender,
+           recipient=recipient,
+           message=message,
+           phase=self.game.get_current_phase())
+
+      # sender sent message to recipient and recipient recieved message from sender
+      self.sent[sender][recipient] = message
+      self.recieved[recipient][sender] = message
+      self.new_message(sender, recipient, message)
+      self.number_sent_msg[sender] += 1
+    else:
+      print("number of sent messages exceeds")
   
   def reply_messages(self, sender, recipient):
-#     if agent_type =="NO_PRESS":
-#       # choose arbitrary messages (e.g. random, )
-#       message = self.random_messages(self.get_all_possible_replies(sender,recipient))
-#     else:
-    message = self.player.get_reply(self.game, sender, recipient)
+    # this is to reply a message, so sender becomes recipient and recipient becomes sender
+    if self.recieved[sender][recipient]:
+      message = self.player.get_reply(self.game, sender, recipient)
 
-    msg = Message(sender=sender,
-         recipient=recipient,
-         message=message,
-         phase=self.game.get_current_phase())
+      msg = Message(sender=sender,
+           recipient=recipient,
+           message=message,
+           phase=self.game.get_current_phase())
       
-    if not self.sent[sender]:
-      self.sent[sender] = {}
+      # set message to be None so that recipient can send a new message to a sender 
+      self.sent[recipient][sender] = None
+      self.recieved[sender][recipient] = None
+      self.new_message(sender, recipient, message)
+      self.number_sent_msg[recipient] -= 1
       
-    self.sent[sender][recipient] = message
-    return None
-#   def set_player(self, Player):
-#     self.player = Player()
-#   def set_game(self, Game):
-#     self.game = Game() 
-#   def set_powers(self, Game):
-#     self.game = Game() 
+    else:
+      raise "There is no message from " +recipient+ " to " +sender +" to reply"
+      
   def get_orders(self):
     return {power_name: self.player.get_orders(self.game, power_name) for power_name in self.game.powers}
   def set_orders(self, power_name, power_orders):
