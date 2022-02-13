@@ -13,15 +13,16 @@
 
 Class Diplomacy_game_player():
   """ Class for setting up players to play Diplomacy """
-  def __init__(self, Game=None, Player=None, powers=None, limit_num_msg=6):
-    self.messages = []
+  def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.is_sent = []
     self.is_received = []
     self.player = Player()
     self.game = Game() 
     self.powers = powers
-    self.msg_limitation = limit_num_msg
-    
+    self.number_msg_limitation = number_msg_limitation
+  def get_all_power_messages(self, power_name):
+    return self.game.filter_messages(messages=self.game.messages, game_role=power_name)
+  
   def get_all_possible_messages(self, type):
     return None
   def get_all_possible_replies(self):
