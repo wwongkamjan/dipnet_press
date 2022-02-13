@@ -13,7 +13,7 @@
 # game.process()
 
 Class Diplomacy_Press():
-  """ Class for setting up players to play Diplomacy """
+#    Class for setting up players to play Diplomacy 
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.sent = {}
     self.received = {}
