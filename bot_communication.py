@@ -79,7 +79,8 @@ Class Diplomacy_Press():
   def reply_messages(self, sender, recipient):
     # this is to reply a message, so sender becomes recipient and recipient becomes sender
     if self.recieved[sender][recipient]:
-      message = self.player.get_reply(self.game, sender, recipient)
+      msg_list = get_all_possible_replies(sender, recipient)
+      message = self.player.get_reply(self.game, msg_list, sender, recipient)
 
       msg = Message(sender=sender,
            recipient=recipient,
@@ -101,6 +102,31 @@ Class Diplomacy_Press():
     return self.game.set_orders(power_name, power_orders)
   def game_process(self):
     self.game.process()
+    
+Class Diplomacy_Press_Player():
+  def __init__(self, Player=None):
+    self.player = Player()
+    
+  def get_orders(self, game , power_name):
+    return self.player.get_orders(game, power_name)
+  
+  def get_message(self, game, msg_list, sender, recipient):
+    # if agent is no press, you can call random/non-attacking messages we provided
+    # else call you agent to send message from sender to recipient
+    return self.random_message_list(msg_list)
+  
+  def get_get_reply(self, game, msg_list, sender, recipient):
+    return self.random_message_list(msg_list)
+  
+  def random_message_list(self, msg_list)
+    return random.choice(msg_list)
+  
+def main():
+  
+
+    
+    
+    
     
     
     
