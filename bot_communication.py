@@ -14,18 +14,42 @@
 Class Diplomacy_game_player():
   """ Class for setting up players to play Diplomacy """
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
-    self.is_sent = []
-    self.is_received = []
+    self.is_sent = {}
+    self.is_received = {}
     self.player = Player()
     self.game = Game() 
     self.powers = powers
     self.number_msg_limitation = number_msg_limitation
-  def get_all_power_messages(self, power_name):
+    self.power_dict = {}
+    for i in range(len(powers)):
+      power_dict[powers[i]] = i
+      
+  def get_power_messages(self, power_name):
     return self.game.filter_messages(messages=self.game.messages, game_role=power_name)
-  
-  def get_all_possible_messages(self, type):
+  def get_sent_message(self, power_name):
+    return {message.time_sent: message
+        for message in messages
+        if message.sender == power_name}
+  def get_recieved_message(self, power_name):
+    return {message.time_sent: message
+        for message in messages
+        if message.recipient == power_name}
+  def new_message(self, sender, receiver, message):
+    msg = Message(sender=sender,
+              recipient=receiver,
+              message=message,
+              phase=self.game.get_current_phase())
+    self.game.add_message(msg)
+    if not self.is_sent[sender]:
+      self.is_sent[sender] = {}
+    if not self.is_recieved[receiver]:
+      self.is_recieved[receiver] = {}
+    self.is_sent[sender][receiver] = True
+    self.is_recieved[receiver][sender] = True
+    
+  def get_to_send(self, type):
     return None
-  def get_all_possible_replies(self):
+  def get_to_reply(self):
     return None
   def send_messages(self):
     return None
