@@ -14,8 +14,8 @@
 Class Diplomacy_game_player():
   """ Class for setting up players to play Diplomacy """
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
-    self.is_sent = {}
-    self.is_received = {}
+    self.sent = {}
+    self.received = {}
     self.player = Player()
     self.game = Game() 
     self.powers = powers
@@ -34,22 +34,22 @@ Class Diplomacy_game_player():
     return {message.time_sent: message
         for message in messages
         if message.recipient == power_name}
-  def new_message(self, sender, receiver, message):
+  def new_message(self, sender, recipient, message):
     msg = Message(sender=sender,
-              recipient=receiver,
+              recipient=recipient,
               message=message,
               phase=self.game.get_current_phase())
     self.game.add_message(msg)
-    if not self.is_sent[sender]:
-      self.is_sent[sender] = {}
-    if not self.is_recieved[receiver]:
-      self.is_recieved[receiver] = {}
-    self.is_sent[sender][receiver] = True
-    self.is_recieved[receiver][sender] = True
+    if not self.sent[sender]:
+      self.sent[sender] = {}
+    if not self.recieved[recipient]:
+      self.recieved[recipient] = {}
+    self.sent[sender][recipient] = message
+    self.recieved[recipient][sender] = message
     
-  def get_to_send(self, type):
+  def get_to_send(self, recipient, type):
     return None
-  def get_to_reply(self):
+  def get_to_reply(self, recipient):
     return None
   def send_messages(self):
     return None
