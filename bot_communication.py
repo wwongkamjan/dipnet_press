@@ -115,7 +115,7 @@ Class Diplomacy_Press_Player():
     # else call you agent to send message from sender to recipient
     return self.random_message_list(msg_list)
   
-  def get_get_reply(self, game, msg_list, sender, recipient):
+  def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
   
   def random_message_list(self, msg_list)
