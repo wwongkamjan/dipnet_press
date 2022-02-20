@@ -49,11 +49,13 @@ Class Diplomacy_Press():
     
   def get_all_possible_message(self, sender, recipient):
     # include no message!
+    # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = []
     return possible_messages
   
   def get_all_possible_replies(self, sender, recipient):
-    # include no reply, ignore the recieved message from this sender!
+    # include no reply, ignore the recieved message from this sender! 
+    # include counter proposal
     possible_replies = []
     return possible_replies
 
