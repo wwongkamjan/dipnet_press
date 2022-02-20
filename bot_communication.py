@@ -1,3 +1,16 @@
+from tornado import gen
+import ujson as json
+from diplomacy import Game
+from diplomacy.engine.message import Message
+from diplomacy.utils.export import to_saved_game_format
+from diplomacy_research.players.benchmark_player import DipNetSLPlayer
+from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
+from diplomacy_research.models.state_space import get_order_tokens
+from diplomacy.server.server_game import ServerGame
+from diplomacy.daide.requests import RequestBuilder
+import random
+import time
+
 # script as helper for power-power communication
 # class Dip Player get order, get message, reply
 # class Diplomacy_Press:
@@ -17,16 +30,16 @@ Class Diplomacy_Press():
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.sent = {}
     self.received = {}
-    self.player = Player()
     self.game = Game() 
-    self.powers = powers
+    self.player = Player()
+    self.powers = self.game.powers
     self.number_msg_limitation = number_msg_limitation
     self.number_sent_msg = {}
 #     self.power_dict = {}
 #     for i in range(len(powers)):
 #       power_dict[powers[i]] = i
             
-    for power in powers:
+    for power in self.powers:
       self.sent[power] = {power_name: None for power_name in self.powers}
       self.received[power] = {power_name: None for power_name in self.powers}
       self.number_sent_msg[power] = 0
@@ -50,13 +63,15 @@ Class Diplomacy_Press():
   def get_all_possible_message(self, sender, recipient):
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
-    possible_messages = []
+    possible_messages = ['None']
+    possible_messages += self.player.get_orders(self.game, sender) #get_non-attacking_orders
     return possible_messages
   
   def get_all_possible_replies(self, sender, recipient):
     # include no reply, ignore the recieved message from this sender! 
     # include counter proposal
-    possible_replies = []
+    possible_replies = ['None']
+    possible_messages += ['Okay']
     return possible_replies
 
   def send_message(self, sender, recipient):
@@ -123,7 +138,10 @@ Class Diplomacy_Press_Player():
   def random_message_list(self, msg_list)
     return random.choice(msg_list)
   
+@gen.coroutine
 def main():
+  player =  Diplomacy_Press_Player(Player=DipNetSLPlayer)
+  game =  Diplomacy_Press(Game=Game, Player=player)
   
 
     
