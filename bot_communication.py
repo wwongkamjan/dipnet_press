@@ -130,7 +130,6 @@ class Diplomacy_Press:
     self.game.process()
 
 class Diplomacy_Press_Player:
-  @gen.coroutine
   def __init__(self, Player=None):
     self.player = Player
   
