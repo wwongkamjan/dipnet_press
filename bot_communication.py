@@ -62,8 +62,8 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-  @gen.coroutine
-  def get_all_possible_message(self, sender, recipient):
+#   @gen.coroutine
+  async def get_all_possible_message(self, sender, recipient):
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
@@ -83,8 +83,8 @@ class Diplomacy_Press:
     possible_messages += ['Okay']
     return possible_replies
   
-  @gen.coroutine
-  def send_message(self, sender, recipient):
+#   @gen.coroutine
+  async def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
       msg_list = await self.get_all_possible_message(sender, recipient)
