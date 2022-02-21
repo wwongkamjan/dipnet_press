@@ -25,7 +25,7 @@ import time
 # Game - set_orders/ add_messages
 # game.process()
 
-Class Diplomacy_Press:
+class Diplomacy_Press:
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.sent = {}
     self.received = {}
@@ -120,7 +120,7 @@ Class Diplomacy_Press:
   def game_process(self):
     self.game.process()
     
-Class Diplomacy_Press_Player:
+class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player()
     
