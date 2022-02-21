@@ -68,9 +68,10 @@ class Diplomacy_Press:
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
     orders = yield self.player.get_orders(self.game, sender)
-    asyncio.sleep(2)
-    print(orders)
-    possible_messages.append(' AND '.join(orders)) #get_non-attacking_orders
+    str_orders = ''
+    for order in orders:
+      str_orders += '( '+order+' ) AND '
+    possible_messages.append(str_orders) #get_non-attacking_orders
     yield possible_messages
   
 
