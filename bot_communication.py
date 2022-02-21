@@ -169,7 +169,7 @@ def main():
     dip_game.game_process()
      # Saving to disk
   with open('game.json', 'w') as file:
-    file.write(json.dumps(to_saved_game_format(game)))
+    file.write(json.dumps(to_saved_game_format(dip_game.game)))
   stop_io_loop()
 
 if __name__ == '__main__':
