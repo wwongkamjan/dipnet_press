@@ -24,7 +24,7 @@ import time
 # Player - get_orders/ get_messages/ get_replies
 # Game - set_orders/ add_messages
 # game.process()
-
+@gen.coroutine
 class Diplomacy_Press:
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.sent = {}
@@ -129,7 +129,8 @@ class Diplomacy_Press:
   
   def game_process(self):
     self.game.process()
-    
+
+@gen.coroutine
 class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player
