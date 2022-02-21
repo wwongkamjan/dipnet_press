@@ -70,6 +70,7 @@ class Diplomacy_Press:
     while True:
       try:
         orders = yield self.player.get_orders(self.game, sender)      #get_non-attacking_orders
+        orders = list(orders)
         possible_messages.append(' AND '.join(orders))
         break
       except:
@@ -102,7 +103,7 @@ class Diplomacy_Press:
         self.received[recipient][sender] = message
         self.new_message(msg)
         self.number_sent_msg[sender] += 1
-      else:
+    else:
         print("number of sent messages exceeds")
         
 
@@ -111,17 +112,17 @@ class Diplomacy_Press:
     if self.received[sender][recipient]:
       msg_list = self.get_all_possible_replies(sender, recipient)
       message = self.player.get_reply(self.game, msg_list, sender, recipient)
+      if message != "None":
+        msg = Message(sender=sender,
+             recipient=recipient,
+             message=message,
+             phase=self.game.get_current_phase())
 
-      msg = Message(sender=sender,
-           recipient=recipient,
-           message=message,
-           phase=self.game.get_current_phase())
-                          
-      # set message to be None so that recipient can send a new message to a sender 
-      self.sent[recipient][sender] = None
-      self.received[sender][recipient] = None
-      self.new_message(msg)
-      self.number_sent_msg[recipient] -= 1
+        # set message to be None so that recipient can send a new message to a sender 
+        self.sent[recipient][sender] = None
+        self.received[sender][recipient] = None
+        self.new_message(msg)
+        self.number_sent_msg[recipient] -= 1
       
 #     else:
 #       raise "There is no message from " +recipient+ " to " +sender +" to reply"
