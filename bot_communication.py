@@ -70,7 +70,7 @@ class Diplomacy_Press:
     while True:
       try:
         orders = yield self.player.get_orders(self.game, sender)      #get_non-attacking_orders
-        possible_messages.append(' AND '.join(orders)
+        possible_messages.append(' AND '.join(orders))
         break
       except:
         print("orders...")
