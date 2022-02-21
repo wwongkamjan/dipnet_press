@@ -24,14 +24,14 @@ import time
 # Player - get_orders/ get_messages/ get_replies
 # Game - set_orders/ add_messages
 # game.process()
-@gen.coroutine
+
 class Diplomacy_Press:
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.sent = {}
     self.received = {}
     self.game = Game
     self.game.remove_rule('NO_PRESS')
-    self.player = Player
+    self.player = Player.player
     self.powers = self.game.powers
     self.number_msg_limitation = number_msg_limitation
     self.number_sent_msg = {}
@@ -65,7 +65,7 @@ class Diplomacy_Press:
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
-    orders = self.player.player.get_orders(self.game, sender)
+    orders = self.player.get_orders(self.game, sender)
     str_orders = ''
     for i in range (len(orders)):
       str_orders += '( ' + orders[i] + ' )'
@@ -130,7 +130,6 @@ class Diplomacy_Press:
   def game_process(self):
     self.game.process()
 
-@gen.coroutine
 class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player
@@ -160,7 +159,6 @@ def main():
     for sender in dip_game.powers:
       for recipient in dip_game.powers:
         if sender != recipient:
-          print("test")
           dip_game.send_message(sender, recipient)
     #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
     for sender in dip_game.powers:
