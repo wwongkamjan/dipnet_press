@@ -59,7 +59,8 @@ class Diplomacy_Press:
   
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
-    
+  
+  @gen.coroutine
   def get_all_possible_message(self, sender, recipient):
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
