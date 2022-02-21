@@ -137,7 +137,7 @@ class Diplomacy_Press_Player:
   def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
   
-  def random_message_list(self, msg_list)
+  def random_message_list(self, msg_list):
     return random.choice(msg_list)
   
 @gen.coroutine
