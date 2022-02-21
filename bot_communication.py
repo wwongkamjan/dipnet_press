@@ -150,7 +150,7 @@ class Diplomacy_Press_Player:
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
   
-@gen.coroutine
+# @gen.coroutine
 def main():
   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
@@ -174,8 +174,9 @@ def main():
      # Saving to disk
   with open('game.json', 'w') as file:
     file.write(json.dumps(to_saved_game_format(dip_game.game)))
-  stop_io_loop()
+#   stop_io_loop()
 
 if __name__ == '__main__':
-  start_io_loop(main)
+#   start_io_loop(main)
+  main()
 
