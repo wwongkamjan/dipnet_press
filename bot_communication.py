@@ -64,7 +64,9 @@ class Diplomacy_Press:
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
-    possible_messages.append(' AND '.join(self.player.get_orders(self.game, sender))) #get_non-attacking_orders
+    orders = self.player.get_orders(self.game, sender))
+    print("orders of ", sender, " : ", orders)
+    possible_messages.append(' AND '.join(orders)) #get_non-attacking_orders
     return possible_messages
   
   def get_all_possible_replies(self, sender, recipient):
@@ -115,8 +117,10 @@ class Diplomacy_Press:
       
   def get_orders(self):
     return {power_name: self.player.get_orders(self.game, power_name) for power_name in self.game.powers}
+  
   def set_orders(self, power_name, power_orders):
     return self.game.set_orders(power_name, power_orders)
+  
   def game_process(self):
     self.game.process()
     
@@ -160,7 +164,7 @@ def main():
     orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
     for power_name, power_orders in orders.items():
        dip_game.game.set_orders(power_name, power_orders)
-    dip_game.process()
+    dip_game.game_process()
      # Saving to disk
   with open('game.json', 'w') as file:
     file.write(json.dumps(to_saved_game_format(game)))
