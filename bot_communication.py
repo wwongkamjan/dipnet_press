@@ -131,20 +131,23 @@ class Diplomacy_Press:
 class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player
-    
+  
+  @gen.coroutine
   def get_orders(self, game , power_name):
     return self.player.get_orders(game, power_name)
   
+  @gen.coroutine
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided
     # else call you agent to send message from sender to recipient
     #return string of message
     
     return self.random_message_list(msg_list)
-  
+  @gen.coroutine
   def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
   
+  @gen.coroutine
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
   
