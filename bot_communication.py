@@ -122,7 +122,7 @@ class Diplomacy_Press:
     
 class Diplomacy_Press_Player:
   def __init__(self, Player=None):
-    self.player = Player()
+    self.player = Player
     
   def get_orders(self, game , power_name):
     return self.player.get_orders(game, power_name)
