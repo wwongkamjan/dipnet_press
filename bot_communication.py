@@ -73,7 +73,7 @@ class Diplomacy_Press:
           break
     print(orders)
     possible_messages.append(' AND '.join(orders))
-    return list(possible_messages)
+    yield list(possible_messages)
   
 
   def get_all_possible_replies(self, sender, recipient):
