@@ -69,7 +69,7 @@ class Diplomacy_Press:
     possible_messages = ['None']
     while True:
         orders = yield self.player.get_orders(self.game, sender)      #get_non-attacking_orders
-        if isinstance(orders,list):
+        if isinstance(len(orders),int):
           break
     print(orders)
     possible_messages.append(' AND '.join(orders))
