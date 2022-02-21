@@ -70,12 +70,11 @@ class Diplomacy_Press:
     while True:
       try:
         orders = yield self.player.get_orders(self.game, sender)      #get_non-attacking_orders
-        possible_messages.append(' AND '.join(orders))
-        print(possible_messages)
+        possible_messages.append(' AND '.join(orders)
         break
       except:
         print("orders...")
-    return possible_messages
+    return list(possible_messages)
   
 
   def get_all_possible_replies(self, sender, recipient):
@@ -90,6 +89,7 @@ class Diplomacy_Press:
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
       msg_list = self.get_all_possible_message(sender, recipient)
+      print(msg_list)
       message = self.player.get_message(self.game, msg_list, sender, recipient)
       if message != "None":
         msg = Message(sender=sender,
