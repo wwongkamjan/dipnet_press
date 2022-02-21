@@ -72,7 +72,7 @@ class Diplomacy_Press:
     for order in orders:
       str_orders += '( '+order+' ) AND '
     possible_messages.append(str_orders) #get_non-attacking_orders
-    yield possible_messages
+    return possible_messages
   
 
   def get_all_possible_replies(self, sender, recipient):
