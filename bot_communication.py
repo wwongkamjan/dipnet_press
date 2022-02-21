@@ -68,13 +68,11 @@ class Diplomacy_Press:
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
     while True:
-      try:
         orders = yield self.player.get_orders(self.game, sender)      #get_non-attacking_orders
-        orders = list(orders)
-        possible_messages.append(' AND '.join(orders))
-        break
-      except:
-        print("orders...")
+        if isinstance(orders,list):
+          break
+    print(orders)
+    possible_messages.append(' AND '.join(orders))
     return list(possible_messages)
   
 
