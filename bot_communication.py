@@ -52,7 +52,7 @@ class Diplomacy_Press:
         for message in messages
         if message.sender == power_name}
   @gen.coroutine
-  def get_recieved_message(self, power_name):
+  def get_received_message(self, power_name):
     return {message.time_sent: message
         for message in messages
         if message.recipient == power_name}
@@ -73,7 +73,7 @@ class Diplomacy_Press:
   
   @gen.coroutine
   def get_all_possible_replies(self, sender, recipient):
-    # include no reply, ignore the recieved message from this sender! 
+    # include no reply, ignore the received message from this sender! 
     # include counter proposal
     possible_replies = ['None']
     possible_messages += ['Okay']
@@ -91,9 +91,9 @@ class Diplomacy_Press:
              message=message,
              phase=self.game.get_current_phase())
               
-        # sender sent message to recipient and recipient recieved message from sender
+        # sender sent message to recipient and recipient received message from sender
         self.sent[sender][recipient] = message
-        self.recieved[recipient][sender] = message
+        self.received[recipient][sender] = message
         self.new_message(msg)
         self.number_sent_msg[sender] += 1
       else:
@@ -102,7 +102,7 @@ class Diplomacy_Press:
   @gen.coroutine
   def reply_message(self, sender, recipient):
     # this is to reply a message, so sender becomes recipient and recipient becomes sender
-    if self.recieved[sender][recipient]:
+    if self.received[sender][recipient]:
       msg_list = self.get_all_possible_replies(sender, recipient)
       message = self.player.get_reply(self.game, msg_list, sender, recipient)
 
@@ -113,7 +113,7 @@ class Diplomacy_Press:
                           
       # set message to be None so that recipient can send a new message to a sender 
       self.sent[recipient][sender] = None
-      self.recieved[sender][recipient] = None
+      self.received[sender][recipient] = None
       self.new_message(msg)
       self.number_sent_msg[recipient] -= 1
       
