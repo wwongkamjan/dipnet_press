@@ -31,11 +31,10 @@ class Diplomacy_Press:
     self.received = {}
     self.game = Game
     self.game.remove_rule('NO_PRESS')
-    self.player = Player.player
+    self.player = Player
     self.powers = self.game.powers
     self.number_msg_limitation = number_msg_limitation
     self.number_sent_msg = {}
-    print("player instance", self.player)
 #     self.power_dict = {}
 #     for i in range(len(powers)):
 #       power_dict[powers[i]] = i
@@ -61,6 +60,7 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
     
+  @gen.coroutine  
   def get_all_possible_message(self, sender, recipient):
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
