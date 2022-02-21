@@ -64,7 +64,7 @@ class Diplomacy_Press:
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
-    possible_messages.append(self.player.get_orders(self.game, sender).join(' AND ') #get_non-attacking_orders
+    possible_messages.append(self.player.get_orders(self.game, sender).join(' AND ')) #get_non-attacking_orders
     return possible_messages
   
   def get_all_possible_replies(self, sender, recipient):
