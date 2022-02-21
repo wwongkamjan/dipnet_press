@@ -129,7 +129,7 @@ class Diplomacy_Press_Player:
     self.player = Player
     
   def get_orders(self, game , power_name):
-    yield self.player.get_orders(game, power_name)
+    return self.player.get_orders(game, power_name)
   
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided
