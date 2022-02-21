@@ -154,6 +154,7 @@ def main():
     for sender in dip_game.powers:
       for recipient in dip_game.powers:
         if sender != recipient:
+          print("test")
           dip_game.send_message(sender, recipient)
     #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
     for sender in dip_game.powers:
