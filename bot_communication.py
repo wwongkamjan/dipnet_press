@@ -80,10 +80,10 @@ class Diplomacy_Press:
     return possible_replies
   
 
-  async def send_message(self, sender, recipient):
+  def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
-      msg_list = yield self.get_all_possible_message(sender, recipient)
+      msg_list = self.get_all_possible_message(sender, recipient)
       print(msg_list)
       message = self.player.get_message(self.game, msg_list, sender, recipient)
       if message != "None":
