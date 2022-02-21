@@ -16,7 +16,7 @@ import time
 # class Diplomacy_Press:
 # messages tracking sending/receiving/limitation/to_reply/generate all possible messages/replies
 ### generate all possible messages can be classified into groups (attacking) (supporting) (moving/holding/convoying) (proposals - (to attack) (to support) (to move/hold/convoy))
-### generate all possible replies for non-proposal (okay) for proposal (yes,no,maybe)
+### generate all possible replies for non-proposal (okay) for proposal (yes,no,maybe) and counter proposal (move to A, move to B)
 # set_player - as DipNet/DORA/ random any thing
 
 # main():
@@ -31,6 +31,7 @@ Class Diplomacy_Press():
     self.sent = {}
     self.received = {}
     self.game = Game() 
+    self.game.remove_rule('NO_PRESS')
     self.player = Player()
     self.powers = self.game.powers
     self.number_msg_limitation = number_msg_limitation
@@ -64,7 +65,7 @@ Class Diplomacy_Press():
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
-    possible_messages += self.player.get_orders(self.game, sender) #get_non-attacking_orders
+    possible_messages.append(self.player.get_orders(self.game, sender).join(' AND ') #get_non-attacking_orders
     return possible_messages
   
   def get_all_possible_replies(self, sender, recipient):
@@ -130,6 +131,8 @@ Class Diplomacy_Press_Player():
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided
     # else call you agent to send message from sender to recipient
+    #return string of message
+    
     return self.random_message_list(msg_list)
   
   def get_reply(self, game, msg_list, sender, recipient):
@@ -140,15 +143,30 @@ Class Diplomacy_Press_Player():
   
 @gen.coroutine
 def main():
-  player =  Diplomacy_Press_Player(Player=DipNetSLPlayer)
-  game =  Diplomacy_Press(Game=Game, Player=player)
-  
+  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer)
+  dip_game =  Diplomacy_Press(Game=Game, Player=player)
+  while not dip_game.game.is_game_done:
+    #send messages before taking orders
+    for sender in dip_game.powers:
+      for recipient in dip_game.powers:
+        if sender != recipient:
+          dip_game.send_message(self, sender, recipient)
+    #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
+    for sender in dip_game.powers:
+      for recipient in dip_game.powers:
+        if sender != recipient:
+          dip_game.reply_message(self, sender, recipient)
+                             
+    #taking orders after messages were all sent
+    orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+    for power_name, power_orders in orders.items():
+       dip_game.game.set_orders(power_name, power_orders)
+    dip_game.process()
+     # Saving to disk
+  with open('game.json', 'w') as file:
+    file.write(json.dumps(to_saved_game_format(game)))
+  stop_io_loop()
 
-    
-    
-    
-    
-    
-    
-  
+if __name__ == '__main__':
+    start_io_loop(main)
 
