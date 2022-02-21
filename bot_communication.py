@@ -111,8 +111,8 @@ Class Diplomacy_Press():
       self.new_message(sender, recipient, message)
       self.number_sent_msg[recipient] -= 1
       
-    else:
-      raise "There is no message from " +recipient+ " to " +sender +" to reply"
+#     else:
+#       raise "There is no message from " +recipient+ " to " +sender +" to reply"
       
   def get_orders(self):
     return {power_name: self.player.get_orders(self.game, power_name) for power_name in self.game.powers}
