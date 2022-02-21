@@ -35,6 +35,7 @@ class Diplomacy_Press:
     self.powers = self.game.powers
     self.number_msg_limitation = number_msg_limitation
     self.number_sent_msg = {}
+    print("player instance", self.player)
 #     self.power_dict = {}
 #     for i in range(len(powers)):
 #       power_dict[powers[i]] = i
