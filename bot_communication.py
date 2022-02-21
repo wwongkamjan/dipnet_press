@@ -62,13 +62,13 @@ class Diplomacy_Press:
     self.game.add_message(DAIDE_message)
   
   
-  def get_all_possible_message(self, sender, recipient):
+  async def get_all_possible_message(self, sender, recipient):
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
-    orders = yield {sender: self.player.get_orders(self.game, sender)}
+    orders = await self.player.get_orders(self.game, sender)
 #     print(orders[sender])
-    possible_messages.append(' AND '.join(orders[sender])) #get_non-attacking_orders
+    possible_messages.append(' AND '.join(orders)) #get_non-attacking_orders
     return possible_messages
   
 
