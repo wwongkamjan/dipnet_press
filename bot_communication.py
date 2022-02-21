@@ -43,21 +43,21 @@ class Diplomacy_Press:
       self.sent[power] = {power_name: None for power_name in self.powers}
       self.received[power] = {power_name: None for power_name in self.powers}
       self.number_sent_msg[power] = 0
-  @gen.coroutine    
+    
   def get_power_messages(self, power_name):
     return self.game.filter_messages(messages=self.game.messages, game_role=power_name)
-  @gen.coroutine
+
   def get_sent_message(self, power_name):
     return {message.time_sent: message
         for message in messages
         if message.sender == power_name}
-  @gen.coroutine
+
   def get_received_message(self, power_name):
     return {message.time_sent: message
         for message in messages
         if message.recipient == power_name}
   
-  @gen.coroutine
+
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
@@ -70,7 +70,7 @@ class Diplomacy_Press:
     possible_messages.append(' AND '.join(orders[sender])) #get_non-attacking_orders
     return possible_messages
   
-  @gen.coroutine
+
   def get_all_possible_replies(self, sender, recipient):
     # include no reply, ignore the received message from this sender! 
     # include counter proposal
@@ -78,7 +78,7 @@ class Diplomacy_Press:
     possible_messages += ['Okay']
     return possible_replies
   
-  @gen.coroutine
+
   def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
@@ -98,7 +98,7 @@ class Diplomacy_Press:
       else:
         print("number of sent messages exceeds")
         
-  @gen.coroutine
+
   def reply_message(self, sender, recipient):
     # this is to reply a message, so sender becomes recipient and recipient becomes sender
     if self.received[sender][recipient]:
@@ -118,13 +118,13 @@ class Diplomacy_Press:
       
 #     else:
 #       raise "There is no message from " +recipient+ " to " +sender +" to reply"
-  @gen.coroutine    
+ 
   def get_orders(self):
     return {power_name: self.player.get_orders(self.game, power_name) for power_name in self.game.powers}
-  @gen.coroutine
+
   def set_orders(self, power_name, power_orders):
     return self.game.set_orders(power_name, power_orders)
-  @gen.coroutine
+
   def game_process(self):
     self.game.process()
 
@@ -132,22 +132,22 @@ class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player
   
-  @gen.coroutine
+
   def get_orders(self, game , power_name):
     return self.player.get_orders(game, power_name)
   
-  @gen.coroutine
+
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided
     # else call you agent to send message from sender to recipient
     #return string of message
     
     return self.random_message_list(msg_list)
-  @gen.coroutine
+
   def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
   
-  @gen.coroutine
+
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
   
