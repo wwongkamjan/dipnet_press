@@ -64,15 +64,8 @@ class Diplomacy_Press:
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
-    print(self.game)
     orders = self.player.get_orders(self.game, sender)
-    str_orders = ''
-    for i in range (len(orders)):
-      str_orders += '( ' + orders[i] + ' )'
-      if i< len(orders)-1:
-        str_orders+= ' AND '
-    
-    possible_messages.append(str_orders) #get_non-attacking_orders
+    possible_messages.append(' AND '.join(orders)) #get_non-attacking_orders
     return possible_messages
   
   def get_all_possible_replies(self, sender, recipient):
@@ -135,7 +128,7 @@ class Diplomacy_Press_Player:
     self.player = Player
     
   def get_orders(self, game , power_name):
-    return self.player.get_orders(game, power_name)
+    yield self.player.get_orders(game, power_name)
   
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided
@@ -153,7 +146,7 @@ class Diplomacy_Press_Player:
 @gen.coroutine
 def main():
   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
-  dip_game =  Diplomacy_Press(Game=Game(), Player=DipNetSLPlayer())
+  dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
     #send messages before taking orders
     for sender in dip_game.powers:
