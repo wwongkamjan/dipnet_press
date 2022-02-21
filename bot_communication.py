@@ -29,9 +29,9 @@ class Diplomacy_Press:
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.sent = {}
     self.received = {}
-    self.game = Game() 
+    self.game = Game
     self.game.remove_rule('NO_PRESS')
-    self.player = Player()
+    self.player = Player
     self.powers = self.game.powers
     self.number_msg_limitation = number_msg_limitation
     self.number_sent_msg = {}
@@ -142,8 +142,8 @@ class Diplomacy_Press_Player:
   
 @gen.coroutine
 def main():
-  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer)
-  dip_game =  Diplomacy_Press(Game=Game, Player=dip_player)
+  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+  dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
     #send messages before taking orders
     for sender in dip_game.powers:
