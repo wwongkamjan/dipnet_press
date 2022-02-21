@@ -66,7 +66,8 @@ class Diplomacy_Press:
     possible_messages = ['None']
     orders = self.player.get_orders(self.game, sender)
     print("orders of ", sender, " : ", orders)
-    possible_messages.append(' AND '.join(orders)) #get_non-attacking_orders
+    orders = ' AND '.join(orders)
+    possible_messages.append(orders) #get_non-attacking_orders
     return possible_messages
   
   def get_all_possible_replies(self, sender, recipient):
