@@ -70,13 +70,15 @@ class Diplomacy_Press:
     possible_messages.append(' AND '.join(orders[sender])) #get_non-attacking_orders
     return possible_messages
   
+  @gen.coroutine
   def get_all_possible_replies(self, sender, recipient):
     # include no reply, ignore the recieved message from this sender! 
     # include counter proposal
     possible_replies = ['None']
     possible_messages += ['Okay']
     return possible_replies
-
+  
+  @gen.coroutine
   def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
@@ -95,7 +97,8 @@ class Diplomacy_Press:
         self.number_sent_msg[sender] += 1
       else:
         print("number of sent messages exceeds")
-  
+        
+  @gen.coroutine
   def reply_messages(self, sender, recipient):
     # this is to reply a message, so sender becomes recipient and recipient becomes sender
     if self.recieved[sender][recipient]:
