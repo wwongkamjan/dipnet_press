@@ -58,8 +58,8 @@ Class Diplomacy_Press():
         for message in messages
         if message.recipient == power_name}
   
-  def new_message(self, sender, recipient, message):
-    self.game.add_message(message)
+  def new_message(self, DAIDE_message):
+    self.game.add_message(DAIDE_message)
     
   def get_all_possible_message(self, sender, recipient):
     # include no message!
@@ -80,19 +80,19 @@ Class Diplomacy_Press():
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
       msg_list = get_all_possible_message(sender, recipient)
       message = self.player.get_message(self.game, msg_list, sender, recipient)
-
-      msg = Message(sender=sender,
-           recipient=recipient,
-           message=message,
-           phase=self.game.get_current_phase())
-
-      # sender sent message to recipient and recipient recieved message from sender
-      self.sent[sender][recipient] = message
-      self.recieved[recipient][sender] = message
-      self.new_message(sender, recipient, message)
-      self.number_sent_msg[sender] += 1
-    else:
-      print("number of sent messages exceeds")
+      if message != "None":
+        msg = Message(sender=sender,
+             recipient=recipient,
+             message=message,
+             phase=self.game.get_current_phase())
+              
+        # sender sent message to recipient and recipient recieved message from sender
+        self.sent[sender][recipient] = message
+        self.recieved[recipient][sender] = message
+        self.new_message(msg)
+        self.number_sent_msg[sender] += 1
+      else:
+        print("number of sent messages exceeds")
   
   def reply_messages(self, sender, recipient):
     # this is to reply a message, so sender becomes recipient and recipient becomes sender
@@ -104,11 +104,11 @@ Class Diplomacy_Press():
            recipient=recipient,
            message=message,
            phase=self.game.get_current_phase())
-      
+                          
       # set message to be None so that recipient can send a new message to a sender 
       self.sent[recipient][sender] = None
       self.recieved[sender][recipient] = None
-      self.new_message(sender, recipient, message)
+      self.new_message(msg)
       self.number_sent_msg[recipient] -= 1
       
 #     else:
