@@ -62,7 +62,7 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-#   @gen.coroutine
+  @gen.coroutine
   def get_all_possible_message(self, sender, recipient):
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
@@ -136,21 +136,17 @@ class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player
   
-
   def get_orders(self, game , power_name):
     return self.player.get_orders(game, power_name)
   
-
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided
     # else call you agent to send message from sender to recipient
     #return string of message
-    
     return self.random_message_list(msg_list)
 
   def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
-  
 
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
