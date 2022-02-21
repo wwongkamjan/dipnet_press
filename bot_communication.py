@@ -10,6 +10,7 @@ from diplomacy.server.server_game import ServerGame
 from diplomacy.daide.requests import RequestBuilder
 import random
 import time
+import asyncio
 
 # script as helper for power-power communication
 # class Dip Player get order, get message, reply
@@ -67,7 +68,7 @@ class Diplomacy_Press:
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
     orders = yield self.player.get_orders(self.game, sender)
-    async_io.sleep(2)
+    asyncio.sleep(2)
     print(orders)
     possible_messages.append(' AND '.join(orders)) #get_non-attacking_orders
     yield possible_messages
