@@ -74,7 +74,7 @@ class Diplomacy_Press:
 #         if isinstance(orders,list):
 #           break
     orders = self.player.get_orders(self.game, sender)
-    print(orders)
+#     print(orders)
     possible_messages += orders # will be later 'AND/OR'
     return possible_messages
   
@@ -83,7 +83,7 @@ class Diplomacy_Press:
     # include no reply, ignore the received message from this sender! 
     # include counter proposal
     possible_replies = ['None']
-    possible_messages += ['Okay']
+    possible_replies += ['Okay']
     return possible_replies
   
 #   @gen.coroutine
