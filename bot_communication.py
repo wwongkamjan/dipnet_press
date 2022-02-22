@@ -25,6 +25,7 @@ import asyncio
 # Player - get_orders/ get_messages/ get_replies
 # Game - set_orders/ add_messages
 # game.process()
+MESSAGE_TYPE = {'orders': ['attack', 'support', 'move', 'hold', 'convoy'], 'proposals': ['ally','enemy','to_order'] } # attack = move to a map location that other powers' unit is currently on 
 
 class Diplomacy_Press:
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
@@ -155,6 +156,26 @@ class Diplomacy_Press_Player:
 
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
+  
+  def filter_message(self, game, msg_list, sender, recipient, type):
+    #msg_list = list of string message
+    # type - a message type to exclude from message_list e.g. ['attack', 'support', 'proposal', 'to_order', etc.]
+    remove_list = []
+    for msg in msg_list:
+      if self.get_message_type(msg) in type:
+        remove_list.append(msg)
+    
+    return [msg for msg in msg_list if msg not in remove_list]
+  
+  def get_message_type(self, msg):
+    # check if it is support?
+    # attack?
+    # move? 
+    # convoy
+    # hold
+   
+    
+    
   
 @gen.coroutine
 def main():
