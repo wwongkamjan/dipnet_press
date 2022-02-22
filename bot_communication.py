@@ -8,7 +8,7 @@ from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 from diplomacy_research.models.state_space import get_order_tokens
 from diplomacy.server.server_game import ServerGame
 from diplomacy.daide.requests import RequestBuilder
-import random_bot import random_player
+from random_bot import random_player
 import random
 import time
 import asyncio
