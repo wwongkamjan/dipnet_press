@@ -210,8 +210,8 @@ def main():
             dip_game.send_message(sender, recipient)
       #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
       for sender in dip_game.powers:
-        for recipient in dip_game.powers and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
-          if sender != recipient:
+        for recipient in dip_game.powers: 
+          if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
             dip_game.reply_message(sender, recipient)
 
     #taking orders after messages were all sent
