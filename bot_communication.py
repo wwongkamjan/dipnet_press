@@ -198,6 +198,7 @@ def main():
   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
+    
     #send messages before taking orders
     for sender in dip_game.powers:
       for recipient in dip_game.powers:
