@@ -74,8 +74,8 @@ class Diplomacy_Press:
     orders = yield self.player.get_orders(self.game, sender)
     while True:
       if orders:
-          possible_messages.append(' AND '.join(order[sender]))
-          print(orders)
+        possible_messages.append(' AND '.join(order[sender]))
+        print(orders)
         break
     return possible_messages
   
