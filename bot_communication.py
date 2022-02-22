@@ -132,6 +132,7 @@ class Diplomacy_Press:
     return self.game.set_orders(power_name, power_orders)
 
   def game_process(self):
+    # reset contraints e.g. self.sent/received = None, self., self.number_sent_msg = 0
     self.game.process()
 
 class Diplomacy_Press_Player:
