@@ -164,7 +164,7 @@ class Diplomacy_Press_Player:
     # type - a message type to exclude from message_list e.g. ['attack', 'support', 'proposal', 'to_order', etc.]
     remove_list = []
     for msg in msg_list:
-      if self.get_message_type(msg, game, sender) in type:
+      if self.get_message_type(game, msg, sender) in type:
         remove_list.append(msg)
     
     return [msg for msg in msg_list if msg not in remove_list]
