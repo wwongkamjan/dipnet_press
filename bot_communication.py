@@ -148,6 +148,9 @@ class Diplomacy_Press_Player:
     # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
     # else call you agent to send message from sender to recipient
     #return string of message
+    
+    #filter out agressive message i.e. attacking message
+    msg_list = self.filter_message(self, game, msg_list, sender, recipient, ['attack']):
     return self.player.get_message(game, msg_list, sender, recipient)
 
   def get_reply(self, game, msg_list, sender, recipient):
