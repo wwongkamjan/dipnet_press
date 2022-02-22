@@ -6,7 +6,7 @@ import argparse
 
 POWERS = ['AUSTRIA', 'ENGLAND', 'FRANCE', 'GERMANY', 'ITALY', 'RUSSIA', 'TURKEY']
 
-class random_player():
+class random_player:
   
   #get random orders
   def get_orders(self, game, power_name):
