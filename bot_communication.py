@@ -176,7 +176,7 @@ class Diplomacy_Press_Player:
     # convoy
     # hold
     order_token = get_order_tokens(msg)
-    if order_token[0] =='A' or 'F':
+    if order_token[0] =='A' or order_token[0] =='F':
       # this is message about orders
       if len(order_token) <2: 
         print(order_token)
