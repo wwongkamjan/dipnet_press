@@ -150,7 +150,7 @@ class Diplomacy_Press_Player:
     #return string of message
     
     #filter out agressive message i.e. attacking message
-    msg_list = self.filter_message(self, game, msg_list, sender, recipient, ['attack']):
+    msg_list = self.filter_message(self, game, msg_list, sender, recipient, ['attack'])
     return self.player.get_message(game, msg_list, sender, recipient)
 
   def get_reply(self, game, msg_list, sender, recipient):
