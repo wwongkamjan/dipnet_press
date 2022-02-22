@@ -22,7 +22,7 @@ import asyncio
 
 # main():
 # set game, player for each power
-# Player - get_orders/ get_messages/ get_replies
+# Player - get_orders/ get_messages/ get_replies - communication is not allow in retreat and building phase (later)
 # Game - set_orders/ add_messages
 # game.process()
 MESSAGE_TYPE = {'orders': ['attack', 'support', 'move', 'hold', 'convoy'], 'proposals': ['ally','enemy','to_order'] } # attack = move to a map location that other powers' unit is currently on 
@@ -73,11 +73,7 @@ class Diplomacy_Press:
 #         if isinstance(orders,list):
 #           break
     orders = yield self.player.get_orders(self.game, sender)
-    while True:
-      if orders:
-        possible_messages.append(' AND '.join(order[sender]))
-        print(orders)
-        break
+    possible_messages += orders # will be later 'AND/OR'
     return possible_messages
   
 
@@ -162,17 +158,37 @@ class Diplomacy_Press_Player:
     # type - a message type to exclude from message_list e.g. ['attack', 'support', 'proposal', 'to_order', etc.]
     remove_list = []
     for msg in msg_list:
-      if self.get_message_type(msg) in type:
+      if self.get_message_type(msg, game, sender) in type:
         remove_list.append(msg)
     
     return [msg for msg in msg_list if msg not in remove_list]
   
-  def get_message_type(self, msg):
+  def get_message_type(self, game, msg):
     # check if it is support?
     # attack?
     # move? 
     # convoy
     # hold
+    order_token = get_order_tokens(msg, sender)
+    if order_token[0] =='A' or 'F':
+      # this is message about orders
+      if order_token[1] == 'S':
+        return 'support'
+      elif order_token[1] == 'H':
+        return 'hold'
+      elif order_token[1] == 'C':
+        return 'convoy'
+      else:
+        #move/retreat or attack 
+        #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
+        order_unit = order_token[0]+' '+order_token[2]
+        #check if loc has some units of other powers on
+        for power in game.powers:
+          if sender != power and game.powers[power].units
+        
+        
+    else:
+      print('Not support yet')
    
     
     
