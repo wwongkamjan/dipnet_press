@@ -62,8 +62,8 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-  @gen.coroutine
-  def get_all_possible_message(self, sender, recipient):
+#   @gen.coroutine
+  async def get_all_possible_message(self, sender, recipient):
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = ['None']
@@ -85,10 +85,10 @@ class Diplomacy_Press:
     return possible_replies
   
 #   @gen.coroutine
-  def send_message(self, sender, recipient):
+  async def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
-      msg_list = self.get_all_possible_message(sender, recipient)
+      msg_list = await self.get_all_possible_message(sender, recipient)
       message = self.player.get_message(self.game, list(msg_list), sender, recipient)
       if message != "None":
         msg = Message(sender=sender,
@@ -162,12 +162,12 @@ def main():
     for sender in dip_game.powers:
       for recipient in dip_game.powers:
         if sender != recipient:
-          await dip_game.send_message(sender, recipient)
+          dip_game.send_message(sender, recipient)
     #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
     for sender in dip_game.powers:
       for recipient in dip_game.powers:
         if sender != recipient:
-          await dip_game.reply_message(sender, recipient)
+          dip_game.reply_message(sender, recipient)
                              
     #taking orders after messages were all sent
     orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
