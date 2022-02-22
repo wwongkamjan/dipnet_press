@@ -71,7 +71,7 @@ class Diplomacy_Press:
 #         orders = self.player.get_orders(self.game, sender)      #get_non-attacking_orders
 #         if isinstance(orders,list):
 #           break
-    orders = {sender: self.player.get_orders(self.game, sender)}
+    orders = asyncio.run(self.player.get_orders(self.game, sender))
     for sender,order in orders:
       possible_messages.append(' AND '.join(order))
       print(order)
