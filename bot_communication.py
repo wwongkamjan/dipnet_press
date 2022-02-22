@@ -184,14 +184,14 @@ class Diplomacy_Press_Player:
         order_unit = order_token[0]+' '+order_token[2]
         #check if loc has some units of other powers on
         for power in game.powers:
-          if sender != power and game.powers[power].units
-        
-        
+          if sender != power:
+            if order_unit in game.powers[power].units:
+              return 'attack'
+            else:
+              return 'move'  
     else:
-      print('Not support yet')
-   
-    
-    
+      print('Not support yet') # proposal
+  
   
 @gen.coroutine
 def main():
