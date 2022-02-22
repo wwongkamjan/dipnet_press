@@ -215,7 +215,7 @@ def main():
 #             dip_game.reply_message(sender, recipient)
 
     #taking orders after messages were all sent
-    orders = {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+    orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
     for power_name, power_orders in orders.items():
        dip_game.game.set_orders(power_name, power_orders)
     dip_game.game_process()
