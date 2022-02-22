@@ -206,11 +206,11 @@ def main():
       #send messages before taking orders
       for sender in dip_game.powers:
         for recipient in dip_game.powers:
-          if sender != recipient:
+          if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated() :
             dip_game.send_message(sender, recipient)
       #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
       for sender in dip_game.powers:
-        for recipient in dip_game.powers:
+        for recipient in dip_game.powers and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
           if sender != recipient:
             dip_game.reply_message(sender, recipient)
 
