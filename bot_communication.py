@@ -71,7 +71,7 @@ class Diplomacy_Press:
 #         orders = self.player.get_orders(self.game, sender)      #get_non-attacking_orders
 #         if isinstance(orders,list):
 #           break
-    orders = asyncio.run(self.player.get_orders(self.game, sender))
+    orders = self.player.get_orders(self.game, sender)
     for sender,order in orders:
       possible_messages.append(' AND '.join(order))
       print(order)
@@ -86,7 +86,7 @@ class Diplomacy_Press:
     return possible_replies
   
 #   @gen.coroutine
-  async def send_message(self, sender, recipient):
+  def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
       await asyncio.sleep(1)
