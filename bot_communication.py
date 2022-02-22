@@ -74,7 +74,7 @@ class Diplomacy_Press:
     orders = yield {sender: self.player.get_orders(self.game, sender)}
     print(orders[sender])
     possible_messages.append(' AND '.join(orders))
-    await asyncio.sleep(1)
+
     yield possible_messages
   
 
@@ -89,7 +89,8 @@ class Diplomacy_Press:
   async def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
-      msg_list = await self.get_all_possible_message(sender, recipient)
+      await asyncio.sleep(1)
+      msg_list = yield self.get_all_possible_message(sender, recipient)
       message = self.player.get_message(self.game, list(msg_list), sender, recipient)
       if message != "None":
         msg = Message(sender=sender,
