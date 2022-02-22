@@ -23,6 +23,7 @@ def main():
     # Playing game
     while not game.is_game_done:
         orders = yield {power_name: player.get_orders(game, power_name) for power_name in game.powers}
+        print(orders)
         for power_name, power_orders in orders.items():
             # send out every non-attacking order
             for order in power_orders:
