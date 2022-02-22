@@ -178,8 +178,8 @@ class Diplomacy_Press_Player:
     order_token = get_order_tokens(msg)
     if order_token[0] =='A' or order_token[0] =='F':
       # this is message about orders
-      if len(order_token) <2: 
-        print(order_token)
+#       if len(order_token) <2: 
+#         print(order_token)
       if order_token[1] == 'S':
         return 'support'
       elif order_token[1] == 'H':
@@ -197,8 +197,8 @@ class Diplomacy_Press_Player:
               return 'attack'
             else:
               return 'move'  
-    else:
-      print('Not support yet') # proposal
+#     else:
+#       print('Not support yet') # proposal
   
   
 @gen.coroutine
