@@ -8,6 +8,7 @@ from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 from diplomacy_research.models.state_space import get_order_tokens
 from diplomacy.server.server_game import ServerGame
 from diplomacy.daide.requests import RequestBuilder
+import random_bot
 import random
 import time
 import asyncio
@@ -143,10 +144,10 @@ class Diplomacy_Press_Player:
     return self.player.get_orders(game, power_name)
   
   def get_message(self, game, msg_list, sender, recipient):
-    # if agent is no press, you can call random/non-attacking messages we provided
+    # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
     # else call you agent to send message from sender to recipient
     #return string of message
-    return self.random_message_list(msg_list)
+    return self.player.get_message(self, game, msg_list, sender, recipient)
 
   def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
@@ -196,7 +197,8 @@ class Diplomacy_Press_Player:
   
 @gen.coroutine
 def main():
-  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+#   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+  dip_player =  Diplomacy_Press_Player(Player=random_bot())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
     if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
