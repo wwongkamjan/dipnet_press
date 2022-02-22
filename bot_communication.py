@@ -74,7 +74,8 @@ class Diplomacy_Press:
     orders = yield {sender: self.player.get_orders(self.game, sender)}
     print(orders[sender])
     possible_messages.append(' AND '.join(orders))
-    return list(possible_messages)
+    await asyncio.sleep(1)
+    yield possible_messages
   
 
   def get_all_possible_replies(self, sender, recipient):
