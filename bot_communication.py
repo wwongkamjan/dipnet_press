@@ -201,8 +201,8 @@ class Diplomacy_Press_Player:
   
 @gen.coroutine
 def main():
-  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
-#   dip_player =  Diplomacy_Press_Player(Player=random_player())
+#   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+  dip_player =  Diplomacy_Press_Player(Player=random_player())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
 #     if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
@@ -218,7 +218,8 @@ def main():
 #             dip_game.reply_message(sender, recipient)
 
     #taking orders after messages were all sent
-    orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+#     orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+    orders = {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
     for power_name, power_orders in orders.items():
        dip_game.game.set_orders(power_name, power_orders)
     dip_game.game_process()
