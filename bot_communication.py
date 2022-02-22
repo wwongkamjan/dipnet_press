@@ -198,18 +198,18 @@ def main():
   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
-    
-    #send messages before taking orders
-    for sender in dip_game.powers:
-      for recipient in dip_game.powers:
-        if sender != recipient:
-          dip_game.send_message(sender, recipient)
-    #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
-    for sender in dip_game.powers:
-      for recipient in dip_game.powers:
-        if sender != recipient:
-          dip_game.reply_message(sender, recipient)
-                             
+    if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
+      #send messages before taking orders
+      for sender in dip_game.powers:
+        for recipient in dip_game.powers:
+          if sender != recipient:
+            dip_game.send_message(sender, recipient)
+      #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
+      for sender in dip_game.powers:
+        for recipient in dip_game.powers:
+          if sender != recipient:
+            dip_game.reply_message(sender, recipient)
+
     #taking orders after messages were all sent
     orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
     for power_name, power_orders in orders.items():
