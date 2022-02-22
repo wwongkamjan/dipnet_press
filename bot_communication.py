@@ -103,8 +103,8 @@ class Diplomacy_Press:
         self.received[recipient][sender] = message
         self.new_message(msg)
         self.number_sent_msg[sender] += 1
-    else:
-        print("number of sent messages exceeds")
+#     else:
+#         print("number of sent messages exceeds")
         
 
   def reply_message(self, sender, recipient):
