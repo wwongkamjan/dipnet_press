@@ -169,13 +169,13 @@ class Diplomacy_Press_Player:
     
     return [msg for msg in msg_list if msg not in remove_list]
   
-  def get_message_type(self, game, msg):
+  def get_message_type(self, game, msg, sender):
     # check if it is support?
     # attack?
     # move? 
     # convoy
     # hold
-    order_token = get_order_tokens(msg, sender)
+    order_token = get_order_tokens(msg)
     if order_token[0] =='A' or 'F':
       # this is message about orders
       if order_token[1] == 'S':
