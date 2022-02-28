@@ -25,7 +25,7 @@ class random_player:
         # set message for this content type, e.g. pick sender moves 4 out of 10 orders - for now let's do select all - do nothing
         continue
       else:
-        msg_list[key] = []
+        msg_list[key] = None
     return msg_list
   
   def get_proposal(self, game, sender, recipient):
