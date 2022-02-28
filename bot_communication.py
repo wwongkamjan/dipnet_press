@@ -77,7 +77,7 @@ class Diplomacy_Press:
   
 #   @gen.coroutine
   def get_all_possible_message(self, sender, recipient):
-    # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), 'other_move': get_received_message }
+    # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), '(other)power_message': get_received_message }
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = {}
@@ -92,8 +92,8 @@ class Diplomacy_Press:
     possible_messages['sender_proposal'] = proposals # will be later 'AND/OR'
     
     # retrieve info of other power to forward/share to recipient
-    other_info = self.get_received_message(sender)
-    possible_messages['other_move'] = other_info # will be later 'AND/OR'
+    power_message = self.get_received_message(sender)
+    possible_messages['power_message'] = power_message # will be later 'AND/OR'
     return possible_messages
   
 
@@ -188,10 +188,10 @@ class Diplomacy_Press_Player:
       message_str += sender_proposal_str
     
     # message from other power that you want to share (agent already select specific power)
-    if msg_list['other_move']:
+    if msg_list['power_message']:
 #       other_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['other_move']]
 #       other_move_str = ''.join(other_move_str)
-      message_str += other_move_str
+      message_str += msg_list['power_message']
     
     if len(message_str)==0:
       return None
