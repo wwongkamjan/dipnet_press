@@ -18,7 +18,15 @@ class random_player:
         return orders
       
   def get_message(self, game, msg_list, sender, recipient):
-    return random.choice(msg_list)
+    # decide if want to send message 
+    boolean_message_content = [True, False]
+    for key in msg_list:
+      if random.choice(boolean_message_content):
+        # set message for this content type, e.g. pick sender moves 4 out of 10 orders - for now let's do select all - do nothing
+        continue
+      else:
+        msg_list[key] = []
+    return msg_list
   
   def get_proposal(self, game, sender, recipient):
     # propose all units move for recipient
