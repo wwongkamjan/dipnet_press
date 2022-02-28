@@ -88,7 +88,7 @@ class Diplomacy_Press:
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
     
     # retrieve orders to propose to recipient
-    proposals = self.player.get_proposals(self.game, sender, recipient)
+    proposals = self.player.get_proposal(self.game, sender, recipient)
     possible_messages['sender_proposal'] = proposals # will be later 'AND/OR'
     
     # retrieve info of other power to forward/share to recipient
@@ -194,6 +194,11 @@ class Diplomacy_Press_Player:
 
   def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
+  
+  def get_proposal(self, game, sender, recipient):
+    # what moves to propose to recipient?
+
+    return self.player.get_proposal(game, sender, recipient)
 
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
