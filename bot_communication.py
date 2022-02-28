@@ -50,32 +50,50 @@ class Diplomacy_Press:
   def get_power_messages(self, power_name):
     return self.game.filter_messages(messages=self.game.messages, game_role=power_name)
 
-  def get_sent_message(self, power_name):
+  def get_every_sent_message(self, power_name):
+    # any time during game
+    messages=self.game.messages
     return {message.time_sent: message
         for message in messages
         if message.sender == power_name}
 
-  def get_received_message(self, power_name):
+  def get_every_received_message(self, power_name):
+    # any time during game
+    messages=self.game.messages
     return {message.time_sent: message
         for message in messages
         if message.recipient == power_name}
   
-
+  def get_received_message(self, power_name):
+    # at current season
+    return self.received[power_name]
+  
+  def get_sent_message(self, power_name):
+    # at current season
+    return self.sent[power_name]
+  
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
 #   @gen.coroutine
   def get_all_possible_message(self, sender, recipient):
+    # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), 'other_move': get_received_message }
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
-    possible_messages = ['None']
-#     while True:
-#         orders = self.player.get_orders(self.game, sender)      #get_non-attacking_orders
-#         if isinstance(orders,list):
-#           break
+    possible_messages = {}
+    possible_messages['None'] = None
+    
+    # retrieve sender moves
     orders = self.player.get_orders(self.game, sender)
-#     print(orders)
-    possible_messages += orders # will be later 'AND/OR'
+    possible_messages['sender_move'] = orders # will be later 'AND/OR'
+    
+    # retrieve orders to propose to recipient
+    proposals = self.player.get_proposals(self.game, sender, recipient)
+    possible_messages['sender_proposal'] = proposals # will be later 'AND/OR'
+    
+    # retrieve info of other power to forward/share to recipient
+    other_info = self.get_received_message(self, sender):
+    possible_messages['other_move'] = other_info # will be later 'AND/OR'
     return possible_messages
   
 
@@ -91,8 +109,8 @@ class Diplomacy_Press:
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
       msg_list = self.get_all_possible_message(sender, recipient)
-      message = self.player.get_message(self.game, msg_list, sender, recipient)
-      if message != "None":
+      message_key, message  = self.player.get_message(self.game, msg_list, sender, recipient)
+      if message_type != "None":
         msg = Message(sender=sender,
              recipient=recipient,
              message=message,
@@ -149,8 +167,23 @@ class Diplomacy_Press_Player:
     # else call you agent to send message from sender to recipient
     #return string of message
     
-    #filter out agressive message i.e. attacking message
-    msg_list = self.filter_message(game, msg_list, sender, recipient, ['attack'])
+    #filter out agressive message from sender_move i.e. attacking message
+    sender_move = self.filter_message(game, msg_list['sender_move'], sender, recipient, ['attack'])
+    
+    # join string for sender move
+    # AND (FCT (order1)) ((FCT (order2))) ..
+    sender_move_str = [' ( FCT ( '+order+' ) )' for order in sender_move]
+    sender_move_str = ''.join(sender_move_str)
+    sender_move_str = 'AND' + sender_move_str
+    msg_list['sender_move'] = sender_move_str
+    
+    # join string for proposal
+    # AND (PRP (order1)) ((FCT (order2))) ..
+    sender_proposal_str = [' ( PRP ( XDO '+order+' ) )' for order in msg_list['sender_proposal']]
+    sender_proposal_str = ''.join(sender_proposal_str)
+    sender_proposal_str = 'AND' + sender_proposal_str
+    msg_list['sender_proposal'] = sender_proposal_str
+    
     return self.player.get_message(game, msg_list, sender, recipient)
 
   def get_reply(self, game, msg_list, sender, recipient):
