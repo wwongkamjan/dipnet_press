@@ -183,7 +183,7 @@ class Diplomacy_Press_Player:
     # join string for proposal
     # AND (PRP (order1)) ((FCT (order2))) ..
     if msg_list['sender_proposal']:
-      sender_proposal_str = [' ( PRP ( XDO '+order+' ) )' for order in msg_list['sender_proposal']]
+      sender_proposal_str = [' ( XDO ( '+order+' ) )' for order in msg_list['sender_proposal']]
       sender_proposal_str = ''.join(sender_proposal_str)
       message_str += sender_proposal_str
     
