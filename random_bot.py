@@ -19,3 +19,12 @@ class random_player:
       
   def get_message(self, game, msg_list, sender, recipient):
     return random.choice(msg_list)
+  
+  def get_proposal(self, game, sender, recipient):
+    # propose all units move for recipient
+    if game.get_orderable_locations(recipient):
+        possible_orders = game.get_all_possible_orders()
+        orders = [random.choice(possible_orders[loc]) for loc in game.get_orderable_locations(recipient)
+                  if possible_orders[loc]]
+        return orders  
+    
