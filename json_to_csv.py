@@ -5,13 +5,14 @@ import csv
  
 # Opening JSON file and loading the data
 # into the variable data
-with open('game.json') as json_file:
+exp = 'tranparent_bot_game'
+with open(exp + '.json') as json_file:
     data = json.load(json_file)
  
 game_data = data['phases']
  
 # now we will open a file for writing
-data_file = open('game.csv', 'w')
+data_file = open(exp + '.csv', 'w')
  
 # create the csv writer object
 csv_writer = csv.writer(data_file)
