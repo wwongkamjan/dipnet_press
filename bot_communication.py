@@ -179,24 +179,24 @@ class Diplomacy_Press_Player:
     if msg_list['sender_move']:
       sender_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['sender_move']]
       sender_move_str = ''.join(sender_move_str)
-      message_str += sender_move_str
+      message_str += 'power_move: '+ sender_move_str
     # join string for proposal
     # AND (PRP (order1)) ((FCT (order2))) ..
     if msg_list['sender_proposal']:
       sender_proposal_str = [' ( XDO ( '+order+' ) )' for order in msg_list['sender_proposal']]
       sender_proposal_str = ''.join(sender_proposal_str)
-      message_str += sender_proposal_str
+      message_str += ' power_proposal: ' +sender_proposal_str
     
     # message from other power that you want to share (agent already select specific power)
     if msg_list['power_message']:
 #       other_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['other_move']]
 #       other_move_str = ''.join(other_move_str)
-      message_str += msg_list['power_message']
+      message_str += ' other_info: ' +msg_list['power_message']
     
     if len(message_str)==0:
       return None
     else:
-      return 'AND' + message_str
+      return message_str
 
   def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
