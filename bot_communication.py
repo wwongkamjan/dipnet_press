@@ -168,7 +168,7 @@ class Diplomacy_Press_Player:
     #return string of message
     
     #filter out agressive message from sender_move i.e. attacking message
-#     sender_move = self.filter_message(game, msg_list['sender_move'], sender, recipient, ['attack'])
+
 
     # let agent choose message for each category 
     msg_list = self.player.get_message(game, msg_list, sender, recipient)
@@ -177,12 +177,14 @@ class Diplomacy_Press_Player:
     # AND (FCT (order1)) ((FCT (order2))) ..
     message_str = ''
     if msg_list['sender_move']:
+      # msg_list['sender_move'] = self.filter_message(game, msg_list['sender_move'], sender, ['attack']) #censor aggressiv move
       sender_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['sender_move']]
       sender_move_str = ''.join(sender_move_str)
       message_str += 'power_move: '+ sender_move_str
     # join string for proposal
     # AND (PRP (order1)) ((FCT (order2))) ..
     if msg_list['sender_proposal']:
+      # msg_list['sender_proposal'] = self.filter_message(game, msg_list['sender_proposal'], recipient, ['attack']) #censor aggressiv movezzz
       sender_proposal_str = [' ( XDO ( '+order+' ) )' for order in msg_list['sender_proposal']]
       sender_proposal_str = ''.join(sender_proposal_str)
       message_str += ' power_proposal: ' +sender_proposal_str
@@ -209,17 +211,17 @@ class Diplomacy_Press_Player:
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
   
-  def filter_message(self, game, msg_list, sender, recipient, type):
+  def filter_message(self, game, msg_list, power_name, type):
     #msg_list = list of string message
     # type - a message type to exclude from message_list e.g. ['attack', 'support', 'proposal', 'to_order', etc.]
     remove_list = []
     for msg in msg_list:
-      if self.get_message_type(game, msg, sender) in type:
+      if self.get_message_type(game, msg, power_name) in type:
         remove_list.append(msg)
     
     return [msg for msg in msg_list if msg not in remove_list]
   
-  def get_message_type(self, game, msg, sender):
+  def get_message_type(self, game, msg, power_name):
     # check if it is support?
     # attack?
     # move? 
@@ -242,7 +244,7 @@ class Diplomacy_Press_Player:
         order_unit = order_token[0]+' '+order_token[2]
         #check if loc has some units of other powers on
         for power in game.powers:
-          if sender != power:
+          if power_name != power:
             if order_unit in game.powers[power].units:
               return 'attack'
             else:
