@@ -92,7 +92,7 @@ class Diplomacy_Press:
     possible_messages['sender_proposal'] = proposals # will be later 'AND/OR'
     
     # retrieve info of other power to forward/share to recipient
-    other_info = self.get_received_message(self, sender):
+    other_info = self.get_received_message(sender)
     possible_messages['other_move'] = other_info # will be later 'AND/OR'
     return possible_messages
   
@@ -109,8 +109,8 @@ class Diplomacy_Press:
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
       msg_list = self.get_all_possible_message(sender, recipient)
-      message_key, message  = self.player.get_message(self.game, msg_list, sender, recipient)
-      if message_type != "None":
+      has_message, message  = self.player.get_message(self.game, msg_list, sender, recipient)
+      if has_message:
         msg = Message(sender=sender,
              recipient=recipient,
              message=message,
@@ -169,23 +169,28 @@ class Diplomacy_Press_Player:
     
     #filter out agressive message from sender_move i.e. attacking message
 #     sender_move = self.filter_message(game, msg_list['sender_move'], sender, recipient, ['attack'])
-    sender_move = msg_list['sender_move']
+
+    # let agent choose message for each category 
+    msg_list = self.player.get_message(game, msg_list, sender, recipient)
+    if msg_list ==None:
+      return (False,None)
     
     # join string for sender move
     # AND (FCT (order1)) ((FCT (order2))) ..
-    sender_move_str = [' ( FCT ( '+order+' ) )' for order in sender_move]
+    sender_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['sender_move']]
     sender_move_str = ''.join(sender_move_str)
-    sender_move_str = 'AND' + sender_move_str
-    msg_list['sender_move'] = sender_move_str
     
     # join string for proposal
     # AND (PRP (order1)) ((FCT (order2))) ..
     sender_proposal_str = [' ( PRP ( XDO '+order+' ) )' for order in msg_list['sender_proposal']]
     sender_proposal_str = ''.join(sender_proposal_str)
-    sender_proposal_str = 'AND' + sender_proposal_str
-    msg_list['sender_proposal'] = sender_proposal_str
     
-    return self.player.get_message(game, msg_list, sender, recipient)
+    # message from other power that you want to share (agent already select specific power)
+    other_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['other_move']]
+    other_move_str = ''.join(other_move_str)
+
+    message = 'AND' + sender_move_str + sender_proposal_str + other_move_str
+    return (True, message)
 
   def get_reply(self, game, msg_list, sender, recipient):
     return self.random_message_list(msg_list)
