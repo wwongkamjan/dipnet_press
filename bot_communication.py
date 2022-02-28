@@ -189,8 +189,8 @@ class Diplomacy_Press_Player:
     
     # message from other power that you want to share (agent already select specific power)
     if msg_list['other_move']:
-      other_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['other_move']]
-      other_move_str = ''.join(other_move_str)
+#       other_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['other_move']]
+#       other_move_str = ''.join(other_move_str)
       message_str += other_move_str
     
     if len(message_str)==0:
