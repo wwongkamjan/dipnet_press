@@ -168,7 +168,8 @@ class Diplomacy_Press_Player:
     #return string of message
     
     #filter out agressive message from sender_move i.e. attacking message
-    sender_move = self.filter_message(game, msg_list['sender_move'], sender, recipient, ['attack'])
+#     sender_move = self.filter_message(game, msg_list['sender_move'], sender, recipient, ['attack'])
+    sender_move = msg_list['sender_move']
     
     # join string for sender move
     # AND (FCT (order1)) ((FCT (order2))) ..
@@ -259,7 +260,9 @@ def main():
        dip_game.game.set_orders(power_name, power_orders)
     dip_game.game_process()
      # Saving to disk
-  with open('game.json', 'w') as file:
+  game_history_name = 'transparent_bot_game'
+  game_history_name += '.json'
+  with open(game_history_name, 'w') as file:
     file.write(json.dumps(to_saved_game_format(dip_game.game)))
   stop_io_loop()
 
