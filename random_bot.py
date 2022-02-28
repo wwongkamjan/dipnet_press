@@ -24,7 +24,7 @@ class random_player:
       if random.choice(boolean_message_content):
         # set message for this content type, e.g. pick sender moves 4 out of 10 orders - for now let's do select all - do nothing
         if key =='power_message':
-          print(msg_list['power_message'].values())
+          print(list(msg_list['power_message'].values()))
           power_message = random.choice(msg_list['power_message'].values())
           if power_message: # make sure that we wont set None which is possible from picking message from the received list
             msg_list['power_message'] = power_message
