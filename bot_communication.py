@@ -9,6 +9,7 @@ from diplomacy_research.models.state_space import get_order_tokens
 from diplomacy.server.server_game import ServerGame
 from diplomacy.daide.requests import RequestBuilder
 from random_bot import random_player
+from random_comm_functions import get_orders, get_proposal, get_message
 import random
 import time
 import asyncio
@@ -171,7 +172,11 @@ class Diplomacy_Press_Player:
 
 
     # let agent choose message for each category 
-    msg_list = self.player.get_message(game, msg_list, sender, recipient)
+    # if random player
+#     msg_list = self.player.get_message(game, msg_list, sender, recipient)
+
+    # if dipnet
+    msg_list = get_message(game, msg_list, sender, recipient)    
     
     # join string for sender move
     # AND (FCT (order1)) ((FCT (order2))) ..
@@ -205,8 +210,10 @@ class Diplomacy_Press_Player:
   
   def get_proposal(self, game, sender, recipient):
     # what moves to propose to recipient?
-
-    return self.player.get_proposal(game, sender, recipient)
+    #if dipnet
+    return get_proposal(game, sender, recipient)
+    #if random player
+#     return self.player.get_proposal(game, sender, recipient)
 
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
@@ -255,8 +262,8 @@ class Diplomacy_Press_Player:
   
 @gen.coroutine
 def main():
-#   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
-  dip_player =  Diplomacy_Press_Player(Player=random_player())
+  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+#   dip_player =  Diplomacy_Press_Player(Player=random_player())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
     if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
