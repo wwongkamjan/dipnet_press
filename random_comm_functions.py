@@ -7,7 +7,7 @@ import argparse
 POWERS = ['AUSTRIA', 'ENGLAND', 'FRANCE', 'GERMANY', 'ITALY', 'RUSSIA', 'TURKEY']
   
 #get random orders
-def get_orders(self, game, power_name):
+def get_orders(game, power_name):
 #     print("random player get orders")
   if game.get_orderable_locations(power_name):
       possible_orders = game.get_all_possible_orders()
@@ -15,7 +15,7 @@ def get_orders(self, game, power_name):
                 if possible_orders[loc]]
       return orders
 
-def get_message(self, game, msg_list, sender, recipient):
+def get_message(game, msg_list, sender, recipient):
   # decide if want to send message 
   boolean_message_content = [True, False]
   for key in msg_list:
@@ -30,7 +30,7 @@ def get_message(self, game, msg_list, sender, recipient):
       msg_list[key] = None
   return msg_list
 
-def get_proposal(self, game, sender, recipient):
+def get_proposal(game, sender, recipient):
   # propose all units move for recipient
   if game.get_orderable_locations(recipient):
       possible_orders = game.get_all_possible_orders()
