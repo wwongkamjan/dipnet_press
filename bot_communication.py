@@ -293,7 +293,7 @@ def main():
     dip_game.game_process()
      # Saving to disk
   game_history_name = 'transparent_bot_game'
-  exp = game_history_name.copy()
+  exp = game_history_name
   game_history_name += '.json'
   with open(game_history_name, 'w') as file:
     file.write(json.dumps(to_saved_game_format(dip_game.game)))
