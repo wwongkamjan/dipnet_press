@@ -85,9 +85,9 @@ class Diplomacy_Press:
     possible_messages['None'] = None
     
     # retrieve sender moves
-    order = self.player.get_orders(self.game, sender)
-    orders = [ord for ord in order]
-    print(orders)
+    orders = self.player.get_orders(self.game, sender)
+#     orders = [ord for ord in order]
+#     print(orders)
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
     
     # retrieve orders to propose to recipient
@@ -104,7 +104,7 @@ class Diplomacy_Press:
     # include no reply, ignore the received message from this sender! 
     # include counter proposal
     possible_replies = ['None']
-    possible_replies += ['Okay']
+    possible_replies += ['Acknowledge','RejectProposal','AcceptProposal']
     return possible_replies
   
 #   @gen.coroutine
@@ -120,6 +120,7 @@ class Diplomacy_Press:
              phase=self.game.get_current_phase())
               
         # sender sent message to recipient and recipient received message from sender
+        #keep message as dictionary similar to when sending message
         self.sent[sender][recipient] = message
         self.received[recipient][sender] = message
         self.new_message(msg)
@@ -175,10 +176,10 @@ class Diplomacy_Press_Player:
 
     # let agent choose message for each category 
     # if random player
-#     msg_list = self.player.get_message(game, msg_list, sender, recipient)
+    msg_list = self.player.get_message(game, msg_list, sender, recipient)
 
     # if dipnet
-    msg_list = get_message(game, msg_list, sender, recipient)    
+#     msg_list = get_message(game, msg_list, sender, recipient)    
     
     # join string for sender move
     # AND (FCT (order1)) ((FCT (order2))) ..
@@ -264,8 +265,8 @@ class Diplomacy_Press_Player:
   
 @gen.coroutine
 def main():
-  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
-#   dip_player =  Diplomacy_Press_Player(Player=random_player())
+#   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+  dip_player =  Diplomacy_Press_Player(Player=random_player())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
     if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
