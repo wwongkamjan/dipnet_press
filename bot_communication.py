@@ -121,8 +121,9 @@ class Diplomacy_Press:
               
         # sender sent message to recipient and recipient received message from sender
         #keep message as dictionary similar to when sending message
-        self.sent[sender][recipient] = message
-        self.received[recipient][sender] = message
+        message_split = message.split(':') # (1) sender move (2) proposal (3) moves of other power, for now keep only (1)
+        self.sent[sender][recipient] = message_split[1]
+        self.received[recipient][sender] = message_split[1]
         self.new_message(msg)
         self.number_sent_msg[sender] += 1
 #     else:
