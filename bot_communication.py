@@ -13,6 +13,9 @@ from random_comm_functions import get_orders, get_proposal, get_message
 import random
 import time
 import asyncio
+import json
+import csv
+ 
 
 # script as helper for power-power communication
 # class Dip Player get order, get message, reply
@@ -290,9 +293,31 @@ def main():
     dip_game.game_process()
      # Saving to disk
   game_history_name = 'transparent_bot_game'
+  exp = game_history_name.copy()
   game_history_name += '.json'
   with open(game_history_name, 'w') as file:
     file.write(json.dumps(to_saved_game_format(dip_game.game)))
+   
+  # Opening JSON file and loading the data
+  # into the variable data
+  with open(exp + '.json') as json_file:
+    data = json.load(json_file)
+  game_data = data['phases']
+  data_file = open(exp + '.csv', 'w')
+  
+  csv_writer = csv.writer(data_file)
+  count = 0
+  for phase in game_data:
+    if count == 0:
+        # Writing headers of CSV file
+        header = phase.keys()
+        csv_writer.writerow(header)
+        count += 1
+
+    # Writing data of CSV file
+    csv_writer.writerow(phase.values())
+
+  data_file.close()
   stop_io_loop()
 
 if __name__ == '__main__':
