@@ -76,8 +76,8 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-  @gen.coroutine
-  async def get_all_possible_message(self, sender, recipient):
+#   @gen.coroutine
+  def get_all_possible_message(self, sender, recipient):
     # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), '(other)power_message': get_received_message }
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
@@ -85,7 +85,8 @@ class Diplomacy_Press:
     possible_messages['None'] = None
     
     # retrieve sender moves
-    orders = await [order for order in self.player.get_orders(self.game, sender)]
+    order = yield self.player.get_orders(self.game, sender)
+    orders = [ord for ord in order]
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
     
     # retrieve orders to propose to recipient
