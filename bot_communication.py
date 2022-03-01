@@ -215,9 +215,9 @@ class Diplomacy_Press_Player:
   def get_proposal(self, game, sender, recipient):
     # what moves to propose to recipient?
     #if dipnet
-    return get_proposal(game, sender, recipient)
+#     return get_proposal(game, sender, recipient)
     #if random player
-#     return self.player.get_proposal(game, sender, recipient)
+    return self.player.get_proposal(game, sender, recipient)
 
   def random_message_list(self, msg_list):
     return random.choice(msg_list)
