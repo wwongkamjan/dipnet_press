@@ -26,7 +26,7 @@ import asyncio
 # Player - get_orders/ get_messages/ get_replies - communication is not allow in retreat and building phase (later)
 # Game - set_orders/ add_messages
 # game.process()
-MESSAGE_TYPE = {'orders': ['attack', 'support', 'move', 'hold', 'convoy'], 'proposals': ['ally','enemy','to_order'] } # attack = move to a map location that other powers' unit is currently on 
+# agressive move = move to a map location that other powers' unit is currently on 
 
 class Diplomacy_Press:
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
