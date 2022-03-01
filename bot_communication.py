@@ -123,10 +123,8 @@ class Diplomacy_Press:
              phase=self.game.get_current_phase())
               
         # sender sent message to recipient and recipient received message from sender
-        #keep message as dictionary similar to when sending message
-        message_split = message.split(':') # (1) sender move (2) proposal (3) moves of other power, for now keep only (1)
-        self.sent[sender][recipient] = message_split[1]
-        self.received[recipient][sender] = message_split[1]
+        self.sent[sender][recipient] = message
+        self.received[recipient][sender] = message
         self.new_message(msg)
         self.number_sent_msg[sender] += 1
 #     else:
@@ -205,7 +203,10 @@ class Diplomacy_Press_Player:
     if msg_list['power_message']:
 #       other_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['other_move']]
 #       other_move_str = ''.join(other_move_str)
-      message_str += ' other_info: ' +msg_list['power_message']
+      # expect (1) sender move (2) proposal (3) moves of other power, for now sharing only (1)
+      message_split = msg_list['power_message'].split(':') 
+      if message_split[0] == 'power_move':
+       message_str += ' other_info: ' +message_split[1]
     
     if len(message_str)==0:
       return None
