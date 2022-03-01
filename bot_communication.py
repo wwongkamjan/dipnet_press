@@ -76,7 +76,7 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-#   @gen.coroutine
+  @gen.coroutine
   def get_all_possible_message(self, sender, recipient):
     # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), '(other)power_message': get_received_message }
     # include no message!
