@@ -84,7 +84,7 @@ class Diplomacy_Press:
     possible_messages['None'] = None
     
     # retrieve sender moves
-    orders = self.player.get_orders(self.game, sender)
+    orders = [order for order in self.player.get_orders(self.game, sender)]
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
     
     # retrieve orders to propose to recipient
