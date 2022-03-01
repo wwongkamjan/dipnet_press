@@ -5,7 +5,7 @@ import csv
  
 # Opening JSON file and loading the data
 # into the variable data
-exp = 'transparent_bot_game'
+exp = 'dipnet_transparent_bot_game'
 with open(exp + '.json') as json_file:
     data = json.load(json_file)
  
