@@ -91,7 +91,7 @@ class Diplomacy_Press:
     # retrieve sender moves
      orders = yield self.player.get_orders(self.game, sender)
 #     orders = [ord for ord in order]
-     print(orders)
+     print('inpossible: ',orders)
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
     
     # retrieve orders to propose to recipient
