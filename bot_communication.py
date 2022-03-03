@@ -167,11 +167,12 @@ class Diplomacy_Press_Player:
 #   @gen.coroutine 
   async def get_orders(self, game , power_name):
     
+    await self.player.get_orders(game, power_name)
     orders = yield [order for order in self.player.get_orders(game, power_name)]
-    while not isinstance(orders, list):
-     orders = yield [order for order in self.player.get_orders(game, power_name)]
-    print(orders)
-    await orders
+#     while not isinstance(orders, list):
+#      orders = yield [order for order in self.player.get_orders(game, power_name)]
+#     print(orders)
+    
   
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
