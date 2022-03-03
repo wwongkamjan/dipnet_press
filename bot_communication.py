@@ -165,7 +165,7 @@ class Diplomacy_Press_Player:
     self.player = Player
     self.dipnet_player = DipNetSLPlayer()
     
-#   @gen.coroutine 
+  @gen.coroutine 
   def get_orders(self, game , power_name):
     
 #     await self.player.get_orders(game, power_name)
