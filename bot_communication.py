@@ -175,16 +175,14 @@ class Diplomacy_Press_Player:
     print(orders)
 #     await orders
     yield orders
-    
-  
+
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
     # else call you agent to send message from sender to recipient
     #return string of message
     
     #filter out agressive message from sender_move i.e. attacking message
-
-
+    
     # let agent choose message for each category 
     # if random player
 #     msg_list = self.player.get_message(game, msg_list, sender, recipient)
@@ -210,8 +208,6 @@ class Diplomacy_Press_Player:
     
     # message from other power that you want to share (agent already select specific power)
     if msg_list['power_message']:
-#       other_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['other_move']]
-#       other_move_str = ''.join(other_move_str)
       # expect (1) sender move (2) proposal (3) moves of other power, for now sharing only (1)
       message_split = msg_list['power_message'].split(':') 
       if message_split[0] == 'power_move':
@@ -254,8 +250,6 @@ class Diplomacy_Press_Player:
     order_token = get_order_tokens(msg)
     if order_token[0] =='A' or order_token[0] =='F':
       # this is message about orders
-#       if len(order_token) <2: 
-#         print(order_token)
       if order_token[1] == 'S':
         return 'support'
       elif order_token[1] == 'H':
@@ -273,10 +267,8 @@ class Diplomacy_Press_Player:
               return 'attack'
             else:
               return 'move'  
-#     else:
-#       print('Not support yet') # proposal
   
-  
+ 
 @gen.coroutine
 def main():
 #   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
