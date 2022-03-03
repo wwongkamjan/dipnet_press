@@ -164,7 +164,7 @@ class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player
     
-#   @gen.coroutine 
+  @gen.coroutine 
   def get_orders(self, game , power_name):
     orders = yield self.player.get_orders(game, power_name)
     print(orders)
