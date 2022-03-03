@@ -89,7 +89,7 @@ class Diplomacy_Press:
     orders = ''
     while not isinstance(orders, list):
     # retrieve sender moves
-     orders = yield [order for order in self.player.get_orders(self.game, sender)]
+     orders = yield self.player.get_orders(self.game, sender)
 #     orders = [ord for ord in order]
      print(orders)
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
