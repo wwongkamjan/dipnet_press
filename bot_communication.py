@@ -172,7 +172,8 @@ class Diplomacy_Press_Player:
     orders = yield self.dipnet_player.get_orders(game, power_name)
     while [1 for order in orders if not order.done()]:
      continue
-     
+    orders = [order.result() for order in orders]
+    print(orders)
     return orders
 
   def get_message(self, game, msg_list, sender, recipient):
