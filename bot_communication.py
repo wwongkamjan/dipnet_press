@@ -169,10 +169,10 @@ class Diplomacy_Press_Player:
   def get_orders(self, game , power_name):
     
 #     await self.player.get_orders(game, power_name)
-    orders = [order for order in self.dipnet_player.get_orders(game, power_name)]
-#     while not isinstance(orders, list):
-#      orders = yield [order for order in self.player.get_orders(game, power_name)]
-
+    orders = self.dipnet_player.get_orders(game, power_name)
+    while [1 for future in futures if not orders.done()]:
+     continue
+     
     return orders
 
   def get_message(self, game, msg_list, sender, recipient):
