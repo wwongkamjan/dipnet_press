@@ -166,7 +166,10 @@ class Diplomacy_Press_Player:
     
   @gen.coroutine 
   def get_orders(self, game , power_name):
+    
     orders = yield self.player.get_orders(game, power_name)
+    while not isinstance(orders, list):
+     orders = yield self.player.get_orders(game, power_name)
     print(orders)
     return orders
   
