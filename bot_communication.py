@@ -166,15 +166,14 @@ class Diplomacy_Press_Player:
     self.dipnet_player = DipNetSLPlayer()
     
 #   @gen.coroutine 
-  async def get_orders(self, game , power_name):
+  def get_orders(self, game , power_name):
     
 #     await self.player.get_orders(game, power_name)
-    orders = await [order for order in self.dipnet_player.get_orders(game, power_name)]
+    orders = [order for order in self.dipnet_player.get_orders(game, power_name)]
 #     while not isinstance(orders, list):
 #      orders = yield [order for order in self.player.get_orders(game, power_name)]
-    print(orders)
-#     await orders
-    yield orders
+
+    return orders
 
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
