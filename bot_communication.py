@@ -170,7 +170,7 @@ class Diplomacy_Press_Player:
     
 #     await self.player.get_orders(game, power_name)
     orders = self.dipnet_player.get_orders(game, power_name)
-    while [1 for future in futures if not orders.done()]:
+    while [1 for order in orders if not order.done()]:
      continue
      
     return orders
