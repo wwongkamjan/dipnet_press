@@ -79,20 +79,17 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-  @gen.coroutine
+
   def get_all_possible_message(self, sender, recipient):
     # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), '(other)power_message': get_received_message }
     # include no message!
     # at first, moves -> then proposal allies, enemies -> then XDO ...
     possible_messages = {}
     possible_messages['None'] = None
-    orders = ''
-    while not isinstance(orders, list):
     # retrieve sender moves
-     orders = yield self.player.get_orders(self.game, sender)
+    orders = self.player.get_orders(self.game, sender)
 #     orders = [ord for ord in order]
-     print('inpossible: ',orders)
-    print('out loop: ', orders)
+
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
     
     # retrieve orders to propose to recipient
@@ -152,7 +149,7 @@ class Diplomacy_Press:
       
 #     else:
 #       raise "There is no message from " +recipient+ " to " +sender +" to reply"
- 
+
   def get_orders(self):
     return {power_name: self.player.get_orders(self.game, power_name) for power_name in self.game.powers}
 
@@ -166,9 +163,12 @@ class Diplomacy_Press:
 class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player
-  
+    
+#   @gen.coroutine 
   def get_orders(self, game , power_name):
-    return self.player.get_orders(game, power_name)
+    orders = yield self.player.get_orders(game, power_name)
+    print(orders)
+    return orders
   
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
