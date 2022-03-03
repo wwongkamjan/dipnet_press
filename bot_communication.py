@@ -173,7 +173,7 @@ class Diplomacy_Press_Player:
 #     while not isinstance(orders, list):
 #      orders = yield [order for order in self.player.get_orders(game, power_name)]
     print(orders)
-    await orders
+#     await orders
     return orders
     
   
