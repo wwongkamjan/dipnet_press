@@ -163,7 +163,7 @@ class Diplomacy_Press:
 class Diplomacy_Press_Player:
   def __init__(self, Player=None):
     self.player = Player
-    self.dipnet_player = DipNetSLPlayer()
+#     self.dipnet_player = DipNetSLPlayer()
     
   @gen.coroutine 
   def get_orders(self, game , power_name):
@@ -177,7 +177,7 @@ class Diplomacy_Press_Player:
 #      print('in while')
 #     orders = [order.result() for order in orders]
 #     print('orders', orders)
-    orders = yield [order for order in self.dipnet_player.get_orders(game, power_name)]
+    orders = yield [order for order in self.player.get_orders(game, power_name)]
     print(orders.__str__())
     return orders
  
@@ -277,8 +277,8 @@ class Diplomacy_Press_Player:
  
 @gen.coroutine
 def main():
-#   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
-  dip_player =  Diplomacy_Press_Player(Player=random_player())
+  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+#   dip_player =  Diplomacy_Press_Player(Player=random_player())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   while not dip_game.game.is_game_done:
     if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
