@@ -79,7 +79,7 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-#   @gen.coroutine 
+  @gen.coroutine 
   def get_all_possible_message(self, sender, recipient):
     # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), '(other)power_message': get_received_message }
     # include no message!
@@ -101,7 +101,7 @@ class Diplomacy_Press:
     possible_messages['power_message'] = power_message # will be later 'AND/OR'
     return possible_messages
   
-
+  @gen.coroutine 
   def get_all_possible_replies(self, sender, recipient):
     # include no reply, ignore the received message from this sender! 
     # include counter proposal
@@ -109,12 +109,12 @@ class Diplomacy_Press:
     possible_replies += ['Acknowledge','RejectProposal','AcceptProposal']
     return possible_replies
   
-#   @gen.coroutine
+  @gen.coroutine
   def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
       msg_list = yield self.get_all_possible_message(sender, recipient)
-      message  = self.player.get_message(self.game, msg_list, sender, recipient)
+      message  = yield self.player.get_message(self.game, msg_list, sender, recipient)
       if message:
         msg = Message(sender=sender,
              recipient=recipient,
@@ -129,11 +129,11 @@ class Diplomacy_Press:
 #     else:
 #         print("number of sent messages exceeds")
         
-
+  @gen.coroutine 
   def reply_message(self, sender, recipient):
     # this is to reply a message, so sender becomes recipient and recipient becomes sender
     if self.received[sender][recipient]:
-      msg_list = self.get_all_possible_replies(sender, recipient)
+      msg_list = yield self.get_all_possible_replies(sender, recipient)
       message = self.player.get_reply(self.game, msg_list, sender, recipient)
       if message != "None":
         msg = Message(sender=sender,
@@ -170,19 +170,18 @@ class Diplomacy_Press_Player:
   def get_orders(self, game , power_name):
     
 #     await self.player.get_orders(game, power_name)
-#     print('get_orders')
-#     future_or_iterable = yield self.dipnet_player.get_orders(game, power_name)
-#     orders = [future_or_iterable] if not isinstance(future_or_iterable, list) else future_or_iterable
-#     print(orders)
-#     while [1 for order in orders if not order.done()]:
-#      print('in while')
-#     orders = [order.result() for order in orders]
-#     print('orders', orders)
-    orders = yield [order for order in self.player.get_orders(game, power_name)]
-    print(orders.__str__())
+    # print('get_orders')
+    future_or_iterable = yield self.player.get_orders(game, power_name)
+    # print(future_or_iterable)
+    orders = [future_or_iterable] if not isinstance(future_or_iterable, list) else future_or_iterable
+    # print("DPP.get_orders()",orders)
+    # while [1 for order in orders if not order.done()]:
+    #  print('in while')
+    # orders = yield [order.result() for order in orders]
+    # print('orders', orders)
     return orders
  
-#   @gen.coroutine 
+  @gen.coroutine 
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
     # else call you agent to send message from sender to recipient
@@ -287,12 +286,12 @@ def main():
       for sender in dip_game.powers:
         for recipient in dip_game.powers:
           if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated() :
-            dip_game.send_message(sender, recipient)
+            yield dip_game.send_message(sender, recipient)
       #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
       for sender in dip_game.powers:
         for recipient in dip_game.powers: 
           if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
-            dip_game.reply_message(sender, recipient)
+            yield dip_game.reply_message(sender, recipient)
 
     #taking orders after messages were all sent
     orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
