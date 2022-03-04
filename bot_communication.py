@@ -79,7 +79,7 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-  @gen.coroutine 
+#   @gen.coroutine 
   def get_all_possible_message(self, sender, recipient):
     # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), '(other)power_message': get_received_message }
     # include no message!
@@ -109,7 +109,7 @@ class Diplomacy_Press:
     possible_replies += ['Acknowledge','RejectProposal','AcceptProposal']
     return possible_replies
   
-  @gen.coroutine
+#   @gen.coroutine
   def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
@@ -178,9 +178,10 @@ class Diplomacy_Press_Player:
 #     orders = [order.result() for order in orders]
 #     print('orders', orders)
     orders = yield [order for order in self.dipnet_player.get_orders(game, power_name)]
+    print(orders.__str__())
     return orders
  
-  @gen.coroutine 
+#   @gen.coroutine 
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
     # else call you agent to send message from sender to recipient
