@@ -177,7 +177,7 @@ class Diplomacy_Press_Player:
 #      print('in while')
 #     orders = [order.result() for order in orders]
 #     print('orders', orders)
-    orders = yield [order from order in self.dipnet_player.get_orders(game, power_name)]
+    orders = yield [order for order in self.dipnet_player.get_orders(game, power_name)]
     return orders
  
   @gen.coroutine 
