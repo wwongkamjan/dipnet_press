@@ -201,7 +201,7 @@ class Diplomacy_Press_Player:
     message_str = ''
     if msg_list['sender_move']:
       # msg_list['sender_move'] = self.filter_message(game, msg_list['sender_move'], sender, ['attack']) #censor aggressiv move
-      sender_move_str = yield [' ( FCT ( '+order+' ) )' for order in msg_list['sender_move']]
+      sender_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['sender_move']]
       sender_move_str = ''.join(sender_move_str)
       message_str += 'power_move: '+ sender_move_str
     # join string for proposal
