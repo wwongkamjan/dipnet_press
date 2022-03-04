@@ -79,7 +79,7 @@ class Diplomacy_Press:
   def new_message(self, DAIDE_message):
     self.game.add_message(DAIDE_message)
   
-
+  @gen.coroutine 
   def get_all_possible_message(self, sender, recipient):
     # return dict_messages -> {'None' = None, 'sender_move': get_orders, 'sender_proposal': get_proposals (i.e. XDO request), '(other)power_message': get_received_message }
     # include no message!
@@ -87,7 +87,7 @@ class Diplomacy_Press:
     possible_messages = {}
     possible_messages['None'] = None
     # retrieve sender moves
-    orders = self.player.get_orders(self.game, sender)
+    orders = yield self.player.get_orders(self.game, sender)
 #     orders = [ord for ord in order]
 
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
@@ -109,11 +109,11 @@ class Diplomacy_Press:
     possible_replies += ['Acknowledge','RejectProposal','AcceptProposal']
     return possible_replies
   
-#   @gen.coroutine
+  @gen.coroutine
   def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
     if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
-      msg_list = self.get_all_possible_message(sender, recipient)
+      msg_list = yield self.get_all_possible_message(sender, recipient)
       message  = self.player.get_message(self.game, msg_list, sender, recipient)
       if message:
         msg = Message(sender=sender,
@@ -165,20 +165,22 @@ class Diplomacy_Press_Player:
     self.player = Player
     self.dipnet_player = DipNetSLPlayer()
     
-#   @gen.coroutine 
+  @gen.coroutine 
   def get_orders(self, game , power_name):
     
 #     await self.player.get_orders(game, power_name)
-    print('get_orders')
-    future_or_iterable = yield self.dipnet_player.get_orders(game, power_name)
-    orders = [future_or_iterable] if not isinstance(future_or_iterable, list) else future_or_iterable
-    print(orders)
-    while [1 for order in orders if not order.done()]:
-     print('in while')
-    orders = [order.result() for order in orders]
-    print('orders', orders)
+#     print('get_orders')
+#     future_or_iterable = yield self.dipnet_player.get_orders(game, power_name)
+#     orders = [future_or_iterable] if not isinstance(future_or_iterable, list) else future_or_iterable
+#     print(orders)
+#     while [1 for order in orders if not order.done()]:
+#      print('in while')
+#     orders = [order.result() for order in orders]
+#     print('orders', orders)
+    orders = yield [order from order in self.dipnet_player.get_orders(game, power_name)]
     return orders
-
+ 
+  @gen.coroutine 
   def get_message(self, game, msg_list, sender, recipient):
     # if agent is no press, you can call random/non-attacking messages we provided i.e. self.random_message_list(msg_list)
     # else call you agent to send message from sender to recipient
@@ -198,7 +200,7 @@ class Diplomacy_Press_Player:
     message_str = ''
     if msg_list['sender_move']:
       # msg_list['sender_move'] = self.filter_message(game, msg_list['sender_move'], sender, ['attack']) #censor aggressiv move
-      sender_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['sender_move']]
+      sender_move_str = yield [' ( FCT ( '+order+' ) )' for order in msg_list['sender_move']]
       sender_move_str = ''.join(sender_move_str)
       message_str += 'power_move: '+ sender_move_str
     # join string for proposal
