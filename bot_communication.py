@@ -87,6 +87,7 @@ class Diplomacy_Press:
     possible_messages = {}
     possible_messages['None'] = None
     # retrieve sender moves
+    self.player.update_stance( game, power_name) # update stance about other power before getting orders 
     orders = yield self.player.get_orders(self.game, sender)
 #     orders = [ord for ord in order]
 
@@ -164,8 +165,25 @@ class Diplomacy_Press_Player:
  
   def __init__(self, Player=None):
     self.player = Player
-#     self.dipnet_player = DipNetSLPlayer()
+    self.stance = {}
     
+  def init_stance(self, power_list):
+    for power in power_list:
+      self.stance[power] = {power: 'N' for power in power_list}
+      
+  def set_stance(self, power_name, status):
+    self.stance[power_name] = status
+    
+  def update_stance(self, game, power_name): #use as basic to update stance of every other power for power_name 
+    for other_power in self.stance:
+     previous_order = game.order_history[game._phase_abbr(game._find_previous_phase())][other_power]
+     for order in previous_order:
+      if self.get_order_type(game, order, other_power,power_name) =='attack':
+       self.set_stance[power_name][other_power] = 'B'
+      else:
+       if self.get_order_type(game, order, other_power,power_name) =='support' and not self.stance[power_name][other_power] != 'B':
+        self.set_stance[power_name][other_power] = 'S'
+         
   @gen.coroutine 
   def get_orders(self, game , power_name):
     
@@ -194,7 +212,7 @@ class Diplomacy_Press_Player:
 #     msg_list = self.player.get_message(game, msg_list, sender, recipient)
 
     # if dipnet
-    msg_list = get_message(game, msg_list, sender, recipient)    
+    msg_list = get_message(game, msg_list, sender, recipient) # random select 
     
     # join string for sender move
     # AND (FCT (order1)) ((FCT (order2))) ..
@@ -273,7 +291,26 @@ class Diplomacy_Press_Player:
               return 'attack'
             else:
               return 'move'  
-  
+             
+  def get_order_type(self, game, order, power_sub, power_obj):
+    order_token = get_order_tokens(msg)
+    if order_token[0] =='A' or order_token[0] =='F':
+      # this is message about orders
+      if order_token[1] == 'S':
+        return 'support'
+      elif order_token[1] == 'H':
+        return 'hold'
+      elif order_token[1] == 'C':
+        return 'convoy'
+      else:
+        #move/retreat or attack 
+        #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
+        order_unit = order_token[0]+' '+order_token[2]
+        if order_unit in game.powers[power_obj].units:
+          return 'attack'
+        else:
+          return 'move'  
+
  
 @gen.coroutine
 def main():
