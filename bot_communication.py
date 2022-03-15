@@ -322,6 +322,7 @@ def main():
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   dip_player.init_stance(dip_game.game.powers)
   while not dip_game.game.is_game_done:
+    print(dip_game.game.get_current_phase())
     if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
       #send messages before taking orders
       for sender in dip_game.powers:
