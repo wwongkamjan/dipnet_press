@@ -296,7 +296,7 @@ class Diplomacy_Press_Player:
               return 'move'  
              
   def get_order_type(self, game, order, power_sub, power_obj):
-    order_token = get_order_tokens(msg)
+    order_token = get_order_tokens(order)
     if order_token[0] =='A' or order_token[0] =='F':
       # this is message about orders
       if order_token[1] == 'S':
