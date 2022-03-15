@@ -212,7 +212,8 @@ class Diplomacy_Press_Player:
 #     msg_list = self.player.get_message(game, msg_list, sender, recipient)
 
     # if dipnet
-    msg_list = get_message(game, msg_list, sender, recipient) # random select 
+#     msg_list = get_message(game, msg_list, sender, recipient) # random select 
+    msg_list = get_message(game, self.stance[sender][recipient], msg_list, sender, recipient) # strategically select
     
     # join string for sender move
     # AND (FCT (order1)) ((FCT (order2))) ..
