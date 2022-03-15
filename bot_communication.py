@@ -339,7 +339,7 @@ def main():
        dip_game.game.set_orders(power_name, power_orders)
     dip_game.game_process()
      # Saving to disk
-  game_history_name = 'dipnet_transparent_bot_game'
+  game_history_name = 'press_agent_v0'
   exp = game_history_name
   game_history_name += '.json'
   with open(game_history_name, 'w') as file:
