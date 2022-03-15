@@ -10,7 +10,7 @@ from diplomacy.server.server_game import ServerGame
 from diplomacy.daide.requests import RequestBuilder
 from random_bot import random_player
 from random_comm_functions import get_orders, get_proposal, get_message
-from press_agent import get_message, get_proposal as press_get_message, press_get_proposal
+from press_agent import get_message as press_get_message, get_proposal as press_get_proposal
 import random
 import time
 import asyncio
