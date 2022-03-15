@@ -36,8 +36,35 @@ def filter_message(game, msg_list, power_name, type):
   # type - a message type to exclude from message_list e.g. ['attack', 'support', 'proposal', 'to_order', etc.]
   remove_list = []
   for msg in msg_list:
-    if self.get_message_type(game, msg, power_name) in type:
+    if get_message_type(game, msg, power_name) in type:
       remove_list.append(msg)
+      
+def get_message_type(game, msg, power_name):
+  # check if it is support?
+  # attack?
+  # move? 
+  # convoy
+  # hold
+  order_token = get_order_tokens(msg)
+  if order_token[0] =='A' or order_token[0] =='F':
+    # this is message about orders
+    if order_token[1] == 'S':
+      return 'support'
+    elif order_token[1] == 'H':
+      return 'hold'
+    elif order_token[1] == 'C':
+      return 'convoy'
+    else:
+      #move/retreat or attack 
+      #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
+      order_unit = order_token[0]+' '+order_token[2]
+      #check if loc has some units of other powers on
+      for power in game.powers:
+        if power_name != power:
+          if order_unit in game.powers[power].units:
+            return 'attack'
+          else:
+            return 'move' 
     
   return [msg for msg in msg_list if msg not in remove_list]
 
