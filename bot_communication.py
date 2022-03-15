@@ -9,8 +9,8 @@ from diplomacy_research.models.state_space import get_order_tokens
 from diplomacy.server.server_game import ServerGame
 from diplomacy.daide.requests import RequestBuilder
 from random_bot import random_player
-# from random_comm_functions import get_orders, get_proposal, get_message
-from press_agent import get_message, get_proposal
+from random_comm_functions import get_orders, get_proposal, get_message
+from press_agent import get_message, get_proposal as press_get_message, press_get_proposal
 import random
 import time
 import asyncio
@@ -165,13 +165,17 @@ class Diplomacy_Press:
 
 class Diplomacy_Press_Player:
  
-  def __init__(self, Player=None):
+  def __init__(self, Player=None, bot_type=[]):
     self.player = Player
     self.stance = {}
+    self.bot_temp = bot_type
     
-  def init_stance(self, power_list):
+  def init_communication(self, power_list):
+    self.bot_type={}
     for power in power_list:
       self.stance[power] = {power: 'N' for power in power_list}
+      self.bot_type[power]= self.bot_temp.pop()
+      print('power: '+power+' as ', self.bot_type[power])
       
   def set_stance(self, power_name, status):
     self.stance[power_name] = status
@@ -215,7 +219,10 @@ class Diplomacy_Press_Player:
 
     # if dipnet
 #     msg_list = get_message(game, msg_list, sender, recipient) # random select 
-    msg_list = get_message(game, self.stance, msg_list, sender, recipient) # strategically select
+    if self.bot_type[sender] =='transparent':
+      msg_list = get_message(game, msg_list, sender, recipient)
+    elif self.bot_type[sender] =='press_agent':
+      msg_list = press_get_message(game, self.stance, msg_list, sender, recipient) # strategically select
     
     # join string for sender move
     # AND (FCT (order1)) ((FCT (order2))) ..
@@ -251,7 +258,11 @@ class Diplomacy_Press_Player:
   def get_proposal(self, game, sender, recipient):
     # what moves to propose to recipient?
     #if dipnet
-    return get_proposal(game, sender, recipient)
+    if self.bot_type[sender] =='transparent':
+      return get_proposal(game, sender, recipient)
+    elif self.bot_type[sender] =='press_agent':
+      return press_get_proposal(game, sender, recipient)
+    
     #if random player
 #     return self.player.get_proposal(game, sender, recipient)
 
@@ -317,10 +328,10 @@ class Diplomacy_Press_Player:
  
 @gen.coroutine
 def main():
-  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer(), ['transparent','transparent','transparent','transparent','transparent','transparent','press_agent'])
 #   dip_player =  Diplomacy_Press_Player(Player=random_player())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
-  dip_player.init_stance(dip_game.game.powers)
+  dip_player.init_communication(dip_game.game.powers)
   while not dip_game.game.is_game_done:
     print(dip_game.game.get_current_phase())
     if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
