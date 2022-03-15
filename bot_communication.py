@@ -165,7 +165,7 @@ class Diplomacy_Press:
 
 class Diplomacy_Press_Player:
  
-  def __init__(self, Player=None, bot_type=[]):
+  def __init__(self, bot_type=[], Player=None, ):
     self.player = Player
     self.stance = {}
     self.bot_temp = bot_type
@@ -328,7 +328,8 @@ class Diplomacy_Press_Player:
  
 @gen.coroutine
 def main():
-  dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer(), ['transparent','transparent','transparent','transparent','transparent','transparent','press_agent'])
+  bots = ['transparent','transparent','transparent','transparent','transparent','transparent','press_agent']
+  dip_player =  Diplomacy_Press_Player(bots, Player=DipNetSLPlayer())
 #   dip_player =  Diplomacy_Press_Player(Player=random_player())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
   dip_player.init_communication(dip_game.game.powers)
