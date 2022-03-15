@@ -39,6 +39,7 @@ def filter_message(game, msg_list, power_name, type):
   for msg in msg_list:
     if get_message_type(game, msg, power_name) in type:
       remove_list.append(msg)
+  return [msg for msg in msg_list if msg not in remove_list]
       
 def get_message_type(game, msg, power_name):
   # check if it is support?
@@ -67,7 +68,7 @@ def get_message_type(game, msg, power_name):
           else:
             return 'move' 
     
-  return [msg for msg in msg_list if msg not in remove_list]
+
 
 def get_proposal(game, sender, recipient):
   # propose all units move for recipient
