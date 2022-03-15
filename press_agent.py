@@ -2,6 +2,7 @@ import asyncio
 import random
 from diplomacy.client.connection import connect
 from diplomacy.utils import exceptions
+from diplomacy_research.models.state_space import get_order_tokens
 import argparse
 
   
