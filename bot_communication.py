@@ -182,7 +182,7 @@ class Diplomacy_Press_Player:
        self.set_stance[power_name][other_power] = 'B'
       else:
        if self.get_order_type(game, order, other_power,power_name) =='support' and not self.stance[power_name][other_power] != 'B':
-        self.set_stance[power_name][other_power] = 'S'
+        self.set_stance[power_name][other_power] = 'A'
          
   @gen.coroutine 
   def get_orders(self, game , power_name):
