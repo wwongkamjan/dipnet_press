@@ -319,6 +319,7 @@ def main():
   dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
 #   dip_player =  Diplomacy_Press_Player(Player=random_player())
   dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
+  dip_player.init_stance(dip_game.game.powers)
   while not dip_game.game.is_game_done:
     if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
       #send messages before taking orders
