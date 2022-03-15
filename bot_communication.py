@@ -88,7 +88,7 @@ class Diplomacy_Press:
     possible_messages = {}
     possible_messages['None'] = None
     # retrieve sender moves
-    if game.get_current_phase() != 'S1901M':
+    if self.game.get_current_phase() != 'S1901M':
      self.player.update_stance( self.game, sender) # update stance about other power before getting orders 
     orders = yield self.player.get_orders(self.game, sender)
 #     orders = [ord for ord in order]
