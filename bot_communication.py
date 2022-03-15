@@ -88,7 +88,7 @@ class Diplomacy_Press:
     possible_messages = {}
     possible_messages['None'] = None
     # retrieve sender moves
-    self.player.update_stance( game, power_name) # update stance about other power before getting orders 
+    self.player.update_stance( self.game, power_name) # update stance about other power before getting orders 
     orders = yield self.player.get_orders(self.game, sender)
 #     orders = [ord for ord in order]
 
