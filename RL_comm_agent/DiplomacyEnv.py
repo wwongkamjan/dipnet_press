@@ -19,14 +19,23 @@ from common.utils import ma_agg_double_list
 
 class DiplomacyEnv(gym.Env):
   def __init__(self):
-    self.done = set()
-    # stance vector of [power1][power2], neutral=0 ally=1 enemy=2 + 
+    self.done = False
+    # stance vector of [power1][power2],  
     # orders:
-    #         unit's power, England= ...
-    #         type of order, move=0 support=1 
-    self.observation_space = gym.spaces.MultiDiscrete([3, ])
-    self.action_space = 
+    #         unit's power, England= ... one hot for 7 powers = [Eng, France, ..]
+    #         type of order, one hot [move, hold, support, attack, convoy]
+    #         attack whom/move to whose territory one hot for 7 powers = [Eng, France, ..]
+    self.observation_space = gym.spaces.Box(low=np.array([-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), 
+                                            high=np.array([10.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+                                            dtype=np.float32)
+    self.action_space = gym.spaces.Discrete(2) # 
+    self.cur_obs = None
+    self.episode_len = 0
+    
   def reset(self): 
     # return to initial state - Diplomacy game and DipNet reset
+    # get stance vector, orders from framework
+    self.episode_len = 0
+    self.cur_obs =
   def step(self, action): # return state, reward, done, info
 
