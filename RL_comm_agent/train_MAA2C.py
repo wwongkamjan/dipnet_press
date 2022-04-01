@@ -8,28 +8,80 @@ from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 from diplomacy_research.models.state_space import get_order_tokens
 from diplomacy.server.server_game import ServerGame
 from diplomacy.daide.requests import RequestBuilder
+from MAA2C import MAA2C
+from common.utils import ma_agg_double_list
+
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+
+# MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
+
+MAX_EPISODES = 500
+EPISODES_BEFORE_TRAIN = 10
+EVAL_EPISODES = 10
+EVAL_INTERVAL = 100
+
+# roll out n steps
+ROLL_OUT_N_STEPS = 10
+# only remember the latest ROLL_OUT_N_STEPS
+MEMORY_CAPACITY = ROLL_OUT_N_STEPS
+# only use the latest ROLL_OUT_N_STEPS for training A2C
+BATCH_SIZE = ROLL_OUT_N_STEPS
+
+REWARD_DISCOUNTED_GAMMA = 0.99
+ENTROPY_REG = 0.00
+#
+DONE_PENALTY = -10.
+
+CRITIC_LOSS = "mse"
+MAX_GRAD_NORM = None
+
+EPSILON_START = 0.99
+EPSILON_END = 0.05
+EPSILON_DECAY = 500
+
+RANDOM_SEED = 2017
+N_AGENTS = 2
+
 
 def main():
-  #
+    env = DiplomacyEnv()
+    env.seed(RANDOM_SEED)
+    env_eval = DiplomacyEnv()
+    env_eval.seed(RANDOM_SEED)
+    state_dim = env.observation_space.shape[0]
+    if len(env.action_space.shape) > 1:
+        action_dim = env.action_space.shape[0]
+    else:
+        action_dim = env.action_space.n
+
+    maa2c = MAA2C(env=env, n_agents=N_AGENTS, 
+              state_dim=state_dim, action_dim=action_dim, memory_capacity=MEMORY_CAPACITY,
+              batch_size=BATCH_SIZE, entropy_reg=ENTROPY_REG,
+              done_penalty=DONE_PENALTY, roll_out_n_steps=ROLL_OUT_N_STEPS,
+              reward_gamma=REWARD_DISCOUNTED_GAMMA,
+              epsilon_start=EPSILON_START, epsilon_end=EPSILON_END,
+              epsilon_decay=EPSILON_DECAY, max_grad_norm=MAX_GRAD_NORM,
+              episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
+              critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)
+
+    episodes =[]
+    eval_rewards =[]
+    while maa2c.n_episodes < MAX_EPISODES:
+        maa2c.interact()
+        if maa2c.n_episodes >= EPISODES_BEFORE_TRAIN:
+            maa2c.train()
+        if maa2c.episode_done and ((maa2c.n_episodes+1)%EVAL_INTERVAL == 0):
+            rewards, _ = maa2c.evaluation(env_eval, EVAL_EPISODES)
+            rewards_mu, rewards_std = ma_agg_double_list(rewards)
+            for agent_id in range (N_AGENTS):
+                print("Episode %d, Agent %d, Average Reward %.2f" % (maa2c.n_episodes+1, agent_id, rewards_mu[agent_id]))
+            episodes.append(maa2c.n_episodes+1)
+            eval_rewards.append(rewards_mu)
   
-  bots = ['transparent','transparent','transparent','transparent','transparent','transparent','press_agent']
-  dip_player =  Diplomacy_Press_Player(bots, Player=DipNetSLPlayer())
-#   dip_player =  Diplomacy_Press_Player(Player=random_player())
-  dip_game =  Diplomacy_Press(Game=Game(), Player=dip_player)
-  dip_player.init_communication(dip_game.game.powers)
-  while not dip_game.game.is_game_done:
-    print(dip_game.game.get_current_phase())
-    if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R': # no communication during retreat and building phase
-      #send messages before taking orders
-      for sender in dip_game.powers:
-        for recipient in dip_game.powers:
-          if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated() :
-            yield dip_game.send_message(sender, recipient)
-      #reply to messages - game/allies/enemy state (or stance) can be changed after getting messages and replies
-      for sender in dip_game.powers:
-        for recipient in dip_game.powers: 
-          if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
-            yield dip_game.reply_message(sender, recipient)
-stop_io_loop()           
+
+        
 if __name__ == '__main__':
-  start_io_loop(main)
+  main()
