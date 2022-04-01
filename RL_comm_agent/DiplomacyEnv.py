@@ -15,6 +15,7 @@ class DiplomacyEnv(gym.Env):
   def __init__(self):
     self.done = False
     self.n_agents = 1
+    self.agent_id = [id for id in range(n_agents)]
     self.power_onehot = {}
     self.order_onehot = {}
     # stance vector of [power1][power2],  
@@ -41,7 +42,8 @@ class DiplomacyEnv(gym.Env):
     self.dip_game =  Game()
     self.dip_player.init_communication(self.dip_game.game.powers)
     self.episode_len = 0
-    self.cur_obs = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) #neutral for any power and no order
+    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} #neutral for any power and no order
+    return self.cur_obs
     
   def step(self, action): # return state, reward, done, info
       
