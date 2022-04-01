@@ -10,6 +10,8 @@ from diplomacy.server.server_game import ServerGame
 from diplomacy.daide.requests import RequestBuilder
 
 def main():
+  #
+  
   bots = ['transparent','transparent','transparent','transparent','transparent','transparent','press_agent']
   dip_player =  Diplomacy_Press_Player(bots, Player=DipNetSLPlayer())
 #   dip_player =  Diplomacy_Press_Player(Player=random_player())
