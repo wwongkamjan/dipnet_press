@@ -44,7 +44,6 @@ class DiplomacyEnv(gym.Env):
     self.dip_player = DipNetSLPlayer()
 #   dip_player =  Diplomacy_Press_Player(Player=random_player())
     self.dip_game =  Game()
-    self.dip_player.init_communication(self.dip_game.game.powers)
     self.episode_len = 0
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
     self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
