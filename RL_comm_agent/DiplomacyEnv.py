@@ -55,8 +55,16 @@ class DiplomacyEnv(gym.Env):
       reward = {agent_id: 0 for agent_id in self.agent_id}
       next_state = self.cur_obs # does not matter 
     else:  
-      done = {agent_id: False for agent_id in self.agent_id}
-      reward = {agent_id: 0 if agent_id != power_mapping[sender_power] for agent_id in self.agent_id else self.last_action_reward} # get from next phase result (0/+1/-1 get/lose supply center)
+      # censoring order - from deciding state to sent state (go to new state) or not send (stay at the same state)
+      if action:
+        done = {agent_id: False for agent_id in self.agent_id}
+        reward = {agent_id: self.last_action_reward if agent_id == power_mapping[sender_power] else 0 for agent_id in self.agent_id} # get from next phase result (0/+1/-1 get/lose supply center)
+        next_state = 
+      else:
+        done = {agent_id: False for agent_id in self.agent_id}
+        reward = {agent_id: 0 for agent_id in self.agent_id}
+        next_state = self.cur_obs
+        
     return next_state, reward, done, {} #empty info
       
     
