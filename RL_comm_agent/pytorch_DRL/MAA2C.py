@@ -136,15 +136,15 @@ class MAA2C(Agent):
             done =self.agentdict_to_arr(done)
             actions.append([index_to_one_hot(a, self.action_dim) for a in action])
             rewards.append(reward)
-            # done = done[0]
+            done = done[0]
             final_state = next_state
             self.env_state = next_state
-            if done[0] or done[1]:
+            if done:
                 self.env_state = self.env.reset()
                 self.env_state = self.agentdict_to_arr(self.env_state)
                 break
         # discount reward
-        if done[0] or done[1]:
+        if done:
             final_r = [0.0] * self.n_agents
             self.n_episodes += 1
             self.episode_done = True
