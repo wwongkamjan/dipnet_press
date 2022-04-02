@@ -13,11 +13,13 @@ from common.utils import ma_agg_double_list
 
 class DiplomacyEnv(gym.Env):
   def __init__(self):
-    self.done = False
     self.n_agents = 1
+    self.sender_power = None
+    self.stance = 0.0
     self.agent_id = [id for id in range(n_agents)]
-    self.power_onehot = {}
-    self.order_onehot = {}
+    self.order_type_id = [id for id in range(5)]
+    self.power_mapping = {}
+    self.order_type_mapping = {}
     # stance vector of [power1][power2],  
     # orders:
     #         unit's power, England= ... one hot for 7 powers = [Eng, France, ..]
@@ -32,6 +34,7 @@ class DiplomacyEnv(gym.Env):
     self.episode_len = 0
     self.dip_net = None
     self.dip_game = None
+    self.last_action_reward = 0
 
     
   def reset(self): 
@@ -48,10 +51,13 @@ class DiplomacyEnv(gym.Env):
   def step(self, action): # return state, reward, done, info
       
     if self.dip_game.is_game_done:
-      self.done = True
-      reward = 0
-    reward = get from next phase result (0/+1/-1 get/lose supply center)
-    return None, 
+      done = {agent_id: True for agent_id in self.agent_id}
+      reward = {agent_id: 0 for agent_id in self.agent_id}
+      next_state = self.cur_obs # does not matter 
+    else:  
+      done = {agent_id: False for agent_id in self.agent_id}
+      reward = {agent_id: 0 if agent_id != power_mapping[sender_power] for agent_id in self.agent_id else self.last_action_reward} # get from next phase result (0/+1/-1 get/lose supply center)
+    return next_state, reward, done, {} #empty info
       
     
 
