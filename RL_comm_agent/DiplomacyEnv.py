@@ -45,7 +45,7 @@ class DiplomacyEnv(gym.Env):
     # get stance vector, orders from framework
     self.dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
     self.dip_game =  Diplomacy_Press()
-    self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
+    self.power_mapping = {power: id for power,id in zip(self.dip_game.game.powers,self.agent_id)}
     self.episode_len = 0
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
     self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
@@ -56,7 +56,7 @@ class DiplomacyEnv(gym.Env):
     input: Discrete(2) - 0 or 1
     output: return state, reward, done, info
     """
-    if self.dip_game.is_game_done:0
+    if self.dip_game.game.is_game_done:0
       done = {agent_id: True for agent_id in self.agent_id}
       reward = {agent_id: 0 for agent_id in self.agent_id}
       next_state = self.cur_obs # does not matter 
@@ -66,8 +66,8 @@ class DiplomacyEnv(gym.Env):
       if self.sending: 
         if action:
           # reward will be from next phase result (0/+1/-1 get/lose supply center)
-          reward = {agent_id: self.last_action_reward if agent_id == power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
-          next_state = {agent_id: [self.stance, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] if agent_id == power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
+          reward = {agent_id: self.last_action_reward if agent_id == self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
+          next_state = {agent_id: [self.stance, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] if agent_id ==self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
         else:
           reward = {agent_id: 0 for agent_id in self.agent_id}
           next_state = self.cur_obs   
