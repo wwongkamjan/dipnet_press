@@ -15,6 +15,7 @@ class DiplomacyEnv(gym.Env):
   def __init__(self):
     self.n_agents = 1
     self.sender_power = None
+    self.sending = True
     self.stance = 0.0
     self.agent_id = [id for id in range(n_agents)]
     self.order_type_id = [id for id in range(5)]
@@ -45,25 +46,34 @@ class DiplomacyEnv(gym.Env):
     self.dip_game =  Game()
     self.dip_player.init_communication(self.dip_game.game.powers)
     self.episode_len = 0
-    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} #neutral for any power and no order
+    # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
+    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
     return self.cur_obs
     
-  def step(self, action): # return state, reward, done, info
-      
+  def step(self, action): 
+    # input: Discrete(2) - 0 or 1
+    # output: return state, reward, done, info
     if self.dip_game.is_game_done:
       done = {agent_id: True for agent_id in self.agent_id}
       reward = {agent_id: 0 for agent_id in self.agent_id}
       next_state = self.cur_obs # does not matter 
     else:  
       # censoring order - from deciding state to sent state (go to new state) or not send (stay at the same state)
-      if action:
-        done = {agent_id: False for agent_id in self.agent_id}
-        reward = {agent_id: self.last_action_reward if agent_id == power_mapping[sender_power] else 0 for agent_id in self.agent_id} # get from next phase result (0/+1/-1 get/lose supply center)
-        next_state = 
+      done = {agent_id: False for agent_id in self.agent_id}
+      if self.sending: 
+        if action:
+          # reward will be from next phase result (0/+1/-1 get/lose supply center)
+          reward = {agent_id: self.last_action_reward if agent_id == power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
+          next_state = {agent_id: [self.stance, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] if agent_id == power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
+        else:
+          reward = {agent_id: 0 for agent_id in self.agent_id}
+          next_state = self.cur_obs   
+        self.sending = False
       else:
-        done = {agent_id: False for agent_id in self.agent_id}
+        # the order is sent - taking any action to go back to initial state 
         reward = {agent_id: 0 for agent_id in self.agent_id}
-        next_state = self.cur_obs
+        next_state= {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
+        self.sending = True
         
     return next_state, reward, done, {} #empty info
       
