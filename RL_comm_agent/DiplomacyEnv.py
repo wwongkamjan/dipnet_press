@@ -41,9 +41,8 @@ class DiplomacyEnv(gym.Env):
   def reset(self): 
     # return to initial state - Diplomacy game and DipNet reset
     # get stance vector, orders from framework
-    self.dip_player = DipNetSLPlayer()
-#   dip_player =  Diplomacy_Press_Player(Player=random_player())
-    self.dip_game =  Game()
+    self.dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+    self.dip_game =  Diplomacy_Press()
     self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
     self.episode_len = 0
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
@@ -53,7 +52,7 @@ class DiplomacyEnv(gym.Env):
   def step(self, action): 
     # input: Discrete(2) - 0 or 1
     # output: return state, reward, done, info
-    if self.dip_game.is_game_done:
+    if self.dip_game.is_game_done:0
       done = {agent_id: True for agent_id in self.agent_id}
       reward = {agent_id: 0 for agent_id in self.agent_id}
       next_state = self.cur_obs # does not matter 
