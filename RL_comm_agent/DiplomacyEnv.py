@@ -20,7 +20,7 @@ class DiplomacyEnv(gym.Env):
     self.agent_id = [id for id in range(n_agents)]
     self.order_type_id = [id for id in range(5)]
     self.power_mapping = {}
-    self.order_type_mapping = {}
+    self.order_type_mapping = {'move': 0, 'hold': 1, 'support':2, 'attack':3, 'convoy':4}
     # stance vector of [power1][power2],  
     # orders:
     #         unit's power, England= ... one hot for 7 powers = [Eng, France, ..]
@@ -44,6 +44,7 @@ class DiplomacyEnv(gym.Env):
     self.dip_player = DipNetSLPlayer()
 #   dip_player =  Diplomacy_Press_Player(Player=random_player())
     self.dip_game =  Game()
+    self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
     self.episode_len = 0
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
     self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
@@ -75,6 +76,7 @@ class DiplomacyEnv(gym.Env):
         self.sending = True
         
     return next_state, reward, done, {} #empty info
+  
       
     
 
