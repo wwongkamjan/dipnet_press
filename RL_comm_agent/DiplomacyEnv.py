@@ -81,11 +81,14 @@ class DiplomacyEnv(gym.Env):
         
     return next_state, reward, done, {} #empty info
   
-  def diplomacy_step(self):
+  def diplomacy_step(self): move this to trainer
     self.phase_done = False
-    for Dip MAA2C agent you can 
+    for trainer copy/modify interact and train inside it 
+    
     while not phase_done:
-         env.step(action)
+         action = self.action(state)
+         env.take_action(action) 
+          
     states, actions, rewards, next_states, dones = env.get_transactions()
     for s,a,r,n_s,d zip(states, actions, rewards, next_states, dones)
       if done:
