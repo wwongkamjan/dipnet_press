@@ -45,7 +45,8 @@ class DiplomacyEnv(gym.Env):
     # get stance vector, orders from framework
     self.dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
     self.dip_game =  Diplomacy_Press()
-    self.power_mapping = {power: id for power,id in zip(self.dip_game.game.powers,self.agent_id)}
+    self.dip_player.init_communication(self.dip_game.powers)
+    self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
     self.episode_len = 0
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
     self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
@@ -80,6 +81,38 @@ class DiplomacyEnv(gym.Env):
         
     return next_state, reward, done, {} #empty info
   
+  def diplomacy_step(self):
+    self.phase_done = False
+    for Dip MAA2C agent you can 
+    while not phase_done:
+         env.step(action)
+    states, actions, rewards, next_states, dones = env.get_transactions()
+    for s,a,r,n_s,d zip(states, actions, rewards, next_states, dones)
+      if done:
+        r = discount similarly to org
+      else: 
+        r = discount
+      memory.push(s,a,r)
+    for sender in self.dip_game.powers:
+        for recipient in self.dip_game.powers:
+          if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated() :
+            take multiple steps i.e. let the power iterate through k first orders from DipNet, censor them and then send message
+            draft:
+              1. set self.sender_power = sender
+              2. get_orders from DipNet, pick best k
+              3. for each order:
+                  - set curr_obs (now it is all zeros state) to be [dip_player.stance[sender][power], zeros] (now stance is A (+10), B (-10), N (0)) 
+                  - in step() add state = cur_obs to the list and add next_state_info as tuple (sender, recipinet, one hot order)
+              4. send message about selected orders
+              5. recipient acknowledge 
+              6. power do actions and game.process
+              7. get stance[sender][recipient], reward from new phase 
+              8. tranform tuples in next_state_info to [dip_player.stance[sender][recipient], one-hot order (line26-30)] and add to the next_states list
+              9. add reward, done to the list - how to reward? let's do DipNet? or relavance of taken orders and shared orders?
+   self.phase_done = True
+              
+            
+    
       
     
 
