@@ -1,5 +1,6 @@
 from pytorch_DRL.MAA2C import MAA2C
 from pytorch_DRL.common.utils import ma_agg_double_list
+from DiplomacyEnv import DiplomacyEnv
 
 import sys
 import numpy as np
@@ -14,16 +15,16 @@ EVAL_EPISODES = 10
 EVAL_INTERVAL = 100
 
 # roll out n steps
-ROLL_OUT_N_STEPS = 10
-# only remember the latest ROLL_OUT_N_STEPS
-MEMORY_CAPACITY = ROLL_OUT_N_STEPS
-# only use the latest ROLL_OUT_N_STEPS for training A2C
-BATCH_SIZE = ROLL_OUT_N_STEPS
+ROLL_OUT_N_STEPS = 100
+# only remember the latest 2 ROLL_OUT_N_STEPS
+MEMORY_CAPACITY = 2*ROLL_OUT_N_STEPS
+# only use the latest 2 ROLL_OUT_N_STEPS for training A2C
+BATCH_SIZE = 2*ROLL_OUT_N_STEPS
 
 REWARD_DISCOUNTED_GAMMA = 0.99
 ENTROPY_REG = 0.00
-#
-DONE_PENALTY = -10.
+
+DONE_PENALTY = 0
 
 CRITIC_LOSS = "mse"
 MAX_GRAD_NORM = None
@@ -33,14 +34,14 @@ EPSILON_END = 0.05
 EPSILON_DECAY = 500
 
 RANDOM_SEED = 2017
-N_AGENTS = 2
+N_AGENTS = 7
 
 
 def main():
     env = DiplomacyEnv()
-    env.seed(RANDOM_SEED)
+#     env.seed(RANDOM_SEED)
     env_eval = DiplomacyEnv()
-    env_eval.seed(RANDOM_SEED)
+#     env_eval.seed(RANDOM_SEED)
     state_dim = env.observation_space.shape[0]
     if len(env.action_space.shape) > 1:
         action_dim = env.action_space.shape[0]
