@@ -9,10 +9,10 @@ import random
 
 # MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
 
-MAX_EPISODES = 500
-EPISODES_BEFORE_TRAIN = 10
+MAX_EPISODES = 10
+EPISODES_BEFORE_TRAIN = 5
 EVAL_EPISODES = 10
-EVAL_INTERVAL = 100
+EVAL_INTERVAL = 2
 
 # roll out n steps
 ROLL_OUT_N_STEPS = 100
