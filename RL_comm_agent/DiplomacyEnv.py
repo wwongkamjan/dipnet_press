@@ -21,12 +21,14 @@ class DiplomacyEnv(gym.Env):
     self.order_type_id = [id for id in range(5)]
     self.power_mapping = {}
     self.order_type_mapping = {'move': 0, 'hold': 1, 'support':2, 'attack':3, 'convoy':4}
-    # stance vector of [power1][power2],  
-    # orders:
-    #         unit's power, England= ... one hot for 7 powers = [Eng, France, ..]
-    #         type of order, one hot [move, hold, support, attack, convoy]
-    #         attack whom/move to whose territory one hot for 7 powers = [Eng, France, ..]
-    # cur_obs for each agent and action for each agent
+    """
+    stance vector of [power1][power2],  
+    orders:
+            unit's power, England= ... one hot for 7 powers = [Eng, France, ..]
+            type of order, one hot [move, hold, support, attack, convoy]
+            attack whom/move to whose territory one hot for 7 powers = [Eng, France, ..]
+    cur_obs for each agent and action for each agent
+    """
     self.observation_space = gym.spaces.Box(low=np.array([-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), 
                                             high=np.array([10.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
                                             dtype=np.float32)
@@ -50,8 +52,10 @@ class DiplomacyEnv(gym.Env):
     return self.cur_obs
     
   def step(self, action): 
-    # input: Discrete(2) - 0 or 1
-    # output: return state, reward, done, info
+    """
+    input: Discrete(2) - 0 or 1
+    output: return state, reward, done, info
+    """
     if self.dip_game.is_game_done:0
       done = {agent_id: True for agent_id in self.agent_id}
       reward = {agent_id: 0 for agent_id in self.agent_id}
