@@ -76,7 +76,7 @@ class DiplomacyEnv(gym.Env):
         
       elif order_token[1] == 'H':
         order_type = 'hold'
-        return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*7
+        return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*self.n_agents
         
       elif order_token[1] == 'C':
         order_type = 'convoy'
@@ -94,7 +94,7 @@ class DiplomacyEnv(gym.Env):
           return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
         else:
           order_type = 'move'
-          return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*7
+          return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*self.n_agents
         
   def get_unit_power(self, unit):
     for power in game.powers:
@@ -113,26 +113,36 @@ class DiplomacyEnv(gym.Env):
             power_b = receiver, 
             order = order we're considering censor
     """
-    one_hot_order = self.one_hot_order(order)
+
+    
     if self.dip_game.game.is_game_done:
       done = {agent_id: True for agent_id in self.agent_id}
     else:  
       done = {agent_id: False for agent_id in self.agent_id}
+      
+    one_hot_order = self.one_hot_order(order)  
+    self.ep_dones.append(done) 
+    self.ep_actions.append(action)
+    self.ep_states.append(self.cur_obs)
+    self.ep_info.append((self.state, power_a, power_b, one_hot_order))
+    
     if self.state =='no_order': 
+      self.state == 'censoring'
+      self.cur_obs[agent_id][2:] = one_hot_order 
+      self.step(action, power_a, power_b, order)
+      
     elif self.state == 'censoring':
       if action[power_a] ==0:
         self.state ='no_order'
+        self.cur_obs[agent_id][2:] = [0.0]*19
       else:
         self.state = 'share_order'
+        self.cur_obs[agent_id][1] = 1.0
+        self.step(action, power_a, power_b, order)
     else:
       self.state = 'no_order'
-
-    self.ep_actions.append(action)
-    self.ep_states.append(self.cur_obs)
-    self.ep_dones.append(done)
-    self.ep_info.append((self.state, power_a, power_b, one_hot_order))
-    
-    
+      self.cur_obs[agent_id][1:] = [0.0]*20
+ 
   def get_transactions(self):
     #when the dip phase is done
     return  self.ep_states, self.ep_actions, self.ep_rewards, self.ep_n_states, self.ep_dones
