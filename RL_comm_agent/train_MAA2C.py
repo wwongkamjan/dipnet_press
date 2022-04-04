@@ -36,7 +36,44 @@ EPSILON_DECAY = 500
 RANDOM_SEED = 2017
 N_AGENTS = 7
 
+def interact(env, maa2c):
+    dip_step = 0
+    if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
+        # env_state is dictionary
+        maa2c.env_state = self.env.reset()
+        # tranfrom from dict to arr
+        maa2c.env_state = maa2c.agentdict_to_arr(maa2c.env_state)
+    dip_game = env.dip_game
+    dip_player = env.dip_player
+    dip_player.init_communication(dip_game.game.powers)
+    while not dip_game.game.is_game_done and dip_step < maa2c.roll_out_n_steps:
+        
+        for sender in dip_game.powers:
+            for recipient in dip_game.powers:
+                if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
+                    stance = dip_player.stance[sender][recipient] 
+                    env.set_power_state(sender, dip_player, stance, order)
+                    maa2c.env_state = env.cur_obs
+                    env.ep_states.append(maa2c.env_state)
+                    action = maa2c.exploration_action(maa2c.env_state)
+                    action_dict = {agent_id: action[agent_id] for agent_id in range(self.n_agents)}
+                    env.step(action_dict)
 
+        orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+        for power_name, power_orders in orders.items():
+           dip_game.game.set_orders(power_name, power_orders)
+        dip_game.game_process()
+        dip_step +=1
+    
+                    
+                    
+                
+                
+    
+    
+    
+    
+    
 def main():
     env = DiplomacyEnv()
 #     env.seed(RANDOM_SEED)
@@ -61,7 +98,7 @@ def main():
     episodes =[]
     eval_rewards =[]
     while maa2c.n_episodes < MAX_EPISODES:
-        maa2c.interact()
+        interact()
         if maa2c.n_episodes >= EPISODES_BEFORE_TRAIN:
             maa2c.train()
         if maa2c.episode_done and ((maa2c.n_episodes+1)%EVAL_INTERVAL == 0):
