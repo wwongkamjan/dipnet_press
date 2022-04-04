@@ -25,7 +25,7 @@ class DiplomacyEnv(gym.Env):
     stance vector of [power1][power2],  
     orders:
             unit's power, England= ... one hot for 7 powers = [Eng, France, ..]
-            type of order, one hot [move, hold, support, attack, convoy]
+            type of order, one hot 5 [move, hold, support, attack, convoy]
             attack whom/move to whose territory one hot for 7 powers = [Eng, France, ..]
     cur_obs for each agent and action for each agent
     """
@@ -37,6 +37,12 @@ class DiplomacyEnv(gym.Env):
     self.episode_len = 0
     self.dip_net = None
     self.dip_game = None
+    self.ep_states = []
+    self.ep_actions = []
+    self.ep_rewards = []
+    self.ep_info = []
+    self.ep_n_states = []
+    self.ep_dones = []
     self.last_action_reward = 0
 
     
@@ -52,34 +58,45 @@ class DiplomacyEnv(gym.Env):
     self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
     return self.cur_obs
     
-  def step(self, action): 
+  def step(self, action, power_a, power_b): 
     """
     input: Discrete(2) - 0 or 1
-    output: return state, reward, done, info
     """
-    if self.dip_game.game.is_game_done:0
+    if self.dip_game.game.is_game_done:
       done = {agent_id: True for agent_id in self.agent_id}
-      reward = {agent_id: 0 for agent_id in self.agent_id}
-      next_state = self.cur_obs # does not matter 
-    else:  
-      # censoring order - from deciding state to sent state (go to new state) or not send (stay at the same state)
+    else:
       done = {agent_id: False for agent_id in self.agent_id}
-      if self.sending: 
-        if action:
-          # reward will be from next phase result (0/+1/-1 get/lose supply center)
-          reward = {agent_id: self.last_action_reward if agent_id == self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
-          next_state = {agent_id: [self.stance, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] if agent_id ==self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
-        else:
-          reward = {agent_id: 0 for agent_id in self.agent_id}
-          next_state = self.cur_obs   
-        self.sending = False
-      else:
-        # the order is sent - taking any action to go back to initial state 
-        reward = {agent_id: 0 for agent_id in self.agent_id}
-        next_state= {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
-        self.sending = True
+#       reward = {agent_id: 0 for agent_id in self.agent_id}
+#       next_state = self.cur_obs # does not matter 
+#     else:  
+#       # censoring order - from deciding state to sent state (go to new state) or not send (stay at the same state)
+#       done = {agent_id: False for agent_id in self.agent_id}
+#       if self.sending: 
+#         if action:
+#           # reward will be from next phase result (0/+1/-1 get/lose supply center)
+#           reward = {agent_id: self.last_action_reward if agent_id == self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
+#           next_state = {agent_id: [self.stance, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] if agent_id ==self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
+#         else:
+#           reward = {agent_id: 0 for agent_id in self.agent_id}
+#           next_state = self.cur_obs   
+#         self.sending = False
+#       else:
+#         # the order is sent - taking any action to go back to initial state 
+#         reward = {agent_id: 0 for agent_id in self.agent_id}
+#         next_state= {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
+#         self.sending = True
         
-    return next_state, reward, done, {} #empty info
+#     return next_state, reward, done, {} #empty info
+    self.ep_actions.append(action)
+    self.ep_states.append(self.cur_obs)
+    self.ep_dones.append(done)
+    self.ep_info.append((power_a, power_b))
+    
+    
+  def get_transactions(self):
+    #when the dip phase is done
+    return  self.ep_states, self.ep_actions, self.ep_rewards, self.ep_n_states, self.ep_dones
+    
   
   def diplomacy_step(self): move this to trainer
     self.phase_done = False
