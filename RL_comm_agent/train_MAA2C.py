@@ -35,6 +35,7 @@ EPSILON_DECAY = 500
 
 RANDOM_SEED = 2017
 N_AGENTS = 7
+K_ORDERS = 10
 
 
 def interact(env, maa2c):
@@ -47,26 +48,55 @@ def interact(env, maa2c):
     dip_game = env.dip_game
     dip_player = env.dip_player
     dip_player.init_communication(dip_game.game.powers)
-    while not dip_game.game.is_game_done and dip_step < maa2c.roll_out_n_steps:
-        
+    while not dip_game.game.is_game_done:
+        centers = {power: len(dip_game.get_centers[power]) for power in dip_game.powers}
         for sender in dip_game.powers:
             for recipient in dip_game.powers:
                 if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
                     orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
                     stance = dip_player.stance[sender][recipient] 
-                    env.set_power_state(sender, dip_player, stance)
-                    maa2c.env_state = env.cur_obs
-                    action = maa2c.exploration_action(maa2c.env_state)
-                    action_dict = {agent_id: action[agent_id] for agent_id in range(self.n_agents)}
-                    env.step(action_dict)
+                    n = len(orders)
+                    for order in orders[:min(K_ORDERS,n)]:
+                        env.set_power_state(sender, dip_player, stance)
+                        maa2c.env_state = env.cur_obs
+                        action = maa2c.exploration_action(maa2c.env_state)
+                        action_dict = {agent_id: action[agent_id] for agent_id in range(self.n_agents)}
+                        env.step(action_dict, sender, recipient, order)
 
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         for power_name, power_orders in orders.items():
            dip_game.game.set_orders(power_name, power_orders)
+
         dip_game.game_process()
+        
+        # update next state list and get reward from result of the phase 
+        for power in dip_game.powers:
+            dip_player.update_stance(dip_game, power)
+
+        for i in range (len(env.ep_n_states)):
+            state, sender, recipient, one_hot_order = env.ep_info
+            env.ep_n_states[i][sender][0] = dip_player.stance[sender][recipient]
+            sender_reward = len(dip_game.get_centers[sender]) - centers[sender]
+            env.ep_rewards.append({id: sender_reward if id ==env.power_mapping[sender] else 0 for id in env.agent_id})
+        env.reset_phase()        
         dip_step +=1
+        
+    if dip_game.game.is_game_done:
+        maa2c.env_state = env.reset()
+        # tranfrom from dict to arr
+        maa2c.env_state = maa2c.agentdict_to_arr(maa2c.env_state)
+        final_r = [0.0] * maa2c.n_agents
+        maa2c.n_episodes += 1
+        maa2c.episode_done = True
+        
+    rewards = np.array(rewards)
+    for agent_id in range(maa2c.n_agents):
+        rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
+    rewards = rewards.tolist()
+    maa2c.n_steps += 1
     
-    
+    maa2c.memory.push(states, actions, rewards)
+
 def main():
     env = DiplomacyEnv()
 #     env.seed(RANDOM_SEED)
