@@ -15,7 +15,8 @@ class DiplomacyEnv(gym.Env):
   def __init__(self):
     self.n_agents = 1
     self.sender_power = None
-    self.sending = True
+    self.state = 'no_order' # env state no_order -> censoring if censored -> no_order
+                   #                                          if not -> share_order -> no_order 
     self.stance = 0.0
     self.agent_id = [id for id in range(n_agents)]
     self.order_type_id = [id for id in range(5)]
@@ -23,14 +24,15 @@ class DiplomacyEnv(gym.Env):
     self.order_type_mapping = {'move': 0, 'hold': 1, 'support':2, 'attack':3, 'convoy':4}
     """
     stance vector of [power1][power2],  
+    send? 0/1
     orders:
             unit's power, England= ... one hot for 7 powers = [Eng, France, ..]
             type of order, one hot 5 [move, hold, support, attack, convoy]
             attack whom/move to whose territory one hot for 7 powers = [Eng, France, ..]
     cur_obs for each agent and action for each agent
     """
-    self.observation_space = gym.spaces.Box(low=np.array([-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), 
-                                            high=np.array([10.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+    self.observation_space = gym.spaces.Box(low=np.array([-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), 
+                                            high=np.array([10.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
                                             dtype=np.float32)
     self.action_space = gym.spaces.Discrete(2) # 
     self.cur_obs = None
@@ -55,7 +57,7 @@ class DiplomacyEnv(gym.Env):
     self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
     self.episode_len = 0
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
-    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
+    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
     return self.cur_obs
   
   def set_power_state(self, power_a, stance_of_power_b):
@@ -106,36 +108,29 @@ class DiplomacyEnv(gym.Env):
     
   def step(self, action, power_a, power_b, order): 
     """
-    input: Discrete(2) - 0 or 1
+    input:  action=dictionary of agent action where action = Discrete(2) or 0 or 1, 
+            power_a = sender, 
+            power_b = receiver, 
+            order = order we're considering censor
     """
+    one_hot_order = self.one_hot_order(order)
     if self.dip_game.game.is_game_done:
       done = {agent_id: True for agent_id in self.agent_id}
-#       reward = {agent_id: 0 for agent_id in self.agent_id}
-#       next_state = self.cur_obs # does not matter 
     else:  
-      # censoring order - from deciding state to sent state (go to new state) or not send (stay at the same state)
       done = {agent_id: False for agent_id in self.agent_id}
-      if self.sending: 
-#         if action:
-#           # reward will be from next phase result (0/+1/-1 get/lose supply center)
-#           reward = {agent_id: self.last_action_reward if agent_id == self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
-#           next_state = {agent_id: [self.stance, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] if agent_id ==self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
-#         else:
-#           reward = {agent_id: 0 for agent_id in self.agent_id}
-#           next_state = self.cur_obs   
-        self.sending = False
+    if self.state =='no_order': 
+    elif self.state == 'censoring':
+      if action[power_a] ==0:
+        self.state ='no_order'
       else:
-        # the order is sent - taking any action to go back to initial state 
-#         reward = {agent_id: 0 for agent_id in self.agent_id}
-#         next_state= {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
-        self.sending = True
-        
-#     return next_state, reward, done, {} #empty info
-    one_hot_order = self.one_hot_order(order)
+        self.state = 'share_order'
+    else:
+      self.state = 'no_order'
+
     self.ep_actions.append(action)
     self.ep_states.append(self.cur_obs)
     self.ep_dones.append(done)
-    self.ep_info.append((power_a, power_b, one_hot_order))
+    self.ep_info.append((self.state, power_a, power_b, one_hot_order))
     
     
   def get_transactions(self):
