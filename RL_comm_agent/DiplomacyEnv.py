@@ -60,21 +60,61 @@ class DiplomacyEnv(gym.Env):
   
   def set_power_state(self, power_a, stance_of_power_b):
     self.cur_obs[self.power_mapping[power_a]][0] = stance_of_power_b
-                      
-  def step(self, action, power_a, power_b): 
+    
+  def one_hot_order(self, order):
+    order_token = get_order_tokens(order)
+    if order_token[0][0] =='A' or order_token[0][0] =='F':
+      # this is message about orders
+      power1 = get_unit_power(order_token[0])
+      if order_token[1] == 'S':
+        order_type = 'support'
+        order_unit = order_token[0][0]+' '+order_token[2]
+        power2 =get_unit_power(order_unit)
+        return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
+        
+      elif order_token[1] == 'H':
+        order_type = 'hold'
+        return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*7
+        
+      elif order_token[1] == 'C':
+        order_type = 'convoy'
+        order_unit = order_token[0][0]+' '+order_token[2]
+        power2 =get_unit_power(order_unit)
+        return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
+        
+      else:
+        #move/retreat or attack 
+        #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
+        order_unit = order_token[0][0]+' '+order_token[2]
+        power2 =get_unit_power(order_unit)
+        if power2:
+          order_type= 'attack'
+          return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
+        else:
+          order_type = 'move'
+          return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*7
+        
+  def get_unit_power(self, unit):
+    for power in game.powers:
+      if unit in game.powers[power].units:
+        return power
+  def one_hot(self, id, n):
+    one_hot_list = [0.0 for i in range(n)]
+    one_hot_list[id] = 1.0
+    return one_hot_list
+    
+  def step(self, action, power_a, power_b, order): 
     """
     input: Discrete(2) - 0 or 1
     """
     if self.dip_game.game.is_game_done:
       done = {agent_id: True for agent_id in self.agent_id}
-    else:
-      done = {agent_id: False for agent_id in self.agent_id}
 #       reward = {agent_id: 0 for agent_id in self.agent_id}
 #       next_state = self.cur_obs # does not matter 
-#     else:  
-#       # censoring order - from deciding state to sent state (go to new state) or not send (stay at the same state)
-#       done = {agent_id: False for agent_id in self.agent_id}
-#       if self.sending: 
+    else:  
+      # censoring order - from deciding state to sent state (go to new state) or not send (stay at the same state)
+      done = {agent_id: False for agent_id in self.agent_id}
+      if self.sending: 
 #         if action:
 #           # reward will be from next phase result (0/+1/-1 get/lose supply center)
 #           reward = {agent_id: self.last_action_reward if agent_id == self.power_mapping[sender_power] else 0 for agent_id in self.agent_id} 
@@ -82,18 +122,19 @@ class DiplomacyEnv(gym.Env):
 #         else:
 #           reward = {agent_id: 0 for agent_id in self.agent_id}
 #           next_state = self.cur_obs   
-#         self.sending = False
-#       else:
-#         # the order is sent - taking any action to go back to initial state 
+        self.sending = False
+      else:
+        # the order is sent - taking any action to go back to initial state 
 #         reward = {agent_id: 0 for agent_id in self.agent_id}
 #         next_state= {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
-#         self.sending = True
+        self.sending = True
         
 #     return next_state, reward, done, {} #empty info
+    self.one_hot(order)
     self.ep_actions.append(action)
     self.ep_states.append(self.cur_obs)
     self.ep_dones.append(done)
-    self.ep_info.append((power_a, power_b))
+    self.ep_info.append((power_a, power_b, one_hot_order))
     
     
   def get_transactions(self):
