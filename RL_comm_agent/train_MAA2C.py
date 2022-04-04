@@ -36,6 +36,7 @@ EPSILON_DECAY = 500
 RANDOM_SEED = 2017
 N_AGENTS = 7
 
+
 def interact(env, maa2c):
     dip_step = 0
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
@@ -51,10 +52,10 @@ def interact(env, maa2c):
         for sender in dip_game.powers:
             for recipient in dip_game.powers:
                 if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
+                    orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
                     stance = dip_player.stance[sender][recipient] 
-                    env.set_power_state(sender, dip_player, stance, order)
+                    env.set_power_state(sender, dip_player, stance)
                     maa2c.env_state = env.cur_obs
-                    env.ep_states.append(maa2c.env_state)
                     action = maa2c.exploration_action(maa2c.env_state)
                     action_dict = {agent_id: action[agent_id] for agent_id in range(self.n_agents)}
                     env.step(action_dict)
@@ -64,14 +65,6 @@ def interact(env, maa2c):
            dip_game.game.set_orders(power_name, power_orders)
         dip_game.game_process()
         dip_step +=1
-    
-                    
-                    
-                
-                
-    
-    
-    
     
     
 def main():
