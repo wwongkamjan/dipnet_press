@@ -98,6 +98,7 @@ class DiplomacyEnv(gym.Env):
     for power in game.powers:
       if unit in game.powers[power].units:
         return power
+      
   def one_hot(self, id, n):
     one_hot_list = [0.0 for i in range(n)]
     one_hot_list[id] = 1.0
@@ -130,7 +131,7 @@ class DiplomacyEnv(gym.Env):
         self.sending = True
         
 #     return next_state, reward, done, {} #empty info
-    self.one_hot(order)
+    one_hot_order = self.one_hot_order(order)
     self.ep_actions.append(action)
     self.ep_states.append(self.cur_obs)
     self.ep_dones.append(done)
