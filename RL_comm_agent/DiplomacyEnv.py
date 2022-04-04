@@ -154,45 +154,10 @@ class DiplomacyEnv(gym.Env):
       self.cur_obs[agent_id][1:] = [0.0]*20
       self.ep_n_states.append(self.cur_obs)
      
-
   def get_transactions(self):
     #when the dip phase is done
     return  self.ep_states, self.ep_actions, self.ep_rewards, self.ep_n_states, self.ep_dones
-    
-  
-  def diplomacy_step(self): move this to trainer
-    self.phase_done = False
-    for trainer copy/modify interact and train inside it 
-    
-    while not phase_done:
-         action = self.action(state)
-         env.take_action(action) 
-          
-    states, actions, rewards, next_states, dones = env.get_transactions()
-    for s,a,r,n_s,d zip(states, actions, rewards, next_states, dones)
-      if done:
-        r = discount similarly to org
-      else: 
-        r = discount
-      memory.push(s,a,r)
-    for sender in self.dip_game.powers:
-        for recipient in self.dip_game.powers:
-          if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated() :
-            take multiple steps i.e. let the power iterate through k first orders from DipNet, censor them and then send message
-            draft:
-              1. set self.sender_power = sender
-              2. get_orders from DipNet, pick best k
-              3. for each order:
-                  - set curr_obs (now it is all zeros state) to be [dip_player.stance[sender][power], zeros] (now stance is A (+10), B (-10), N (0)) 
-                  - in step() add state = cur_obs to the list and add next_state_info as tuple (sender, recipinet, one hot order)
-              4. send message about selected orders
-              5. recipient acknowledge 
-              6. power do actions and game.process
-              7. get stance[sender][recipient], reward from new phase 
-              8. tranform tuples in next_state_info to [dip_player.stance[sender][recipient], one-hot order (line26-30)] and add to the next_states list
-              9. add reward, done to the list - how to reward? let's do DipNet? or relavance of taken orders and shared orders?
-   self.phase_done = True
-              
+
             
     
       
