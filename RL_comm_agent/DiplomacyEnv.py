@@ -57,7 +57,10 @@ class DiplomacyEnv(gym.Env):
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
     self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
     return self.cur_obs
-    
+  
+  def set_power_state(self, power_a, stance_of_power_b):
+    self.cur_obs[self.power_mapping[power_a]][0] = stance_of_power_b
+                      
   def step(self, action, power_a, power_b): 
     """
     input: Discrete(2) - 0 or 1
