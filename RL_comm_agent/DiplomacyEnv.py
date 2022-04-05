@@ -15,7 +15,7 @@ class DiplomacyEnv(gym.Env):
   def __init__(self):
     self.n_agents = 1
     self.sender_power = None
-    self.state = 'no_order' # env state no_order -> censoring if censored -> no_order
+    self.state = 'no_sender' # env state no sender -> (with sender assigned but )no_order -> censoring if censored -> no_order
                    #                                          if not -> share_order -> no_order 
     self.stance = 0.0
     self.agent_id = [id for id in range(n_agents)]
@@ -66,7 +66,14 @@ class DiplomacyEnv(gym.Env):
     return self.cur_obs
 
   def set_power_state(self, power_a, stance_of_power_b):
+    done = {agent_id: False for agent_id in self.agent_id}
+    self.ep_dones.append(done) 
+    action = {agent_id: 0 for agent_id in self.agent_id}
+    self.ep_actions.append(action)
+    self.ep_states.append(self.cur_obs)
+    self.ep_info.append((self.state, power_a, None, None))
     self.cur_obs[self.power_mapping[power_a]][0] = stance_of_power_b
+    self.ep_n_states.append(self.cur_obs)
     
   def reset_power_state(self):
     self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
@@ -133,7 +140,7 @@ class DiplomacyEnv(gym.Env):
     self.ep_actions.append(action)
     self.ep_states.append(self.cur_obs)
     self.ep_info.append((self.state, power_a, power_b, one_hot_order))
-    
+
     if self.state =='no_order': 
       self.state == 'censoring'
       self.cur_obs[agent_id][2:] = one_hot_order 
