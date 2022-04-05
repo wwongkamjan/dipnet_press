@@ -101,7 +101,7 @@ class DiplomacyEnv(gym.Env):
       power1 = get_unit_power(order_token[0])
       if order_token[1] == 'S':
         order_type = 'support'
-        order_unit = order_token[0][0]+' '+order_token[2]
+        order_unit = order_token[2]
         power2 =get_unit_power(order_unit)
         return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
         
@@ -111,7 +111,7 @@ class DiplomacyEnv(gym.Env):
         
       elif order_token[1] == 'C':
         order_type = 'convoy'
-        order_unit = order_token[0][0]+' '+order_token[2]
+        order_unit = order_token[2]
         power2 =get_unit_power(order_unit)
         return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
         
