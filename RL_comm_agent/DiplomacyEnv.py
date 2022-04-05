@@ -62,11 +62,14 @@ class DiplomacyEnv(gym.Env):
     self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
     self.episode_len = 0
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
-    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
+    self.cur_obs = self.reset_power_state() 
     return self.cur_obs
 
   def set_power_state(self, power_a, stance_of_power_b):
     self.cur_obs[self.power_mapping[power_a]][0] = stance_of_power_b
+    
+  def reset_power_state(self):
+    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
     
   def one_hot_order(self, order):
     order_token = get_order_tokens(order)
@@ -155,9 +158,3 @@ class DiplomacyEnv(gym.Env):
   def get_transactions(self):
     #when the dip phase is done
     return  self.ep_states, self.ep_actions, self.ep_rewards, self.ep_n_states, self.ep_dones
-
-            
-    
-      
-    
-
