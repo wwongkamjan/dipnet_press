@@ -50,6 +50,12 @@ class DiplomacyEnv(gym.Env):
   def reset(self): 
     # return to initial state - Diplomacy game and DipNet reset
     # get stance vector, orders from framework
+    self.ep_states = []
+    self.ep_actions = []
+    self.ep_rewards = []
+    self.ep_info = []
+    self.ep_n_states = []
+    self.ep_dones = []
     self.dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
     self.dip_game =  Diplomacy_Press()
     self.dip_player.init_communication(self.dip_game.powers)
@@ -58,15 +64,7 @@ class DiplomacyEnv(gym.Env):
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
     self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id} 
     return self.cur_obs
-  
- def reset_phase(self):
-    self.ep_states = []
-    self.ep_actions = []
-    self.ep_rewards = []
-    self.ep_info = []
-    self.ep_n_states = []
-    self.ep_dones = []
-  
+
   def set_power_state(self, power_a, stance_of_power_b):
     self.cur_obs[self.power_mapping[power_a]][0] = stance_of_power_b
     
