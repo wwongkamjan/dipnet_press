@@ -48,6 +48,7 @@ def interact(env, maa2c):
     dip_game = env.dip_game
     dip_player = env.dip_player
     dip_player.init_communication(dip_game.game.powers)
+    last_ep_index = 0
     while not dip_game.game.is_game_done:
         centers = {power: len(dip_game.get_centers[power]) for power in dip_game.powers}
         for sender in dip_game.powers:
@@ -60,8 +61,10 @@ def interact(env, maa2c):
                         env.set_power_state(sender, dip_player, stance)
                         maa2c.env_state = env.cur_obs
                         action = maa2c.exploration_action(maa2c.env_state)
-                        action_dict = {agent_id: action[agent_id] for agent_id in range(self.n_agents)}
+                        action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                         env.step(action_dict, sender, recipient, order)
+                        
+            #reset reset_power_state -> all zeros
 
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         for power_name, power_orders in orders.items():
@@ -72,13 +75,16 @@ def interact(env, maa2c):
         # update next state list and get reward from result of the phase 
         for power in dip_game.powers:
             dip_player.update_stance(dip_game, power)
-
-        for i in range (len(env.ep_n_states)):
-            state, sender, recipient, one_hot_order = env.ep_info
+        
+        for i in range (last_ep_index, len(env.ep_n_states)):
+            state, sender, recipient, one_hot_order = env.ep_info[i]
             env.ep_n_states[i][sender][0] = dip_player.stance[sender][recipient]
             sender_reward = len(dip_game.get_centers[sender]) - centers[sender]
-            env.ep_rewards.append({id: sender_reward if id ==env.power_mapping[sender] else 0 for id in env.agent_id})
-        env.reset_phase()        
+            if state=='censoring' and env.ep_actions[i][env.power_mapping[sender]]==1: # set reward for sharing order 
+                env.ep_rewards.append({id: sender_reward if id ==env.power_mapping[sender] else 0 for id in env.agent_id})   
+            else:
+                env.ep_rewards.append({id: 0 for id in env.agent_id})   
+        last_ep_index = len(env.ep_n_states) -1
         dip_step +=1
         
     if dip_game.game.is_game_done:
@@ -89,6 +95,8 @@ def interact(env, maa2c):
         maa2c.n_episodes += 1
         maa2c.episode_done = True
         
+    #tranform s,a,r from dict to arr
+    
     rewards = np.array(rewards)
     for agent_id in range(maa2c.n_agents):
         rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
