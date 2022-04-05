@@ -58,13 +58,13 @@ def interact(env, maa2c):
                     stance = dip_player.stance[sender][recipient] 
                     n = len(orders)
                     for order in orders[:min(K_ORDERS,n)]:
-                        env.set_power_state(sender, dip_player, stance)
-                        maa2c.env_state = env.cur_obs
+                        env.set_power_state(sender, stance)
+                        maa2c.env_state = maa2c.agentdict_to_arr(env.cur_obs)
                         action = maa2c.exploration_action(maa2c.env_state)
                         action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                         env.step(action_dict, sender, recipient, order)
                         
-            #reset reset_power_state -> all zeros
+                env.reset_power_state(sender, recipient)
 
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         for power_name, power_orders in orders.items():
@@ -78,12 +78,16 @@ def interact(env, maa2c):
         
         for i in range (last_ep_index, len(env.ep_n_states)):
             state, sender, recipient, one_hot_order = env.ep_info[i]
-            env.ep_n_states[i][sender][0] = dip_player.stance[sender][recipient]
             sender_reward = len(dip_game.get_centers[sender]) - centers[sender]
-            if state=='censoring' and env.ep_actions[i][env.power_mapping[sender]]==1: # set reward for sharing order 
-                env.ep_rewards.append({id: sender_reward if id ==env.power_mapping[sender] else 0 for id in env.agent_id})   
-            else:
-                env.ep_rewards.append({id: 0 for id in env.agent_id})   
+            if state=='no_more_order':
+                env.ep_states[i][sender][0] = dip_player.stance[sender][recipient]
+            if state=='censoring': #update stance of next states of states = share order/do not share order
+                env.ep_n_states[i][sender][0] = dip_player.stance[sender][recipient]
+                if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
+                    env.ep_rewards.append({id: sender_reward if id ==env.power_mapping[sender] else 0 for id in env.agent_id})   
+                else:
+                    env.ep_rewards.append({id: 0 for id in env.agent_id})   
+                    
         last_ep_index = len(env.ep_n_states) -1
         dip_step +=1
         
@@ -91,11 +95,19 @@ def interact(env, maa2c):
         maa2c.env_state = env.reset()
         # tranfrom from dict to arr
         maa2c.env_state = maa2c.agentdict_to_arr(maa2c.env_state)
+        centers = {power: len(dip_game.get_centers[power]) for power in dip_game.powers}
         final_r = [0.0] * maa2c.n_agents
+        for power in dip_game.powers():
+            final_r[env.power_mapping[power]] = len(centers[power])
         maa2c.n_episodes += 1
         maa2c.episode_done = True
         
     #tranform s,a,r from dict to arr
+    next_states = maa2c.agentdict_to_arr(ep_n_states)
+    rewards = maa2c.agentdict_to_arr(ep_rewards)
+    dones = maa2c.agentdict_to_arr(ep_dones)
+    actions = maa2c.agentdict_to_arr(ep_actions)
+    states = maa2c.agentdict_to_arr(ep_states)
     
     rewards = np.array(rewards)
     for agent_id in range(maa2c.n_agents):
