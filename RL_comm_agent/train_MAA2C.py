@@ -3,8 +3,6 @@ from pytorch_DRL.common.utils import ma_agg_double_list
 from DiplomacyEnv import DiplomacyEnv
 
 import sys
-sys.path.insert(0, '')
-sys.path.insert(0, '../..')
 import numpy as np
 import matplotlib.pyplot as plt
 import random
