@@ -60,7 +60,7 @@ class DiplomacyEnv(gym.Env):
     self.ep_info = []
     self.ep_n_states = []
     self.ep_dones = []
-    self.dip_player =  Diplomacy_Press_Player(Player=DipNetSLPlayer())
+    self.dip_player =  Diplomacy_Press_Player(bots=['RL','RL','RL','RL','RL','RL','RL'], Player=DipNetSLPlayer())
     self.dip_game =  Diplomacy_Press(Game=Game(), Player=self.dip_player)
     self.dip_player.init_communication(self.dip_game.powers)
     self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
