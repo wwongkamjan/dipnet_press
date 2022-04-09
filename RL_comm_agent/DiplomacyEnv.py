@@ -22,17 +22,18 @@ class DiplomacyEnv(gym.Env):
     self.order_type_id = [id for id in range(5)]
     self.power_mapping = {}
     self.order_type_mapping = {'move': 0, 'hold': 1, 'support':2, 'attack':3, 'convoy':4}
+    self.power_type_mapping = {'self':0, 'neutral':1, 'ally':2, 'enemy':3 }
     """
     stance vector of [power1][power2],  
     send? 0/1
     orders:
-            unit's power, England= ... one hot for 7 powers = [Eng, France, ..]
+            ['self', 'ally', 'neutral', 'enemy'] of unit's power, one hot 
             type of order, one hot 5 [move, hold, support, attack, convoy]
-            attack whom/move to whose territory one hot for 7 powers = [Eng, France, ..]
+            ['self', 'ally', 'neutral', 'enemy'] of unit's power = attack whom/move to whose territory one hot 
     cur_obs for each agent and action for each agent
     """
-    self.observation_space = gym.spaces.Box(low=np.array([-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), 
-                                            high=np.array([10.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+    self.observation_space = gym.spaces.Box(low=np.array([-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), 
+                                            high=np.array([10.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
                                             dtype=np.float32)
     self.action_space = gym.spaces.Discrete(2) # 
     self.cur_obs = None
@@ -77,7 +78,7 @@ class DiplomacyEnv(gym.Env):
     self.state = 'no_order'
     
   def reset_cur_obs(self):
-    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
+    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
     
   def reset_power_state(self, power_a, power_b):
     if self.dip_game.game.is_game_done:
@@ -94,7 +95,16 @@ class DiplomacyEnv(gym.Env):
     self.ep_n_states.append(self.cur_obs)
     self.state = 'no_sender'
     
-  def one_hot_order(self, order):
+  def get_power_type(self, power_a, power_b):
+    if power_a == power_b:
+      return 'self'
+    if self.dip_player.stance[sender][recipient] < -1:
+      return 'enemy'
+    if self.dip_player.stance[sender][recipient] > 1:
+      return 'ally'
+    return 'neutral'
+    
+  def one_hot_order(self, order, sender):
     order_token = get_order_tokens(order)
     if order_token[0][0] =='A' or order_token[0][0] =='F':
       # this is message about orders
@@ -103,17 +113,17 @@ class DiplomacyEnv(gym.Env):
         order_type = 'support'
         order_unit = order_token[2]
         power2 =get_unit_power(order_unit)
-        return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
+        return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         
       elif order_token[1] == 'H':
         order_type = 'hold'
-        return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*self.n_agents
+        return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*4
         
       elif order_token[1] == 'C':
         order_type = 'convoy'
         order_unit = order_token[2]
         power2 =get_unit_power(order_unit)
-        return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
+        return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         
       else:
         #move/retreat or attack 
@@ -122,10 +132,10 @@ class DiplomacyEnv(gym.Env):
         power2 =get_unit_power(order_unit)
         if power2:
           order_type= 'attack'
-          return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_mapping[power2], self.n_agents)
+          return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         else:
           order_type = 'move'
-          return one_hot(self.power_mapping[power1], self.n_agents) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*self.n_agents
+          return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*4
         
   def get_unit_power(self, unit):
     for power in game.powers:
@@ -151,7 +161,7 @@ class DiplomacyEnv(gym.Env):
     else:  
       done = {agent_id: False for agent_id in self.agent_id}
       
-    one_hot_order = self.one_hot_order(order)  
+    one_hot_order = self.one_hot_order(order, power_a)  
     self.ep_dones.append(done) 
     self.ep_actions.append(action)
     self.ep_states.append(self.cur_obs)
