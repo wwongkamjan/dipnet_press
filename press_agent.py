@@ -23,9 +23,9 @@ def get_message(game, stance, msg_list, sender, recipient):
           msg_list[key] = None # we care only sender_move for now
       else:
         # case when key = sender_move
-        if stance[sender][recipient] == 'N':
+        if stance[sender][recipient] > -1  and stance[sender][recipient] < 1:
           msg_list[key] = filter_message(game, msg_list['sender_move'], recipient, ['attack','hold','convoy'])
-        elif stance[sender][recipient] == 'B':
+        elif stance[sender][recipient] <= -1:
            msg_list[key] = None
             
     else:
