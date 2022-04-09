@@ -127,7 +127,8 @@ def interact(env, maa2c):
     maa2c.n_steps += 1
     
     maa2c.memory.push(states, actions, rewards)
-
+    
+@gen.coroutine
 def main():
     env = DiplomacyEnv()
 #     env.seed(RANDOM_SEED)
