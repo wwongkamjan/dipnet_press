@@ -11,6 +11,7 @@ import random
 
 # MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+print(os.path.join(os.path.dirname(__file__), ".."))
 MAX_EPISODES = 10
 EPISODES_BEFORE_TRAIN = 5
 EVAL_EPISODES = 10
