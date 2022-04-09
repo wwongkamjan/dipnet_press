@@ -54,6 +54,8 @@ class DiplomacyEnv(gym.Env):
   def reset(self): 
     # return to initial state - Diplomacy game and DipNet reset
     # get stance vector, orders from framework
+    stop_io_loop()
+    start_io_loop()
     self.ep_states = []
     self.ep_actions = []
     self.ep_rewards = []
