@@ -12,6 +12,7 @@ import random
 
 # MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
 from DiplomacyEnv import DiplomacyEnv
+from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 
 MAX_EPISODES = 10
 EPISODES_BEFORE_TRAIN = 5
@@ -162,7 +163,7 @@ def main():
             episodes.append(maa2c.n_episodes+1)
             eval_rewards.append(rewards_mu)
   
-
+    stop_io_loop()
         
 if __name__ == '__main__':
-  main()
+  start_io_loop(main())
