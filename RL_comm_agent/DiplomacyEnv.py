@@ -13,7 +13,7 @@ from pytorch_DRL.common.utils import ma_agg_double_list
 import sys
 import os
 # MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 class DiplomacyEnv(gym.Env):
   def __init__(self):
