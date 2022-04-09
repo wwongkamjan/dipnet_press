@@ -21,7 +21,7 @@ class DiplomacyEnv(gym.Env):
     self.state = 'no_sender' # env state no sender -> (with sender assigned but )no_order -> censoring if censored -> no_order - > no_sender
                    #                                          if not -> share_order ->  no_order  -> no_sender
     self.stance = 0.0
-    self.agent_id = [id for id in range(n_agents)]
+    self.agent_id = [id for id in range(self.n_agents)]
     self.order_type_id = [id for id in range(5)]
     self.power_mapping = {}
     self.order_type_mapping = {'move': 0, 'hold': 1, 'support':2, 'attack':3, 'convoy':4}
