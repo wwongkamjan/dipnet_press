@@ -16,7 +16,7 @@ import sys
 
 class DiplomacyEnv(gym.Env):
   def __init__(self):
-    self.n_agents = 1
+    self.n_agents = 7
     self.sender_power = None
     self.state = 'no_sender' # env state no sender -> (with sender assigned but )no_order -> censoring if censored -> no_order - > no_sender
                    #                                          if not -> share_order ->  no_order  -> no_sender
