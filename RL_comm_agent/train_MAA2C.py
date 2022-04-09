@@ -3,12 +3,14 @@ from pytorch_DRL.common.utils import ma_agg_double_list
 from DiplomacyEnv import DiplomacyEnv
 
 import sys
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 import random
 
 # MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
-
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 MAX_EPISODES = 10
 EPISODES_BEFORE_TRAIN = 5
 EVAL_EPISODES = 10
