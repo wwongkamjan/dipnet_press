@@ -8,7 +8,7 @@ from players.benchmark_player import DipNetSLPlayer
 from utils.cluster import start_io_loop, stop_io_loop
 from models.state_space import get_order_tokens
 from bot_communication import Diplomacy_Press, Diplomacy_Press_Player
-from MAA2C import MAA2C
+from pytorch_DRL.MAA2C import MAA2C
 from pytorch_DRL.common.utils import ma_agg_double_list
 
 class DiplomacyEnv(gym.Env):
