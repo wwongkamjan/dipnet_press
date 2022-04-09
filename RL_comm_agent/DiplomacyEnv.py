@@ -81,7 +81,7 @@ class DiplomacyEnv(gym.Env):
     self.state = 'no_order'
     
   def reset_cur_obs(self):
-    self.cur_obs = {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
+    return {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
     
   def reset_power_state(self, power_a, power_b):
     if self.dip_game.game.is_game_done:
@@ -94,7 +94,7 @@ class DiplomacyEnv(gym.Env):
     self.ep_actions.append(action)
     self.ep_states.append(self.cur_obs)
     self.ep_info.append(('no_more_order', power_a, power_b, None))
-    self.reset_cur_obs()
+    self.cur_obs = self.reset_cur_obs() 
     self.ep_n_states.append(self.cur_obs)
     self.state = 'no_sender'
     
