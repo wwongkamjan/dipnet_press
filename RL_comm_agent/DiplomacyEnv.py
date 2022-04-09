@@ -11,9 +11,8 @@ from bot_communication import Diplomacy_Press, Diplomacy_Press_Player
 from pytorch_DRL.MAA2C import MAA2C
 from pytorch_DRL.common.utils import ma_agg_double_list
 import sys
-# import os
-# # MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
-# sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+# MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
 
 class DiplomacyEnv(gym.Env):
   def __init__(self):
