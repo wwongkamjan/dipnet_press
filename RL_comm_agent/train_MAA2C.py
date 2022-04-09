@@ -154,7 +154,7 @@ def main():
     episodes =[]
     eval_rewards =[]
     while maa2c.n_episodes < MAX_EPISODES:
-        interact()
+        interact(env, maa2c)
         if maa2c.n_episodes >= EPISODES_BEFORE_TRAIN:
             maa2c.train()
         if maa2c.episode_done and ((maa2c.n_episodes+1)%EVAL_INTERVAL == 0):
