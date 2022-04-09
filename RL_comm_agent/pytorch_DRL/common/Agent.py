@@ -3,8 +3,8 @@ import torch as th
 
 import numpy as np
 
-from common.Memory import ReplayMemory
-from common.utils import identity
+from pytorch_DRL.common.Memory import ReplayMemory
+from pytorch_DRL.common.utils import identity
 
 
 class Agent(object):
