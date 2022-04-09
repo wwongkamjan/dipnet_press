@@ -165,7 +165,7 @@ class Diplomacy_Press:
 
 class Diplomacy_Press_Player:
  
-  def __init__(self, bot_type=[], Player=None, ):
+  def __init__(self, bot_type=[], Player=None):
     self.player = Player
     self.stance = {}
     self.bot_temp = bot_type
