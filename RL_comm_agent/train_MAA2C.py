@@ -166,4 +166,4 @@ def main():
     stop_io_loop()
         
 if __name__ == '__main__':
-  start_io_loop(main())
+  start_io_loop(main)
