@@ -41,7 +41,7 @@ EPSILON_DECAY = 500
 
 RANDOM_SEED = 2017
 N_AGENTS = 7
-K_ORDERS = 10
+K_ORDERS = 5
 
 @gen.coroutine
 def interact(env, maa2c):
@@ -55,52 +55,55 @@ def interact(env, maa2c):
     dip_player = env.dip_player
     last_ep_index = 0
     while not dip_game.game.is_game_done:
-        centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
-        for sender in dip_game.powers:
-            for recipient in dip_game.powers:
-                if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
-                    orders = yield dip_player.get_orders(dip_game.game, sender)
-                    stance = dip_player.stance[sender][recipient] 
-                    n = len(orders)
-                    env.set_power_state(sender, stance)
-                    for order in orders[:min(K_ORDERS,n)]:
-                        print(order)
-                        maa2c.env_state = maa2c.agentdict_to_arr(env.cur_obs)
-                        action = maa2c.exploration_action(maa2c.env_state)
-                        action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
-                        env.step(action_dict, sender, recipient, order)
-                        
-                    env.reset_power_state(sender, recipient)
+        if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
+            centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
+            for sender in dip_game.powers:
+                for recipient in dip_game.powers:
+                    if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
+                        orders = yield dip_player.get_orders(dip_game.game, sender)
+                        stance = dip_player.stance[sender][recipient] 
+                        n = len(orders)
+                        env.set_power_state(sender, stance)
+                        print('sender: ', sender + ' recipient: ', recipient)
+                        for order in orders[:min(K_ORDERS,n)]:
+                            print('consider: ', order)
+                            maa2c.env_state = maa2c.agentdict_to_arr(env.cur_obs)
+                            action = maa2c.exploration_action(maa2c.env_state)
+                            action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                            env.step(action_dict, sender, recipient, order)
+                            
+                        env.reset_power_state(sender, recipient)
 
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         for power_name, power_orders in orders.items():
            dip_game.game.set_orders(power_name, power_orders)
 
         dip_game.game_process()
-        
+        print('game process')
         # update next state list and get reward from result of the phase 
         for power in dip_game.powers:
-            dip_player.update_stance(dip_game, power)
-        
-        for i in range (last_ep_index, len(env.ep_n_states)):
-            state, sender, recipient, one_hot_order = env.ep_info[i]
-            #reward = self + ally supply center
-            #find all allies 
-            sender_reward = 0
-            sender_stance =  dip_player.stance[sender]
-            for power in sender_stance:
-                if sender_stance[power] > 1 or power==sender:
-                    sender_reward += len(dip_game.game.get_centers(power)) - centers[power]
-            if state=='no_more_order':
-                env.ep_states[i][sender][0] = dip_player.stance[sender][recipient]
-            if state=='censoring': #update stance of next states of states = share order/do not share order
-                env.ep_n_states[i][sender][0] = dip_player.stance[sender][recipient]
-                if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
-                    env.ep_rewards.append({id: sender_reward if id ==env.power_mapping[sender] else 0 for id in env.agent_id})   
-                else:
-                    env.ep_rewards.append({id: 0 for id in env.agent_id})   
+            dip_player.update_stance(dip_game.game, power)
+
+        if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
+            for i in range (last_ep_index, len(env.ep_n_states)):
+                state, sender, recipient, one_hot_order = env.ep_info[i]
+                #reward = self + ally supply center
+                #find all allies 
+                sender_reward = 0
+                sender_stance =  dip_player.stance[sender]
+                for power in sender_stance:
+                    if sender_stance[power] > 1 or power==sender:
+                        sender_reward += len(dip_game.game.get_centers(power)) - centers[power]
+                if state=='no_more_order':
+                    env.ep_states[i][sender][0] = dip_player.stance[sender][recipient]
+                if state=='censoring': #update stance of next states of states = share order/do not share order
+                    env.ep_n_states[i][sender][0] = dip_player.stance[sender][recipient]
+                    if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
+                        env.ep_rewards.append({id: sender_reward if id ==env.power_mapping[sender] else 0 for id in env.agent_id})   
+                    else:
+                        env.ep_rewards.append({id: 0 for id in env.agent_id})   
                     
-        last_ep_index = len(env.ep_n_states) -1
+            last_ep_index = len(env.ep_n_states) -1
         dip_step +=1
         
     if dip_game.game.is_game_done:

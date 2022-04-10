@@ -171,22 +171,22 @@ class DiplomacyEnv(gym.Env):
     self.ep_actions.append(action)
     self.ep_states.append(self.cur_obs)
     self.ep_info.append((self.state, power_a, power_b, one_hot_order))
-    print('state:', self.state)
-    print('cur obs: ', self.cur_obs)
-    print('action', action)
+    # print('state:', self.state)
+    # print('cur obs: ', self.cur_obs)
+    # print('action', action)
     agent_id = self.power_mapping[power_a]
     if self.state =='no_order': 
       self.state = 'censoring'
       self.cur_obs[agent_id][-13:] = one_hot_order 
       self.ep_n_states.append(self.cur_obs)
-      print('new obs: ', self.cur_obs)
+      # print('new obs: ', self.cur_obs)
       self.step(action, power_a, power_b, order)
       
     elif self.state == 'censoring':
       if action[agent_id] ==0:
         self.state ='no_order'
         self.cur_obs[agent_id][2:] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        print('new obs: ', self.cur_obs)
+        # print('new obs: ', self.cur_obs)
         self.ep_n_states.append(self.cur_obs)
       else:
         self.state = 'share_order'
