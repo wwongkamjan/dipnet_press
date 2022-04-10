@@ -141,8 +141,8 @@ class DiplomacyEnv(gym.Env):
           return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*4
         
   def get_unit_power(self, unit):
-    for power in game.powers:
-      if unit in game.powers[power].units:
+    for power in self.dip_game.powers:
+      if unit in self.dip_game.powers[power].units:
         return power
       
   def one_hot(self, id, n):
