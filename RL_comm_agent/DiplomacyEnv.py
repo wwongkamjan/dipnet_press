@@ -132,7 +132,9 @@ class DiplomacyEnv(gym.Env):
       else:
         #move/retreat or attack 
         #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
-        order_unit = order_token[0][0]+' '+order_token[2]
+        order_token[1][0] = order_token[0][0]
+        order_unit = order_token[1]
+        print(order_unit)
         power2 =self.get_unit_power(order_unit)
         if power2:
           order_type= 'attack'
