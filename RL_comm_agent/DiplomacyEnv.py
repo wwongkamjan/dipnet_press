@@ -176,7 +176,7 @@ class DiplomacyEnv(gym.Env):
     print('action', action)
     agent_id = self.power_mapping[power_a]
     if self.state =='no_order': 
-      self.state == 'censoring'
+      self.state = 'censoring'
       self.cur_obs[agent_id][2:] = one_hot_order 
       self.ep_n_states.append(self.cur_obs)
       self.step(action, power_a, power_b, order)
