@@ -48,7 +48,7 @@ def interact(env, maa2c):
     dip_step = 0
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
         # env_state is dictionary
-        maa2c.env_state = self.env.reset()
+        maa2c.env_state = env.reset()
         # tranfrom from dict to arr
         maa2c.env_state = maa2c.agentdict_to_arr(maa2c.env_state)
     dip_game = env.dip_game
@@ -115,11 +115,11 @@ def interact(env, maa2c):
         maa2c.episode_done = True
         
     #tranform s,a,r from dict to arr
-    next_states = maa2c.agentdict_to_arr(ep_n_states)
-    rewards = maa2c.agentdict_to_arr(ep_rewards)
-    dones = maa2c.agentdict_to_arr(ep_dones)
-    actions = maa2c.agentdict_to_arr(ep_actions)
-    states = maa2c.agentdict_to_arr(ep_states)
+    next_states = maa2c.agentdict_to_arr(env.ep_n_states)
+    rewards = maa2c.agentdict_to_arr(env.ep_rewards)
+    dones = maa2c.agentdict_to_arr(env.ep_dones)
+    actions = maa2c.agentdict_to_arr(env.ep_actions)
+    states = maa2c.agentdict_to_arr(env.ep_states)
     
     rewards = np.array(rewards)
     for agent_id in range(maa2c.n_agents):
