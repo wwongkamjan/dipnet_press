@@ -109,6 +109,7 @@ class DiplomacyEnv(gym.Env):
     
   def one_hot_order(self, order, sender):
     order_token = get_order_tokens(order)
+    print('token: ', order_token)
     if order_token[0][0] =='A' or order_token[0][0] =='F':
       # this is message about orders
       power1 = self.get_unit_power(order_token[0])
