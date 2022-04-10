@@ -197,7 +197,7 @@ class DiplomacyEnv(gym.Env):
       self.state = 'no_order'
       self.cur_obs[agent_id][1:] = [0.0]*(len(self.cur_obs)-1)
       self.ep_n_states.append(self.cur_obs)
-     
+    print('new obs: ', self.cur_obs)
   def get_transactions(self):
     #when the dip phase is done
     return  self.ep_states, self.ep_actions, self.ep_rewards, self.ep_n_states, self.ep_dones
