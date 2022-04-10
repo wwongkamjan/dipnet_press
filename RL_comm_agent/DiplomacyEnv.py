@@ -179,13 +179,14 @@ class DiplomacyEnv(gym.Env):
       self.state = 'censoring'
       self.cur_obs[agent_id][-13:] = one_hot_order 
       self.ep_n_states.append(self.cur_obs)
+      print('new obs: ', self.cur_obs)
       self.step(action, power_a, power_b, order)
       
     elif self.state == 'censoring':
       if action[agent_id] ==0:
         self.state ='no_order'
         self.cur_obs[agent_id][2:] = [0.0]*(len(self.cur_obs)-2)
-        print(self.cur_obs)
+        print('new obs: ', self.cur_obs)
         self.ep_n_states.append(self.cur_obs)
       else:
         self.state = 'share_order'
@@ -197,7 +198,7 @@ class DiplomacyEnv(gym.Env):
       self.state = 'no_order'
       self.cur_obs[agent_id][1:] = [0.0]*(len(self.cur_obs)-1)
       self.ep_n_states.append(self.cur_obs)
-    print('new obs: ', self.cur_obs)
+    
   def get_transactions(self):
     #when the dip phase is done
     return  self.ep_states, self.ep_actions, self.ep_rewards, self.ep_n_states, self.ep_dones
