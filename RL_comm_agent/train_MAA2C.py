@@ -56,7 +56,7 @@ def interact(env, maa2c):
     dip_player = env.dip_player
     last_ep_index = 0
     while not dip_game.game.is_game_done:
-        centers = {power: len(dip_game.get_centers[power]) for power in dip_game.powers}
+        centers = {power: len(dip_game.game.get_centers[power]) for power in dip_game.powers}
         for sender in dip_game.powers:
             for recipient in dip_game.powers:
                 if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
