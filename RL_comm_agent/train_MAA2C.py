@@ -108,7 +108,7 @@ def interact(env, maa2c):
         centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
         final_r = [0.0] * maa2c.n_agents
         for power in dip_game.powers:
-            final_r[env.power_mapping[power]] = len(centers[power])
+            final_r[env.power_mapping[power]] = centers[power]
         maa2c.n_episodes += 1
         maa2c.episode_done = True
         
