@@ -21,7 +21,7 @@ EVAL_EPISODES = 10
 EVAL_INTERVAL = 2
 
 # roll out n steps
-ROLL_OUT_N_STEPS = 20
+ROLL_OUT_N_STEPS = 10
 # only remember the latest 2 ROLL_OUT_N_STEPS
 MEMORY_CAPACITY = 10*ROLL_OUT_N_STEPS
 # only use the latest 2 ROLL_OUT_N_STEPS for training A2C
@@ -107,7 +107,7 @@ def interact(env, maa2c):
         maa2c.env_state = maa2c.agentdict_to_arr(env.reset())
         centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
         final_r = [0.0] * maa2c.n_agents
-        for power in dip_game.powers():
+        for power in dip_game.powers:
             final_r[env.power_mapping[power]] = len(centers[power])
         maa2c.n_episodes += 1
         maa2c.episode_done = True
