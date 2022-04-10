@@ -192,6 +192,7 @@ class DiplomacyEnv(gym.Env):
         self.ep_n_states.append(self.cur_obs)
         self.step(action, power_a, power_b, order)
     else:
+      # if state==no sender
       self.state = 'no_order'
       self.cur_obs[agent_id][1:] = [0.0]*(len(self.cur_obs)-1)
       self.ep_n_states.append(self.cur_obs)

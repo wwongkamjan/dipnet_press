@@ -62,15 +62,15 @@ def interact(env, maa2c):
                     orders = yield dip_player.get_orders(dip_game.game, sender)
                     stance = dip_player.stance[sender][recipient] 
                     n = len(orders)
+                    env.set_power_state(sender, stance)
                     for order in orders[:min(K_ORDERS,n)]:
                         print(order)
-                        env.set_power_state(sender, stance)
                         maa2c.env_state = maa2c.agentdict_to_arr(env.cur_obs)
                         action = maa2c.exploration_action(maa2c.env_state)
                         action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                         env.step(action_dict, sender, recipient, order)
                         
-                env.reset_power_state(sender, recipient)
+                    env.reset_power_state(sender, recipient)
 
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         for power_name, power_orders in orders.items():
