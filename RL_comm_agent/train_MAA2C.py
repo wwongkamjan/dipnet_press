@@ -104,7 +104,7 @@ def interact(env, maa2c):
         dip_step +=1
         
     if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
-        maa2c.env_state = maa2c.agentdict_to_arr(env.reset())
+        
         centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
         final_r = [0.0] * maa2c.n_agents
         for power in dip_game.powers:
@@ -126,6 +126,8 @@ def interact(env, maa2c):
     maa2c.n_steps += 1
     
     maa2c.memory.push(states, actions, rewards)
+
+    maa2c.env_state = maa2c.agentdict_to_arr(env.reset())
     
 @gen.coroutine
 def main():

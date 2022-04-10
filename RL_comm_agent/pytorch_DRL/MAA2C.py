@@ -76,10 +76,7 @@ class MAA2C(Agent):
         self.training_strategy = training_strategy
         self.actor_parameter_sharing = actor_parameter_sharing
         self.critic_parameter_sharing = critic_parameter_sharing
-        # env_state is dictionary
-        self.env_state = self.env.reset()
-        # tranfrom from dict to arr
-        self.env_state = self.agentdict_to_arr(self.env_state)
+        self.env_state = self.agentdict_to_arr(self.env.reset())
 
         self.actors = [ActorNetwork(self.state_dim, self.actor_hidden_size, self.action_dim, self.actor_output_act)] * self.n_agents
         if self.training_strategy == "cocurrent":
