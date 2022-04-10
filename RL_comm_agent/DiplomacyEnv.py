@@ -185,7 +185,7 @@ class DiplomacyEnv(gym.Env):
     elif self.state == 'censoring':
       if action[agent_id] ==0:
         self.state ='no_order'
-        self.cur_obs[agent_id][2:] = [0.0]*(len(self.cur_obs)-2)
+        self.cur_obs[agent_id][2:] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         print('new obs: ', self.cur_obs)
         self.ep_n_states.append(self.cur_obs)
       else:
@@ -196,7 +196,7 @@ class DiplomacyEnv(gym.Env):
     else:
       # if state==no sender
       self.state = 'no_order'
-      self.cur_obs[agent_id][1:] = [0.0]*(len(self.cur_obs)-1)
+      self.cur_obs[agent_id][1:] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
       self.ep_n_states.append(self.cur_obs)
     
   def get_transactions(self):
