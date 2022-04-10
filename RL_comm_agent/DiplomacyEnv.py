@@ -111,11 +111,11 @@ class DiplomacyEnv(gym.Env):
     order_token = get_order_tokens(order)
     if order_token[0][0] =='A' or order_token[0][0] =='F':
       # this is message about orders
-      power1 = get_unit_power(order_token[0])
+      power1 = self.get_unit_power(order_token[0])
       if order_token[1] == 'S':
         order_type = 'support'
         order_unit = order_token[2]
-        power2 =get_unit_power(order_unit)
+        power2 =self.get_unit_power(order_unit)
         return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         
       elif order_token[1] == 'H':
@@ -125,14 +125,14 @@ class DiplomacyEnv(gym.Env):
       elif order_token[1] == 'C':
         order_type = 'convoy'
         order_unit = order_token[2]
-        power2 =get_unit_power(order_unit)
+        power2 =self.get_unit_power(order_unit)
         return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         
       else:
         #move/retreat or attack 
         #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
         order_unit = order_token[0][0]+' '+order_token[2]
-        power2 =get_unit_power(order_unit)
+        power2 =self.get_unit_power(order_unit)
         if power2:
           order_type= 'attack'
           return one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
@@ -169,7 +169,9 @@ class DiplomacyEnv(gym.Env):
     self.ep_actions.append(action)
     self.ep_states.append(self.cur_obs)
     self.ep_info.append((self.state, power_a, power_b, one_hot_order))
-
+    print('state:', self.state)
+    print('cur obs: ', self.cur_obs)
+    print('action', action)
     if self.state =='no_order': 
       self.state == 'censoring'
       self.cur_obs[agent_id][2:] = one_hot_order 
@@ -179,7 +181,7 @@ class DiplomacyEnv(gym.Env):
     elif self.state == 'censoring':
       if action[power_a] ==0:
         self.state ='no_order'
-        self.cur_obs[agent_id][2:] = [0.0]*19
+        self.cur_obs[agent_id][2:] = [0.0]*(len(self.cur_obs)-2)
         self.ep_n_states.append(self.cur_obs)
       else:
         self.state = 'share_order'
@@ -188,7 +190,7 @@ class DiplomacyEnv(gym.Env):
         self.step(action, power_a, power_b, order)
     else:
       self.state = 'no_order'
-      self.cur_obs[agent_id][1:] = [0.0]*20
+      self.cur_obs[agent_id][1:] = [0.0]*(len(self.cur_obs)-1)
       self.ep_n_states.append(self.cur_obs)
      
   def get_transactions(self):
