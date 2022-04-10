@@ -117,17 +117,17 @@ class DiplomacyEnv(gym.Env):
         order_type = 'support'
         order_unit = order_token[2]
         power2 =self.get_unit_power(order_unit)
-        return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
+        return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + self.one_hot(self.order_type_mapping[order_type],5) + self.one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         
       elif order_token[1] == 'H':
         order_type = 'hold'
-        return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*4
+        return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + self.one_hot(self.order_type_mapping[order_type],5) + [0.0]*4
         
       elif order_token[1] == 'C':
         order_type = 'convoy'
         order_unit = order_token[2]
         power2 =self.get_unit_power(order_unit)
-        return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
+        return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + self.one_hot(self.order_type_mapping[order_type],5) + self.one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         
       else:
         #move/retreat or attack 
@@ -137,10 +137,10 @@ class DiplomacyEnv(gym.Env):
         power2 =self.get_unit_power(order_unit)
         if power2:
           order_type= 'attack'
-          return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
+          return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + self.one_hot(self.order_type_mapping[order_type],5) + self.one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         else:
           order_type = 'move'
-          return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + one_hot(self.order_type_mapping[order_type],5) + [0.0]*4
+          return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + self.one_hot(self.order_type_mapping[order_type],5) + [0.0]*4
         
   def get_unit_power(self, unit):
     for power in self.dip_game.powers:
