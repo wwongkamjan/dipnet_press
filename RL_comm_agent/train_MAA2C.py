@@ -21,9 +21,9 @@ EVAL_EPISODES = 10
 EVAL_INTERVAL = 2
 
 # roll out n steps
-ROLL_OUT_N_STEPS = 100
+ROLL_OUT_N_STEPS = 20
 # only remember the latest 2 ROLL_OUT_N_STEPS
-MEMORY_CAPACITY = 2*ROLL_OUT_N_STEPS
+MEMORY_CAPACITY = 10*ROLL_OUT_N_STEPS
 # only use the latest 2 ROLL_OUT_N_STEPS for training A2C
 BATCH_SIZE = 2*ROLL_OUT_N_STEPS
 
@@ -47,14 +47,11 @@ K_ORDERS = 5
 def interact(env, maa2c):
     dip_step = 0
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
-        # env_state is dictionary
-        maa2c.env_state = env.reset()
-        # tranfrom from dict to arr
-        maa2c.env_state = maa2c.agentdict_to_arr(maa2c.env_state)
+        maa2c.env_state = maa2c.agentdict_to_arr(env.reset())
     dip_game = env.dip_game
     dip_player = env.dip_player
     last_ep_index = 0
-    while not dip_game.game.is_game_done:
+    while not dip_game.game.is_game_done and dip_step < ROLL_OUT_N_STEPS:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
             for sender in dip_game.powers:
@@ -106,11 +103,9 @@ def interact(env, maa2c):
             last_ep_index = len(env.ep_n_states) -1
         dip_step +=1
         
-    if dip_game.game.is_game_done:
-        maa2c.env_state = env.reset()
-        # tranfrom from dict to arr
-        maa2c.env_state = maa2c.agentdict_to_arr(maa2c.env_state)
-        centers = {power: len(dip_game.get_centers[power]) for power in dip_game.powers}
+    if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
+        maa2c.env_state = maa2c.agentdict_to_arr(env.reset())
+        centers = {power: len(dip_game.game.get_centers[power]) for power in dip_game.powers}
         final_r = [0.0] * maa2c.n_agents
         for power in dip_game.powers():
             final_r[env.power_mapping[power]] = len(centers[power])
