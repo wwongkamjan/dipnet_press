@@ -56,7 +56,7 @@ def interact(env, maa2c):
     dip_player = env.dip_player
     last_ep_index = 0
     while not dip_game.game.is_game_done:
-        centers = {power: len(dip_game.game.get_centers[power]) for power in dip_game.powers}
+        centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
         for sender in dip_game.powers:
             for recipient in dip_game.powers:
                 if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
@@ -86,12 +86,11 @@ def interact(env, maa2c):
             state, sender, recipient, one_hot_order = env.ep_info[i]
             #reward = self + ally supply center
             #find all allies 
-            ally_reward = 0
+            sender_reward = 0
             sender_stance =  dip_player.stance[sender]
             for power in sender_stance:
-                if sender_stance[power] > 1 and power!=sender:
-                    ally_reward += len(dip_game.get_centers[power]) - centers[power]
-            sender_reward = len(dip_game.get_centers[sender]) - centers[sender] + ally_reward
+                if sender_stance[power] > 1 or power==sender:
+                    sender_reward += len(dip_game.game.get_centers(power)) - centers[power]
             if state=='no_more_order':
                 env.ep_states[i][sender][0] = dip_player.stance[sender][recipient]
             if state=='censoring': #update stance of next states of states = share order/do not share order
