@@ -45,6 +45,7 @@ K_ORDERS = 10
 
 @gen.coroutine
 def interact(env, maa2c):
+    print('in interact')
     dip_step = 0
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
         # env_state is dictionary
