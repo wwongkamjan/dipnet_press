@@ -45,7 +45,6 @@ K_ORDERS = 10
 
 @gen.coroutine
 def interact(env, maa2c):
-    print('in interact')
     dip_step = 0
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
         # env_state is dictionary
@@ -60,7 +59,7 @@ def interact(env, maa2c):
         for sender in dip_game.powers:
             for recipient in dip_game.powers:
                 if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
-                    orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+                    orders = yield dip_player.get_orders(dip_game.game, sender)
                     stance = dip_player.stance[sender][recipient] 
                     n = len(orders)
                     for order in orders[:min(K_ORDERS,n)]:
