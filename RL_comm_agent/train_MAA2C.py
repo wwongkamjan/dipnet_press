@@ -63,6 +63,7 @@ def interact(env, maa2c):
                     stance = dip_player.stance[sender][recipient] 
                     n = len(orders)
                     for order in orders[:min(K_ORDERS,n)]:
+                        print(order)
                         env.set_power_state(sender, stance)
                         maa2c.env_state = maa2c.agentdict_to_arr(env.cur_obs)
                         action = maa2c.exploration_action(maa2c.env_state)
