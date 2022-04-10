@@ -109,7 +109,7 @@ class DiplomacyEnv(gym.Env):
     
   def one_hot_order(self, order, sender):
     order_token = get_order_tokens(order)
-    print('token: ', order_token)
+    # print('token: ', order_token)
     if order_token[0][0] =='A' or order_token[0][0] =='F':
       # this is message about orders
       power1 = self.get_unit_power(order_token[0])
@@ -133,7 +133,7 @@ class DiplomacyEnv(gym.Env):
         #move/retreat or attack 
         #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
         order_unit = order_token[0][0] + order_token[1][1:]
-        print(order_unit)
+        # print(order_unit)
         power2 =self.get_unit_power(order_unit)
         if power2:
           order_type= 'attack'
