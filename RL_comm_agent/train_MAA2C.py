@@ -43,6 +43,7 @@ RANDOM_SEED = 2017
 N_AGENTS = 7
 K_ORDERS = 10
 
+@gen.coroutine
 def interact(env, maa2c):
     dip_step = 0
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
