@@ -182,7 +182,7 @@ class DiplomacyEnv(gym.Env):
       self.step(action, power_a, power_b, order)
       
     elif self.state == 'censoring':
-      if action[power_a] ==0:
+      if action[agent_id] ==0:
         self.state ='no_order'
         self.cur_obs[agent_id][2:] = [0.0]*(len(self.cur_obs)-2)
         self.ep_n_states.append(self.cur_obs)
