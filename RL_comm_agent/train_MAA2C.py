@@ -54,7 +54,6 @@ def interact(env, maa2c):
         maa2c.env_state = maa2c.agentdict_to_arr(maa2c.env_state)
     dip_game = env.dip_game
     dip_player = env.dip_player
-    dip_player.init_communication(dip_game.game.powers)
     last_ep_index = 0
     while not dip_game.game.is_game_done:
         centers = {power: len(dip_game.get_centers[power]) for power in dip_game.powers}
