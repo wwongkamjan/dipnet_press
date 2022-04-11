@@ -131,7 +131,7 @@ def interact(env, maa2c):
 
     maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
     print('done EP')
-@gen.coroutine
+
 def main():
     env = DiplomacyEnv()
 #     env.seed(RANDOM_SEED)
