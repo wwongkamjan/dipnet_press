@@ -42,6 +42,7 @@ EPSILON_DECAY = 500
 RANDOM_SEED = 2017
 N_AGENTS = 7
 K_ORDERS = 5
+AGENT = None
 
 @gen.coroutine
 def interact():
@@ -80,9 +81,9 @@ def interact():
                             stance = dip_player.stance[sender][recipient] 
                             n = len(orders)
                             env.set_power_state(sender, stance)
-                            print('sender: ', sender + ' recipient: ', recipient)
+                            # print('sender: ', sender + ' recipient: ', recipient)
                             for order in orders[:min(K_ORDERS,n)]:
-                                print('consider: ', order)
+                                # print('consider: ', order)
                                 maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                 action = maa2c.exploration_action(maa2c.env_state)
                                 action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
@@ -95,7 +96,7 @@ def interact():
                 dip_game.game.set_orders(power_name, power_orders)
 
             dip_game.game_process()
-            print('game process')
+            # print('game process')
             # update next state list and get reward from result of the phase 
             for power in dip_game.powers:
                 dip_player.update_stance(dip_game.game, power)
@@ -149,14 +150,27 @@ def interact():
         maa2c.memory.push(states, actions, rewards)
 
         maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
+        print('Episode %d is done' % (maa2c.n_episodes))
+    AGENT = maa2c
+    print('Done collecting experience')
     stop_io_loop()
 
     
 # @gen.coroutine
 def main():
     start_io_loop(interact)
-    # episodes =[]
-    # eval_rewards =[]
+    episodes =[]
+    eval_rewards =[]
+    while AGENT.n_episodes < MAX_EPISODES:
+        AGENT.train()
+        if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
+            rewards, _ = start_io_loop(evaluation())
+            rewards_mu, rewards_std = ma_agg_double_list(rewards)
+            for agent_id in range (N_AGENTS):
+                print("Episode %d, Agent %d, Average Reward %.2f" % (AGENT.n_episodes+1, agent_id, rewards_mu[agent_id]))
+            episodes.append(AGENT.n_episodes+1)
+            eval_rewards.append(rewards_mu)
+
     # while maa2c.n_episodes < MAX_EPISODES:
     #     interact(env, maa2c)
     #     if maa2c.n_episodes >= EPISODES_BEFORE_TRAIN:
