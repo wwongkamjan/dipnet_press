@@ -139,8 +139,10 @@ def interact():
         # dones = arr_dict_to_arr(env.ep_dones, N_AGENTS)
         actions = arr_dict_to_arr(env.ep_actions, N_AGENTS)
         states = arr_dict_to_arr(env.ep_states, N_AGENTS)
-        
-        # print('check rewards: ', rewards[0])
+
+        print('check states: ', states[:10])
+        print('check actions: ', actions[:10])
+        print('check rewards: ', rewards[:10])
         rewards = np.array(rewards)
         for agent_id in range(maa2c.n_agents):
             rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
