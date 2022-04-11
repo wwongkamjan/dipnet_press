@@ -154,7 +154,7 @@ def interact():
     
 # @gen.coroutine
 def main():
-    start_io_loop(interact())
+    start_io_loop(interact)
     # episodes =[]
     # eval_rewards =[]
     # while maa2c.n_episodes < MAX_EPISODES:
