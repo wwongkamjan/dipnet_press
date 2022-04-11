@@ -130,7 +130,7 @@ def interact(env, maa2c):
     maa2c.memory.push(states, actions, rewards)
 
     maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
-    
+    print('done EP')
 @gen.coroutine
 def main():
     env = DiplomacyEnv()
@@ -157,7 +157,6 @@ def main():
     eval_rewards =[]
     while maa2c.n_episodes < EPISODES_BEFORE_TRAIN:
         interact(env, maa2c)
-        print('DONE EP: ', maa2c.n_episodes)
         # if maa2c.n_episodes >= :
         #     maa2c.train()
         # if maa2c.episode_done and ((maa2c.n_episodes+1)%EVAL_INTERVAL == 0):
