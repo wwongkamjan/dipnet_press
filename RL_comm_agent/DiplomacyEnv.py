@@ -173,7 +173,7 @@ class DiplomacyEnv(gym.Env):
     self.ep_states.append(copy.copy(self.cur_obs))
     self.ep_info.append((self.state, power_a, power_b, one_hot_order))
     # print('state:', self.state)
-    # print('cur obs: ', self.cur_obs)
+    print('cur obs: ', self.cur_obs)
     # print('action', action)
     agent_id = self.power_mapping[power_a]
     if self.state =='no_order': 

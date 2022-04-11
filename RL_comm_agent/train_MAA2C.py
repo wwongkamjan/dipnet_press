@@ -116,9 +116,9 @@ def interact():
                     if state=='censoring': #update stance of next states of states = share order/do not share order
                         env.ep_n_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                         if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
-                            env.ep_rewards.append({id: sender_reward if id ==env.power_mapping[sender] else 0 for id in env.agent_id})   
+                            env.ep_rewards.append({id: sender_reward*1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
                         else:
-                            env.ep_rewards.append({id: 0 for id in env.agent_id})   
+                            env.ep_rewards.append({id: 0. for id in env.agent_id})   
                         
                 last_ep_index = len(env.ep_n_states) -1
             dip_step +=1
