@@ -1,5 +1,5 @@
 from pytorch_DRL.MAA2C import MAA2C
-from pytorch_DRL.common.utils import ma_agg_double_list, dict_to_arr, arr_dict_to_arr
+from pytorch_DRL.common.utils import ma_agg_double_list, dict_to_arr, arr_dict_to_arr, index_to_one_hot
 from tornado import gen
 
 
@@ -132,7 +132,7 @@ def interact():
             maa2c.n_episodes += 1
             maa2c.episode_done = True
 
-        print('check dict of states: ', env.ep_states[-10:])    
+        # print('check dict of states: ', env.ep_states[-10:])    
         #tranform s,a,r from dict to arr
         #wrong -> env.* = array of dict
         # next_states = arr_dict_to_arr(env.ep_n_states, N_AGENTS)
@@ -142,7 +142,10 @@ def interact():
         states = arr_dict_to_arr(env.ep_states, N_AGENTS)
 
         # print('check states: ', states[-10:])
-        # print('check actions: ', actions[-10:])
+        
+        for action in actions:
+            action = [index_to_one_hot(a, action_dim) for a in action]
+        print('check actions: ', actions[-10:])
         rewards = np.array(rewards)
         for agent_id in range(maa2c.n_agents):
             rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
