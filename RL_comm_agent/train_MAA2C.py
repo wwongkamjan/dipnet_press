@@ -150,7 +150,7 @@ def interact():
 
         maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
     stop_io_loop()
-    return env, maa2c
+
     
 # @gen.coroutine
 def main():
