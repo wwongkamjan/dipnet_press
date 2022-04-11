@@ -82,7 +82,7 @@ class DiplomacyEnv(gym.Env):
     self.state = 'no_order'
     
   def reset_cur_obs(self):
-    return {agent_id: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
+    return {agent_id: np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for agent_id in self.agent_id}
     
   def reset_power_state(self, power_a, power_b):
     if self.dip_game.game.is_game_done:
@@ -179,7 +179,7 @@ class DiplomacyEnv(gym.Env):
     agent_id = self.power_mapping[power_a]
     if self.state =='no_order': 
       self.state = 'censoring'
-      self.cur_obs[agent_id][-13:] = one_hot_order 
+      self.cur_obs[agent_id,-13:] = one_hot_order 
       self.ep_n_states.append(self.cur_obs)
       # print('new obs: ', self.cur_obs)
       self.step(action, power_a, power_b, order)
@@ -187,18 +187,18 @@ class DiplomacyEnv(gym.Env):
     elif self.state == 'censoring':
       if action[agent_id] ==0:
         self.state ='no_order'
-        self.cur_obs[agent_id][2:] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.cur_obs[agent_id,2:] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         # print('new obs: ', self.cur_obs)
         self.ep_n_states.append(self.cur_obs)
       else:
         self.state = 'share_order'
-        self.cur_obs[agent_id][1] = 1.0
+        self.cur_obs[agent_id,1] = 1.0
         self.ep_n_states.append(self.cur_obs)
         self.step(action, power_a, power_b, order)
     else:
       # if state==no sender
       self.state = 'no_order'
-      self.cur_obs[agent_id][1:] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+      self.cur_obs[agent_id,1:] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
       self.ep_n_states.append(self.cur_obs)
     
   def get_transactions(self):
