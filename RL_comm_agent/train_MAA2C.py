@@ -144,7 +144,9 @@ def interact():
         # print('check states: ', states[-10:])
         
         for action in actions:
+            print(action)
             action = [index_to_one_hot(a, np.int(2)) for a in action]
+            
         print('check actions: ', actions[-10:])
         rewards = np.array(rewards)
         for agent_id in range(maa2c.n_agents):
