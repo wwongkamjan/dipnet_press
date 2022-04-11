@@ -102,7 +102,7 @@ def interact():
                 dip_player.update_stance(dip_game.game, power)
 
             if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
-                for i in range (last_ep_index, len(env.ep_n_states)):
+                for i in range (last_ep_index, len(env.ep_states)):
                     state, sender, recipient, one_hot_order = env.ep_info[i]
                     #reward = self + ally supply center
                     #find all allies 
@@ -114,7 +114,7 @@ def interact():
                     if state=='no_more_order':
                         env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                     if state=='censoring': #update stance of next states of states = share order/do not share order
-                        env.ep_n_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
+                        # env.ep_n_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                         if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
                             env.ep_rewards.append({id: sender_reward*1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
                         else:
@@ -131,7 +131,8 @@ def interact():
                 final_r[env.power_mapping[power]] = centers[power]
             maa2c.n_episodes += 1
             maa2c.episode_done = True
-            
+
+        print('check dict of states: ', env.ep_states[-10:])    
         #tranform s,a,r from dict to arr
         #wrong -> env.* = array of dict
         # next_states = arr_dict_to_arr(env.ep_n_states, N_AGENTS)
