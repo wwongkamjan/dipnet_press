@@ -173,6 +173,7 @@ class DiplomacyEnv(gym.Env):
     self.ep_states.append(self.cur_obs)
     self.ep_info.append((self.state, power_a, power_b, one_hot_order))
     # print('state:', self.state)
+    print('check second last inserted obs: ', self.ep_states[-2])
     print('last inserted obs: ', self.ep_states[-1])
     # print('action', action)
     agent_id = self.power_mapping[power_a]
