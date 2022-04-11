@@ -140,7 +140,7 @@ def interact():
         actions = arr_dict_to_arr(env.ep_actions, N_AGENTS)
         states = arr_dict_to_arr(env.ep_states, N_AGENTS)
         
-        print('check rewards: ', rewards[0])
+        # print('check rewards: ', rewards[0])
         rewards = np.array(rewards)
         for agent_id in range(maa2c.n_agents):
             rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
@@ -151,6 +151,7 @@ def interact():
 
         maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
         print('Episode %d is done' % (maa2c.n_episodes))
+    global AGENT
     AGENT = maa2c
     print('Done collecting experience')
     stop_io_loop()
@@ -162,6 +163,7 @@ def main():
     episodes =[]
     eval_rewards =[]
     while AGENT.n_episodes < MAX_EPISODES:
+        print('train')
         AGENT.train()
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             rewards, _ = start_io_loop(evaluation())
