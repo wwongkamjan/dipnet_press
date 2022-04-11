@@ -155,17 +155,18 @@ def main():
 
     episodes =[]
     eval_rewards =[]
-    while maa2c.n_episodes < MAX_EPISODES:
+    while maa2c.n_episodes < EPISODES_BEFORE_TRAIN:
         interact(env, maa2c)
-        if maa2c.n_episodes >= EPISODES_BEFORE_TRAIN:
-            maa2c.train()
-        if maa2c.episode_done and ((maa2c.n_episodes+1)%EVAL_INTERVAL == 0):
-            rewards, _ = maa2c.evaluation(env_eval, EVAL_EPISODES)
-            rewards_mu, rewards_std = ma_agg_double_list(rewards)
-            for agent_id in range (N_AGENTS):
-                print("Episode %d, Agent %d, Average Reward %.2f" % (maa2c.n_episodes+1, agent_id, rewards_mu[agent_id]))
-            episodes.append(maa2c.n_episodes+1)
-            eval_rewards.append(rewards_mu)
+        print('DONE EP: ', maa2c.n_episodes)
+        # if maa2c.n_episodes >= :
+        #     maa2c.train()
+        # if maa2c.episode_done and ((maa2c.n_episodes+1)%EVAL_INTERVAL == 0):
+        #     rewards, _ = maa2c.evaluation(env_eval, EVAL_EPISODES)
+        #     rewards_mu, rewards_std = ma_agg_double_list(rewards)
+        #     for agent_id in range (N_AGENTS):
+        #         print("Episode %d, Agent %d, Average Reward %.2f" % (maa2c.n_episodes+1, agent_id, rewards_mu[agent_id]))
+        #     episodes.append(maa2c.n_episodes+1)
+        #     eval_rewards.append(rewards_mu)
   
     stop_io_loop()
         
