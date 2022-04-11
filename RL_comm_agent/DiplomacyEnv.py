@@ -82,7 +82,7 @@ class DiplomacyEnv(gym.Env):
     self.state = 'no_order'
     
   def reset_cur_obs(self):
-    return {agent_id: np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for agent_id in self.agent_id}
+    return {agent_id: np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for agent_id in self.agent_id}
     
   def reset_power_state(self, power_a, power_b):
     if self.dip_game.game.is_game_done:
