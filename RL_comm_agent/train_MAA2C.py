@@ -142,11 +142,11 @@ def interact():
 
         print('check states: ', states[-10:])
         print('check actions: ', actions[-10:])
-        print('check rewards: ', rewards[-10:])
         rewards = np.array(rewards)
         for agent_id in range(maa2c.n_agents):
             rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
         rewards = rewards.tolist()
+        print('check rewards: ', rewards[-10:])
         maa2c.n_steps += 1
         
         maa2c.memory.push(states, actions, rewards)

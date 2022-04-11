@@ -11,6 +11,7 @@ from bot_communication import Diplomacy_Press, Diplomacy_Press_Player
 from pytorch_DRL.MAA2C import MAA2C
 from pytorch_DRL.common.utils import ma_agg_double_list
 import sys
+import copy
 
 # MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
 
@@ -74,7 +75,7 @@ class DiplomacyEnv(gym.Env):
     self.ep_dones.append(done) 
     action = {agent_id: 0 for agent_id in self.agent_id}
     self.ep_actions.append(action)
-    self.ep_states.append(self.cur_obs)
+    self.ep_states.append(copy.copy(self.cur_obs))
     self.ep_info.append(('no_sender', power_a, None, None))
     self.cur_obs[self.power_mapping[power_a]][0] = stance_of_power_b
     self.ep_n_states.append(self.cur_obs)
@@ -92,7 +93,7 @@ class DiplomacyEnv(gym.Env):
     self.ep_dones.append(done) 
     action = {agent_id: 0 for agent_id in self.agent_id}
     self.ep_actions.append(action)
-    self.ep_states.append(self.cur_obs)
+    self.ep_states.append(copy.copy(self.cur_obs))
     self.ep_info.append(('no_more_order', power_a, power_b, None))
     self.cur_obs = self.reset_cur_obs() 
     self.ep_n_states.append(self.cur_obs)
@@ -169,7 +170,7 @@ class DiplomacyEnv(gym.Env):
     one_hot_order = self.one_hot_order(order, power_a)  
     self.ep_dones.append(done) 
     self.ep_actions.append(action)
-    self.ep_states.append(self.cur_obs)
+    self.ep_states.append(copy.copy(self.cur_obs))
     self.ep_info.append((self.state, power_a, power_b, one_hot_order))
     # print('state:', self.state)
     # print('cur obs: ', self.cur_obs)
