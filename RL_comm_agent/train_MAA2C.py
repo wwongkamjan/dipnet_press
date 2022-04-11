@@ -114,11 +114,11 @@ def interact(env, maa2c):
         
     #tranform s,a,r from dict to arr
     #wrong -> env.* = array of dict
-    next_states = arr_dict_to_arr(env.ep_n_states)
-    rewards = arr_dict_to_arr(env.ep_rewards)
-    dones = arr_dict_to_arr(env.ep_dones)
-    actions = arr_dict_to_arr(env.ep_actions)
-    states = arr_dict_to_arr(env.ep_states)
+    # next_states = arr_dict_to_arr(env.ep_n_states, N_AGENTS)
+    rewards = arr_dict_to_arr(env.ep_rewards, N_AGENTS)
+    # dones = arr_dict_to_arr(env.ep_dones, N_AGENTS)
+    actions = arr_dict_to_arr(env.ep_actions, N_AGENTS)
+    states = arr_dict_to_arr(env.ep_states, N_AGENTS)
     
     print('check rewards: ', rewards[0])
     rewards = np.array(rewards)
