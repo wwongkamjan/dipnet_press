@@ -145,7 +145,10 @@ def interact():
         
         for action in actions:
             print(action)
-            action = [index_to_one_hot(a, np.int(2)) for a in action]
+            new_arr = []
+            new_arr = [index_to_one_hot(a, np.int(2)) for a in action]
+            print(new_arr)
+            action = new_arr
             
         print('check actions: ', actions[-10:])
         rewards = np.array(rewards)
