@@ -7,7 +7,8 @@ import numpy as np
 
 from pytorch_DRL.common.Agent import Agent
 from pytorch_DRL.common.Model import ActorNetwork, CriticNetwork
-from pytorch_DRL.common.utils import entropy, index_to_one_hot, to_tensor_var
+from pytorch_DRL.common.utils import entropy, index_to_one_hot, to_tensor_var, dict_to_arr
+
 
 
 class MAA2C(Agent):
@@ -76,7 +77,7 @@ class MAA2C(Agent):
         self.training_strategy = training_strategy
         self.actor_parameter_sharing = actor_parameter_sharing
         self.critic_parameter_sharing = critic_parameter_sharing
-        self.env_state = self.agentdict_to_arr(self.env.reset())
+        self.env_state = dict_to_arr(self.env.reset(), self.n_agents)
 
         self.actors = [ActorNetwork(self.state_dim, self.actor_hidden_size, self.action_dim, self.actor_output_act)] * self.n_agents
         if self.training_strategy == "cocurrent":
@@ -114,7 +115,7 @@ class MAA2C(Agent):
             # env_state is dictionary
             self.env_state = self.env.reset()
             # tranfrom from dict to arr
-            self.env_state = self.agentdict_to_arr(self.env_state)
+            self.env_state = dict_to_arr(self.env.reset(), self.n_agents)
         states = []
         actions = []
         rewards = []
@@ -128,9 +129,9 @@ class MAA2C(Agent):
 
             next_state, reward, done, _ = self.env.step(action_dict)
             # next_state, reward, done return as a dictionary     
-            next_state = self.agentdict_to_arr(next_state)
-            reward = self.agentdict_to_arr(reward)
-            done =self.agentdict_to_arr(done)
+            next_state = dict_to_arr(self.env.reset(), self.n_agents)
+            reward = dict_to_arr(self.env.reset(), self.n_agents)
+            done =dict_to_arr(self.env.reset(), self.n_agents)
             actions.append([index_to_one_hot(a, self.action_dim) for a in action])
             rewards.append(reward)
             done = done[0]
@@ -138,7 +139,7 @@ class MAA2C(Agent):
             self.env_state = next_state
             if done:
                 self.env_state = self.env.reset()
-                self.env_state = self.agentdict_to_arr(self.env_state)
+                self.env_state = dict_to_arr(self.env.reset(), self.n_agents)
                 break
         # discount reward
         if done:
