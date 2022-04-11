@@ -64,3 +64,15 @@ def ma_agg_double_list(l):
     s_mu = np.mean(np.array(s), axis=0)
     s_std = np.std(np.array(s), axis=0)
     return s_mu, s_std
+
+def arr_dict_to_arr(arr, n):
+    new_arr = []
+    while len(arr):
+        new_arr.append(dict_to_arr(arr.pop(0), n))
+    return new_arr
+
+def dict_to_arr(dct, n):
+    arr = []
+    for id in range(n):
+        arr.append(dct[id])
+    return arr

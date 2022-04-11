@@ -173,7 +173,7 @@ class Diplomacy_Press_Player:
   def init_communication(self, power_list):
     self.bot_type={}
     for power in power_list:
-      self.stance[power] = {power: 0 for power in power_list}
+      self.stance[power] = {power: 0.0 for power in power_list}
       self.bot_type[power]= self.bot_temp.pop()
       print('power: '+power+' as ', self.bot_type[power])
       
@@ -185,10 +185,10 @@ class Diplomacy_Press_Player:
      previous_order = game.ordered_units[other_power]
      for order in previous_order:
       if self.get_order_type(game, order, other_power,power_name) =='attack':
-       self.stance[power_name][other_power] = -10
+       self.stance[power_name][other_power] = -10.0
       else:
        if self.get_order_type(game, order, other_power,power_name) =='support' and not self.stance[power_name][other_power] <-1:
-        self.stance[power_name][other_power] = 10
+        self.stance[power_name][other_power] = 10.0
          
   @gen.coroutine 
   def get_orders(self, game , power_name):

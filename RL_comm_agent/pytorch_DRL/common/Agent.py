@@ -192,8 +192,3 @@ class Agent(object):
             infos.append(infos_i)
         return rewards, infos
 
-    def agentdict_to_arr(self, dct):
-        arr = []
-        for agent_id in range(self.n_agents):
-            arr.append(dct[agent_id])
-        return arr

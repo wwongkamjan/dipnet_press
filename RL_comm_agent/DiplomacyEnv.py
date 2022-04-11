@@ -149,7 +149,7 @@ class DiplomacyEnv(gym.Env):
       
   def one_hot(self, id, n):
     one_hot_list = [0.0 for i in range(n)]
-    one_hot_list[id] = 1.0
+    one_hot_list[id] = 1.
     return one_hot_list
     
   def step(self, action, power_a, power_b, order): 

@@ -1,5 +1,5 @@
 from pytorch_DRL.MAA2C import MAA2C
-from pytorch_DRL.common.utils import ma_agg_double_list
+from pytorch_DRL.common.utils import ma_agg_double_list, dict_to_arr, arr_dict_to_arr
 from tornado import gen
 
 
@@ -47,7 +47,7 @@ K_ORDERS = 5
 def interact(env, maa2c):
     dip_step = 0
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
-        maa2c.env_state = maa2c.agentdict_to_arr(env.reset())
+        maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
     dip_game = env.dip_game
     dip_player = env.dip_player
     last_ep_index = 0
@@ -64,7 +64,7 @@ def interact(env, maa2c):
                         print('sender: ', sender + ' recipient: ', recipient)
                         for order in orders[:min(K_ORDERS,n)]:
                             print('consider: ', order)
-                            maa2c.env_state = maa2c.agentdict_to_arr(env.cur_obs)
+                            maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                             action = maa2c.exploration_action(maa2c.env_state)
                             action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                             env.step(action_dict, sender, recipient, order)
@@ -113,12 +113,14 @@ def interact(env, maa2c):
         maa2c.episode_done = True
         
     #tranform s,a,r from dict to arr
-    next_states = maa2c.agentdict_to_arr(env.ep_n_states)
-    rewards = maa2c.agentdict_to_arr(env.ep_rewards)
-    dones = maa2c.agentdict_to_arr(env.ep_dones)
-    actions = maa2c.agentdict_to_arr(env.ep_actions)
-    states = maa2c.agentdict_to_arr(env.ep_states)
+    #wrong -> env.* = array of dict
+    next_states = arr_dict_to_arr(env.ep_n_states)
+    rewards = arr_dict_to_arr(env.ep_rewards)
+    dones = arr_dict_to_arr(env.ep_dones)
+    actions = arr_dict_to_arr(env.ep_actions)
+    states = arr_dict_to_arr(env.ep_states)
     
+    print('check rewards: ', rewards[0])
     rewards = np.array(rewards)
     for agent_id in range(maa2c.n_agents):
         rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
@@ -127,7 +129,7 @@ def interact(env, maa2c):
     
     maa2c.memory.push(states, actions, rewards)
 
-    maa2c.env_state = maa2c.agentdict_to_arr(env.reset())
+    maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
     
 @gen.coroutine
 def main():
