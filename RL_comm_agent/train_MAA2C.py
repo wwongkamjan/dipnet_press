@@ -73,7 +73,7 @@ def interact():
         print('this msg print once')     
     else:
         maa2c = AGENT   
-        maa2c.env_state = dict_to_arr(env.reset())
+        maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
     dip_step = 0
 
     # if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
