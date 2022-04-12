@@ -209,6 +209,7 @@ def evaluation():
                                 
                             env.reset_power_state(sender, recipient) 
                             message = [' ( FCT ( '+order+' ) )' for order in share_order_list]
+                            message = ''.join(message)
                             message = 'AND' + message
                             msg = Message(sender=sender,
                                         recipient=recipient,
