@@ -70,7 +70,9 @@ def interact():
                 epsilon_decay=EPSILON_DECAY, max_grad_norm=MAX_GRAD_NORM,
                 episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
                 critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)
-        print('this msg print once')        
+        print('this msg print once')     
+    else:
+        maa2c = AGENT   
     dip_step = 0
 
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
@@ -167,7 +169,6 @@ def interact():
 
     maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
 
-    
     AGENT = maa2c
     print('Done collecting experience')
     stop_io_loop()
