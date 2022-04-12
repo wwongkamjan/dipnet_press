@@ -292,7 +292,7 @@ def main():
     
     episodes =[]
     eval_rewards =[]
-    while AGENT.n_episodes < MAX_EPISODES:
+    while AGENT==None or AGENT.n_episodes < MAX_EPISODES:
         start_io_loop(interact)
         if AGENT.n_episodes >= EPISODES_BEFORE_TRAIN:
             print('train')
