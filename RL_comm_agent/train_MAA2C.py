@@ -250,8 +250,8 @@ def evaluation():
             
         if dip_game.game.is_game_done:
             
-            centers_id = {id: len(dip_game.game.get_centers(power)) for id, power in env.power_mapping}
-            env.ep_rewards.append({id: centers_id[id]*1.0 for id in env.agent_id})   
+            centers_id = {id: len(dip_game.game.get_centers(power)) for id, power in env.power_mapping.items()}
+            env.ep_rewards.append({id: centers_id[id]*1. for id in env.agent_id})   
 
         rewards.append(arr_dict_to_arr(env.ep_rewards, N_AGENTS))
         print('evaluation result: ' )
