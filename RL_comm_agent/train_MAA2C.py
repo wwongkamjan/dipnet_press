@@ -1,7 +1,8 @@
 from pytorch_DRL.MAA2C import MAA2C
 from pytorch_DRL.common.utils import ma_agg_double_list, dict_to_arr, arr_dict_to_arr, index_to_one_hot
 from tornado import gen
-
+import ujson as json
+import csv
 
 import sys
 import os
@@ -13,15 +14,17 @@ import random
 
 # MAA2C: https://github.com/ChenglongChen/pytorch-DRL/
 from DiplomacyEnv import DiplomacyEnv
+from diplomacy.engine.message import Message
+from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 
-MAX_EPISODES = 10
+MAX_EPISODES = 20
 EPISODES_BEFORE_TRAIN = 5
-EVAL_EPISODES = 10
-EVAL_INTERVAL = 2
+EVAL_EPISODES = 1
+EVAL_INTERVAL = 5
 
 # roll out n steps
-ROLL_OUT_N_STEPS = 10
+ROLL_OUT_N_STEPS = 20
 # only remember the latest 2 ROLL_OUT_N_STEPS
 MEMORY_CAPACITY = 10*ROLL_OUT_N_STEPS
 # only use the latest 2 ROLL_OUT_N_STEPS for training A2C
@@ -120,7 +123,7 @@ def interact():
                         else:
                             env.ep_rewards.append({id: 0. for id in env.agent_id})   
                         
-                last_ep_index = len(env.ep_n_states) -1
+                last_ep_index = len(env.ep_states)
             dip_step +=1
             
         if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
@@ -148,7 +151,7 @@ def interact():
             new_arr = [index_to_one_hot(a, action_dim) for a in actions[i]]
             actions[i] = new_arr
             
-        print('check actions: ', actions[-10:])
+        # print('check actions: ', actions[-10:])
         rewards = np.array(rewards)
         for agent_id in range(maa2c.n_agents):
             rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
@@ -165,7 +168,125 @@ def interact():
     print('Done collecting experience')
     stop_io_loop()
 
+
+@gen.coroutine   
+def evaluation():
+    hist_name = 'comm_agent'
+    env = DiplomacyEnv()
+    rewards = []
+    maa2c = AGENT
+    for i in range(EVAL_EPISODES):
+        maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
+        dip_game = env.dip_game
+        dip_player = env.dip_player
+        last_ep_index = 0
+        
+        while not dip_game.game.is_game_done:
+            if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
+                centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
+                for sender in dip_game.powers:
+                    for recipient in dip_game.powers:
+                        share_order_list=[]
+                        if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
+                            orders = yield dip_player.get_orders(dip_game.game, sender)
+                            stance = dip_player.stance[sender][recipient] 
+                            n = len(orders)
+                            env.set_power_state(sender, stance)
+                            # print('sender: ', sender + ' recipient: ', recipient)
+                            for order in orders[:min(K_ORDERS,n)]:
+                                # print('consider: ', order)
+                                maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
+                                action = maa2c.exploration_action(maa2c.env_state)
+                                action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                env.step(action_dict, sender, recipient, order)
+
+                                # if action=share, we add it to the list
+                                if action_dict[env.power_mapping[sender]]==1:
+                                    share_order_list.append(order)
+                                
+                            env.reset_power_state(sender, recipient) 
+                            message = [' ( FCT ( '+order+' ) )' for order in share_order_list]
+                            message = 'AND' + message
+                            msg = Message(sender=sender,
+                                        recipient=recipient,
+                                        message=message,
+                                        phase=dip_game.game.get_current_phase())
+                            dip_game.new_message(msg)
+              
+            orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+            for power_name, power_orders in orders.items():
+                dip_game.game.set_orders(power_name, power_orders)
+
+            dip_game.game_process()
+            # print('game process')
+            # update next state list and get reward from result of the phase 
+            for power in dip_game.powers:
+                dip_player.update_stance(dip_game.game, power)
+
+            if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
+                for i in range (last_ep_index, len(env.ep_states)):
+                    state, sender, recipient, one_hot_order = env.ep_info[i]
+                    #reward = self + ally supply center
+                    #find all allies 
+                    sender_reward = 0
+                    sender_stance =  dip_player.stance[sender]
+                    for power in sender_stance:
+                        if sender_stance[power] > 1 or power==sender:
+                            sender_reward += len(dip_game.game.get_centers(power)) - centers[power]
+                    if state=='no_more_order':
+                        env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
+                    if state=='censoring': #update stance of next states of states = share order/do not share order
+                       
+                        if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
+                            env.ep_rewards.append({id: sender_reward*1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
+                        else:
+                            env.ep_rewards.append({id: 0. for id in env.agent_id})   
+                        
+                last_ep_index = len(env.ep_states)
+            
+        if dip_game.game.is_game_done:
+            
+            centers_id = {id: len(dip_game.game.get_centers(power)) for id, power in env.power_mapping}
+            env.ep_rewards.append({id: centers_id[id]*1.0 for id in env.agent_id})   
+
+        rewards.append(arr_dict_to_arr(env.ep_rewards, N_AGENTS))
+        print('evaluation result: ' )
+        for id, power in env.power_mapping:
+            print('%s: %d centers' %(power, centers_id[id]))
+        
+        save_to_json(hist_name, maa2c.n_episodes, i, dip_game)
     
+    stop_io_loop()
+    return rewards, None
+
+def save_to_json(name, ep, eval_i, game):
+    game_history_name = name + '_eval_episode_' +ep+ '_'+eval_i
+    exp = game_history_name
+    game_history_name += '.json'
+    with open(game_history_name, 'w') as file:
+        file.write(json.dumps(to_saved_game_format(game.game)))
+    
+    # Opening JSON file and loading the data
+    # into the variable data
+    with open(exp + '.json') as json_file:
+        data = json.load(json_file)
+    game_data = data['phases']
+    data_file = open(exp + '.csv', 'w')
+    
+    csv_writer = csv.writer(data_file)
+    count = 0
+    for phase in game_data:
+        if count == 0:
+            # Writing headers of CSV file
+            header = phase.keys()
+            csv_writer.writerow(header)
+            count += 1
+
+        # Writing data of CSV file
+        csv_writer.writerow(phase.values())
+
+    data_file.close()
+        
 # @gen.coroutine
 def main():
     start_io_loop(interact)
@@ -175,26 +296,14 @@ def main():
         print('train')
         AGENT.train()
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
+            print('evaluate')
             rewards, _ = start_io_loop(evaluation())
             rewards_mu, rewards_std = ma_agg_double_list(rewards)
             for agent_id in range (N_AGENTS):
                 print("Episode %d, Agent %d, Average Reward %.2f" % (AGENT.n_episodes+1, agent_id, rewards_mu[agent_id]))
             episodes.append(AGENT.n_episodes+1)
             eval_rewards.append(rewards_mu)
-
-    # while maa2c.n_episodes < MAX_EPISODES:
-    #     interact(env, maa2c)
-    #     if maa2c.n_episodes >= EPISODES_BEFORE_TRAIN:
-    #         maa2c.train()
-    #     if maa2c.episode_done and ((maa2c.n_episodes+1)%EVAL_INTERVAL == 0):
-    #         rewards, _ = maa2c.evaluation(env_eval, EVAL_EPISODES)
-    #         rewards_mu, rewards_std = ma_agg_double_list(rewards)
-    #         for agent_id in range (N_AGENTS):
-    #             print("Episode %d, Agent %d, Average Reward %.2f" % (maa2c.n_episodes+1, agent_id, rewards_mu[agent_id]))
-    #         episodes.append(maa2c.n_episodes+1)
-    #         eval_rewards.append(rewards_mu)
   
-    
         
 if __name__ == '__main__':
     main()
