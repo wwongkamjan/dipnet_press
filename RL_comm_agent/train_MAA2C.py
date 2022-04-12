@@ -303,7 +303,7 @@ def main():
             AGENT.train()
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             print('evaluate')
-            rewards, _ = start_io_loop(evaluation())
+            rewards, _ = start_io_loop(evaluation)
             rewards_mu, rewards_std = ma_agg_double_list(rewards)
             for agent_id in range (N_AGENTS):
                 print("Episode %d, Agent %d, Average Reward %.2f" % (AGENT.n_episodes+1, agent_id, rewards_mu[agent_id]))
