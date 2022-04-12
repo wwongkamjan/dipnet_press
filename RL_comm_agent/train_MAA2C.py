@@ -46,6 +46,7 @@ RANDOM_SEED = 2017
 N_AGENTS = 7
 K_ORDERS = 5
 AGENT = None
+EVAL_REWARDS = None
 
 @gen.coroutine
 def interact():
@@ -174,6 +175,7 @@ def interact():
 
 @gen.coroutine   
 def evaluation():
+    global EVAL_REWARDS
     hist_name = 'comm_agent'
     env = DiplomacyEnv()
     rewards = []
@@ -259,9 +261,8 @@ def evaluation():
             print('%s: %d centers' %(power, centers_id[id]))
         
         save_to_json(hist_name, maa2c.n_episodes, i, dip_game)
-    
+    EVAL_REWARDS = rewards
     stop_io_loop()
-    return rewards, None
 
 def save_to_json(name, ep, eval_i, game):
     game_history_name = name + '_eval_episode_' +ep+ '_'+eval_i
@@ -294,6 +295,7 @@ def save_to_json(name, ep, eval_i, game):
 # @gen.coroutine
 def main():
     
+    
     episodes =[]
     eval_rewards =[]
     while AGENT==None or AGENT.n_episodes < MAX_EPISODES:
@@ -304,7 +306,8 @@ def main():
             AGENT.train()
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             print('evaluate')
-            rewards, _ = start_io_loop(evaluation)
+            start_io_loop(evaluation)
+            rewards = EVAL_REWARDS
             rewards_mu, rewards_std = ma_agg_double_list(rewards)
             for agent_id in range (N_AGENTS):
                 print("Episode %d, Agent %d, Average Reward %.2f" % (AGENT.n_episodes+1, agent_id, rewards_mu[agent_id]))
