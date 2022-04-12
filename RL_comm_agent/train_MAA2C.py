@@ -73,10 +73,11 @@ def interact():
         print('this msg print once')     
     else:
         maa2c = AGENT   
+        maa2c.env_state = dict_to_arr(env.reset())
     dip_step = 0
 
-    if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
-        maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
+    # if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
+    #     maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
     dip_game = env.dip_game
     dip_player = env.dip_player
     last_ep_index = 0
