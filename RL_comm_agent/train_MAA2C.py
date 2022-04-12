@@ -54,13 +54,13 @@ def interact():
     env = DiplomacyEnv()
     global AGENT
 
-    if AGENT==None:
-        state_dim = env.observation_space.shape[0]
-        if len(env.action_space.shape) > 1:
-            action_dim = env.action_space.shape[0]
-        else:
-            action_dim = env.action_space.n
+    state_dim = env.observation_space.shape[0]
+    if len(env.action_space.shape) > 1:
+        action_dim = env.action_space.shape[0]
+    else:
+        action_dim = env.action_space.n
 
+    if AGENT==None:
         maa2c = MAA2C(env=env, n_agents=N_AGENTS, 
                 state_dim=state_dim, action_dim=action_dim, memory_capacity=MEMORY_CAPACITY,
                 batch_size=BATCH_SIZE, entropy_reg=ENTROPY_REG,
