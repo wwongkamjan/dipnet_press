@@ -265,7 +265,7 @@ def evaluation():
     stop_io_loop()
 
 def save_to_json(name, ep, eval_i, game):
-    game_history_name = name + '_eval_episode_' +ep+ '_'+eval_i
+    game_history_name = name + '_eval_episode_' +str(ep)+ '_'+str(eval_i)
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:
