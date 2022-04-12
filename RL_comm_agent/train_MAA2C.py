@@ -257,7 +257,7 @@ def evaluation():
 
         rewards.append(arr_dict_to_arr(env.ep_rewards, N_AGENTS))
         print('evaluation result: ' )
-        for id, power in env.power_mapping:
+        for power,id in env.power_mapping.items():
             print('%s: %d centers' %(power, centers_id[id]))
         
         save_to_json(hist_name, maa2c.n_episodes, i, dip_game)
