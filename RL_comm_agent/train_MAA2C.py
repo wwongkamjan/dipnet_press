@@ -18,10 +18,10 @@ from diplomacy.engine.message import Message
 from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 
-MAX_EPISODES = 20
-EPISODES_BEFORE_TRAIN = 5
+MAX_EPISODES = 10
+EPISODES_BEFORE_TRAIN = 2
 EVAL_EPISODES = 1
-EVAL_INTERVAL = 5
+EVAL_INTERVAL = 2
 
 # roll out n steps
 ROLL_OUT_N_STEPS = 20
@@ -289,12 +289,14 @@ def save_to_json(name, ep, eval_i, game):
         
 # @gen.coroutine
 def main():
-    start_io_loop(interact)
+    
     episodes =[]
     eval_rewards =[]
     while AGENT.n_episodes < MAX_EPISODES:
-        print('train')
-        AGENT.train()
+        start_io_loop(interact)
+        if AGENT.n_episodes >= EPISODES_BEFORE_TRAIN:
+            print('train')
+            AGENT.train()
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             print('evaluate')
             rewards, _ = start_io_loop(evaluation())
