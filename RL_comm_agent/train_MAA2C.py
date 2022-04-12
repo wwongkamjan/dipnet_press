@@ -51,6 +51,7 @@ AGENT = None
 def interact():
 
     env = DiplomacyEnv()
+    global AGENT
 
     if AGENT==None:
         state_dim = env.observation_space.shape[0]
@@ -165,7 +166,7 @@ def interact():
 
     maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
 
-    global AGENT
+    
     AGENT = maa2c
     print('Done collecting experience')
     stop_io_loop()
