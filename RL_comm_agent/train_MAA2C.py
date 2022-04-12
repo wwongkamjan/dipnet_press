@@ -293,9 +293,7 @@ def save_to_json(name, ep, eval_i, game):
     data_file.close()
         
 # @gen.coroutine
-def main():
-    
-    
+def main():    
     episodes =[]
     eval_rewards =[]
     while AGENT==None or AGENT.n_episodes < MAX_EPISODES:
