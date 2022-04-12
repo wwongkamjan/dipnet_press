@@ -69,7 +69,7 @@ def interact():
                 epsilon_decay=EPSILON_DECAY, max_grad_norm=MAX_GRAD_NORM,
                 episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
                 critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)
-              
+        print('this msg print once')        
     dip_step = 0
 
     if (maa2c.max_steps is not None) and (maa2c.n_steps >= maa2c.max_steps):
