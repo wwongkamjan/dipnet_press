@@ -1,5 +1,6 @@
 
 import torch as th
+import os
 from torch import nn
 from torch.optim import Adam, RMSprop
 
@@ -253,4 +254,26 @@ class MAA2C(Agent):
             else:
                 values[agent_id] = value_var.data.numpy()[0]
         return values
+
+
+        # Save model parameters
+    def save_model(self, env_name, suffix="", actor_path=None, critic_path=None):
+        if not os.path.exists('models/'):
+            os.makedirs('models/')
+
+        if actor_path is None:
+            actor_path = "models/sac_actor_{}_{}".format(env_name, suffix)
+        if critic_path is None:
+            critic_path = "models/sac_critic_{}_{}".format(env_name, suffix)
+        print('Saving models to {} and {}'.format(actor_path, critic_path))
+        th.save(self.actors.state_dict(), actor_path)
+        th.save(self.critics.state_dict(), critic_path)
+
+    # Load model parameters
+    def load_model(self, actor_path, critic_path):
+        print('Loading models from {} and {}'.format(actor_path, critic_path))
+        if actor_path is not None:
+            self.actors.load_state_dict(th.load(actor_path))
+        if critic_path is not None:
+            self.critics.load_state_dict(th.load(critic_path))
 

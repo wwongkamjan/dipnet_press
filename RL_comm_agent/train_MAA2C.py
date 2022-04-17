@@ -214,7 +214,9 @@ def evaluation():
                             env.reset_power_state(sender, recipient) 
                             message = [' ( FCT ( '+order+' ) )' for order in share_order_list]
                             message = ''.join(message)
-                            message = 'AND' + message
+                            if len(message):
+                                message = 'AND' + message
+                            message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
                             msg = Message(sender=sender,
                                         recipient=recipient,
                                         message=message,
@@ -232,7 +234,7 @@ def evaluation():
                 dip_player.update_stance(dip_game.game, power)
 
             if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
-                for i in range (last_ep_index, len(env.ep_states)):
+                for j in range (last_ep_index, len(env.ep_states)):
                     state, sender, recipient, one_hot_order = env.ep_info[i]
                     #reward = self + ally supply center
                     #find all allies 
@@ -242,10 +244,10 @@ def evaluation():
                         if sender_stance[power] > 1 or power==sender:
                             sender_reward += len(dip_game.game.get_centers(power)) - centers[power]
                     if state=='no_more_order':
-                        env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
+                        env.ep_states[j][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                     if state=='censoring': #update stance of next states of states = share order/do not share order
                        
-                        if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
+                        if env.ep_actions[j][env.power_mapping[sender]]==1:# set reward for sharing order 
                             env.ep_rewards.append({id: sender_reward*1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
                         else:
                             env.ep_rewards.append({id: 0. for id in env.agent_id})   
@@ -261,6 +263,7 @@ def evaluation():
         print('evaluation result: ' )
         for power,id in env.power_mapping.items():
             print('%s: %d centers' %(power, centers_id[id]))
+        
         
         save_to_json(hist_name, maa2c.n_episodes, i, dip_game)
     EVAL_REWARDS = rewards
