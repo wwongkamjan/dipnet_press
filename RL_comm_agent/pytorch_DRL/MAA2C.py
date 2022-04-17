@@ -266,14 +266,16 @@ class MAA2C(Agent):
         if critic_path is None:
             critic_path = "models/sac_critic_{}_{}".format(env_name, suffix)
         print('Saving models to {} and {}'.format(actor_path, critic_path))
-        th.save(self.actors.state_dict(), actor_path)
-        th.save(self.critics.state_dict(), critic_path)
+        th.save(self.actors[0].state_dict(), actor_path)
+        th.save(self.critics[0].state_dict(), critic_path)
 
     # Load model parameters
     def load_model(self, actor_path, critic_path):
         print('Loading models from {} and {}'.format(actor_path, critic_path))
         if actor_path is not None:
-            self.actors.load_state_dict(th.load(actor_path))
+            for actor in self.actors:
+                actor.load_state_dict(th.load(actor_path))
         if critic_path is not None:
-            self.critics.load_state_dict(th.load(critic_path))
+            for critic in self.critics:
+                critic.load_state_dict(th.load(critic_path))
 
