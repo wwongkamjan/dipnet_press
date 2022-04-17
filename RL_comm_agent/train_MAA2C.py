@@ -264,7 +264,7 @@ def evaluation():
         for power,id in env.power_mapping.items():
             print('%s: %d centers' %(power, centers_id[id]))
         
-        
+        maa2c.save_model('diplomacy', 'ep_{}_v1'.format(str(maa2c.n_episodes)))
         save_to_json(hist_name, maa2c.n_episodes, i, dip_game)
     EVAL_REWARDS = rewards
     stop_io_loop()
