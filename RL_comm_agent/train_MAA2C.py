@@ -105,11 +105,13 @@ def interact():
         for power_name, power_orders in orders.items():
             dip_game.game.set_orders(power_name, power_orders)
 
+        for power in dip_game.powers:
+            dip_player.update_stance(dip_game.game, power)
+
         dip_game.game_process()
         # print('game process')
         # update next state list and get reward from result of the phase 
-        for power in dip_game.powers:
-            dip_player.update_stance(dip_game.game, power)
+
 
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             for i in range (last_ep_index, len(env.ep_states)):
@@ -227,11 +229,12 @@ def evaluation():
             for power_name, power_orders in orders.items():
                 dip_game.game.set_orders(power_name, power_orders)
 
+            for power in dip_game.powers:
+                dip_player.update_stance(dip_game.game, power)
             dip_game.game_process()
             # print('game process')
             # update next state list and get reward from result of the phase 
-            for power in dip_game.powers:
-                dip_player.update_stance(dip_game.game, power)
+
 
             if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
                 for j in range (last_ep_index, len(env.ep_states)):
