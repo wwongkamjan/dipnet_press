@@ -262,9 +262,9 @@ class MAA2C(Agent):
             os.makedirs('models/')
 
         if actor_path is None:
-            actor_path = "models/sac_actor_{}_{}".format(env_name, suffix)
+            actor_path = "models/a2c_actor_{}_{}".format(env_name, suffix)
         if critic_path is None:
-            critic_path = "models/sac_critic_{}_{}".format(env_name, suffix)
+            critic_path = "models/a2c_critic_{}_{}".format(env_name, suffix)
         print('Saving models to {} and {}'.format(actor_path, critic_path))
         th.save(self.actors[0].state_dict(), actor_path)
         th.save(self.critics[0].state_dict(), critic_path)

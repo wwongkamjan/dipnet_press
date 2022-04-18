@@ -228,7 +228,7 @@ def evaluation():
                             message = ''.join(message)
                             if len(message):
                                 message = 'AND' + message
-                            message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
+                            message = 'stance[{}][{}]= {} '.format(sender, recipient, str(stance)) + message
                             msg = Message(sender=sender,
                                         recipient=recipient,
                                         message=message,
@@ -288,7 +288,7 @@ def orders_of_generated_game(current_game, player, power):
     generated_game = current_game.__deepcopy__() 
     # rank other power by current supply center
     centers = {power: len(generated_game.game.get_centers(power)) for power in generated_game.powers}
-    sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1])]
+    sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1], reverse=True)]
     print('we are: ', power)
     print('considering shared orders: ', sorted_powers)
     for other_power in sorted_powers:
