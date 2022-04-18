@@ -225,10 +225,10 @@ class Diplomacy_Press_Player:
 
     # if dipnet
 #     msg_list = get_message(game, msg_list, sender, recipient) # random select 
-    if self.bot_type[sender] =='transparent':
-      msg_list = get_message(game, msg_list, sender, recipient)
-    elif self.bot_type[sender] =='press_agent':
-      msg_list = press_get_message(game, self.stance, msg_list, sender, recipient) # strategically select
+    # if self.bot_type[sender] =='transparent':
+    #   msg_list = get_message(game, msg_list, sender, recipient)
+    # elif self.bot_type[sender] =='press_agent':
+    #   msg_list = press_get_message(game, self.stance, msg_list, sender, recipient) # strategically select
     
     # join string for sender move
     # AND (FCT (order1)) ((FCT (order2))) ..
