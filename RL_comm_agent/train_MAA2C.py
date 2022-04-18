@@ -86,6 +86,7 @@ def interact():
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
             for sender in dip_game.powers:
                 for recipient in dip_game.powers:
+                    share_order_list = []
                     if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
                         orders = yield dip_player.get_orders(dip_game.game, sender)
                         stance = dip_player.stance[sender][recipient] 
@@ -98,10 +99,19 @@ def interact():
                             action = maa2c.exploration_action(maa2c.env_state)
                             action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                             env.step(action_dict, sender, recipient, order)
-                            
+                            # if action=share, we add it to the list
+                            if action_dict[env.power_mapping[sender]]==1:
+                                share_order_list.append(order)
+                        dip_game.received[recipient][sender] = share_order_list
                         env.reset_power_state(sender, recipient)
 
+        #generating an imagined world from received messages
+        new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+        
+        print('new_orders: ', new_orders)
+        print('orders: ', orders)
+
         for power_name, power_orders in orders.items():
             dip_game.game.set_orders(power_name, power_orders)
 
@@ -226,6 +236,7 @@ def evaluation():
                             dip_game.new_message(msg)
               
             orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+
             for power_name, power_orders in orders.items():
                 dip_game.game.set_orders(power_name, power_orders)
 
@@ -271,6 +282,24 @@ def evaluation():
         save_to_json(hist_name, maa2c.n_episodes, i, dip_game)
     EVAL_REWARDS = rewards
     stop_io_loop()
+
+@gen.coroutine  
+def orders_of_generated_game(current_game, player, power):
+    generated_game = current_game.__deepcopy__() 
+    # rank other power by current supply center
+    centers = {power: len(generated_game.game.get_centers(power)) for power in generated_game.powers}
+    sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1])]
+    print('we are: ', power)
+    print('considering shared orders: ', sorted_powers)
+    for other_power in sorted_powers:
+        other_power_orders = generated_game.received[power][other_power]
+        generated_game.set_orders(other_power, other_power_orders)
+
+    generated_game.game_process()
+
+    orders = yield player.get_orders(generated_game, power)
+    return orders
+
 
 def save_to_json(name, ep, eval_i, game):
     game_history_name = name + '_eval_episode_' +str(ep)+ '_'+str(eval_i)

@@ -161,6 +161,9 @@ class Diplomacy_Press:
 
   def game_process(self):
     # reset contraints e.g. self.sent/received = None, self., self.number_sent_msg = 0
+    for power in self.powers:
+      self.sent[power] = {power_name: None for power_name in self.powers}
+      self.received[power] = {power_name: None for power_name in self.powers}
     self.game.process()
 
 class Diplomacy_Press_Player:
@@ -311,8 +314,8 @@ class Diplomacy_Press_Player:
              
   def get_order_type(self, game, order, power_sub, power_obj):
     order_token = get_order_tokens(order)
-    print('order:')
-    print(order_token)
+    # print('order:')
+    # print(order_token)
     if order_token[0][0] =='A' or order_token[0][0] =='F':
       # this is message about orders
       if order_token[1] == 'S':
