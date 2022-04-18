@@ -184,6 +184,7 @@ class Diplomacy_Press_Player:
     for other_power in self.stance:
      previous_order = game.ordered_units[other_power]
      for order in previous_order:
+      print(order)
       if self.get_order_type(game, order, other_power,power_name) =='attack':
        self.stance[power_name][other_power] = -10.0
       else:
