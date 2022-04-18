@@ -106,11 +106,11 @@ def interact():
                         env.reset_power_state(sender, recipient)
 
         #generating an imagined world from received messages
-        new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
+        # new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         
-        print('new_orders: ', new_orders)
-        print('orders: ', orders)
+        # print('new_orders: ', new_orders)
+        # print('orders: ', orders)
 
         for power_name, power_orders in orders.items():
             dip_game.game.set_orders(power_name, power_orders)
