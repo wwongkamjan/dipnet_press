@@ -80,16 +80,8 @@ def test():
     dip_player = env.dip_player
     bot_type = ['RL', 'RL', 'transparent', 'transparent', 'transparent', 'transparent', 'transparent']
     random.shuffle(bot_type)
-    env.power_mapping = {}
     dip_player.bot_type = {power: b for b,power in zip(bot_type, dip_game.powers)}
     id = 0
-    for power, bot_type in dip_player.bot_type.items():
-        if bot_type == 'RL':
-            env.power_mapping[power] = id
-            id+=1
-        if id == N_AGENTS:
-            break
-    last_ep_index = 0
 
     while not dip_game.game.is_game_done:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
@@ -145,63 +137,16 @@ def test():
             dip_player.update_stance(dip_game.game, power)
 
         dip_game.game_process()
-        # print('game process')
-        # update next state list and get reward from result of the phase 
 
-        if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
-            for i in range (last_ep_index, len(env.ep_states)):
-                state, sender, recipient, one_hot_order = env.ep_info[i]
-                #reward = self + ally supply center
-                #find all allies 
-                sender_reward = 0
-                sender_stance =  dip_player.stance[sender]
-                for power in sender_stance:
-                    if sender_stance[power] > 1 or power==sender:
-                        sender_reward += len(dip_game.game.get_centers(power)) - centers[power]
-                if state=='no_more_order':
-                    env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
-                if state=='censoring': #update stance of next states of states = share order/do not share order
-                    # env.ep_n_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
-                    if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
-                        env.ep_rewards.append({id: sender_reward*1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
-                    else:
-                        env.ep_rewards.append({id: 0. for id in env.agent_id})   
-                    
-            last_ep_index = len(env.ep_states)
-        dip_step +=1
-        
-    if dip_game.game.is_game_done:
-        
-        centers_id = {id: len(dip_game.game.get_centers(power)) for power, id in env.power_mapping.items()}
-        env.ep_rewards.append({id: centers_id[id]*1. for id in env.agent_id})   
-
-    rewards.append(arr_dict_to_arr(env.ep_rewards, N_AGENTS))
+    centers_power = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
     print('evaluation result: ' )
-    for power,id in env.power_mapping.items():
-        print('%s: %d centers' %(power, centers_id[id]))
+    for power in dip_game.powers:
+        print('%s: %d centers' % (power, centers_power[power]))
     
     # maa2c.save_model('diplomacy', 'ep_{}_v1'.format(str(maa2c.n_episodes)))
     save_to_json(hist_name, dip_game, dip_player.bot_type)
     EVAL_REWARDS = rewards
     stop_io_loop()
-
-
-@gen.coroutine  
-def orders_of_generated_game(current_game, player, power):
-    generated_game = current_game.__deepcopy__() 
-    # rank other power by current supply center
-    centers = {power: len(generated_game.game.get_centers(power)) for power in generated_game.powers}
-    sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1])]
-    print('we are: ', power)
-    print('considering shared orders: ', sorted_powers)
-    for other_power in sorted_powers:
-        other_power_orders = generated_game.received[power][other_power]
-        generated_game.set_orders(other_power, other_power_orders)
-
-    generated_game.game_process()
-
-    orders = yield player.get_orders(generated_game, power)
-    return orders
 
 
 def save_to_json(name, game, bot_type):
