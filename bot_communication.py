@@ -181,9 +181,9 @@ class Diplomacy_Press_Player:
     self.stance[power_name] = status
     
   def update_stance(self, game, power_name): #use as basic to update stance of every other power for power_name 
+    previous_order = game.get_orders()
     for other_power in self.stance:
-     previous_order = game.ordered_units[other_power]
-     for order in previous_order:
+     for order in previous_order[other_power]:
       print(order)
       if self.get_order_type(game, order, other_power,power_name) =='attack':
        self.stance[power_name][other_power] = -10.0
