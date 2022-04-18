@@ -319,7 +319,9 @@ class Diplomacy_Press_Player:
     if order_token[0][0] =='A' or order_token[0][0] =='F':
       # this is message about orders
       if order_token[1] == 'S':
-        return 'support'
+        order_unit = order_token[2]
+        if order_unit in game.powers[power_obj].units:
+          return 'support'
       elif order_token[1] == 'H':
         return 'hold'
       elif order_token[1] == 'C':
