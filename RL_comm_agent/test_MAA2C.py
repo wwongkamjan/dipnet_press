@@ -81,7 +81,7 @@ def test():
     bot_type = ['RL', 'RL', 'transparent', 'transparent', 'transparent', 'transparent', 'transparent']
     random.shuffle(bot_type)
     env.power_mapping = {}
-    dip_player.bot_type = {power: b for b in bot_type}
+    dip_player.bot_type = {power: b for b,power in zip(bot_type, dip_game.powers)}
     id = 0
     for power, bot_type in dip_player.bot_type.items():
         if bot_type == 'RL':
