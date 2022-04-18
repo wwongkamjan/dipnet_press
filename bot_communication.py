@@ -95,13 +95,13 @@ class Diplomacy_Press:
 
     possible_messages['sender_move'] = orders # will be later 'AND/OR'
     
-    # retrieve orders to propose to recipient
-    proposals = self.player.get_proposal(self.game, sender, recipient)
-    possible_messages['sender_proposal'] = proposals # will be later 'AND/OR'
+    # # retrieve orders to propose to recipient
+    # proposals = self.player.get_proposal(self.game, sender, recipient)
+    # possible_messages['sender_proposal'] = proposals # will be later 'AND/OR'
     
-    # retrieve info of other power to forward/share to recipient
-    power_message = self.get_received_message(sender)
-    possible_messages['power_message'] = power_message # will be later 'AND/OR'
+    # # retrieve info of other power to forward/share to recipient
+    # power_message = self.get_received_message(sender)
+    # possible_messages['power_message'] = power_message # will be later 'AND/OR'
     return possible_messages
   
   @gen.coroutine 
@@ -115,20 +115,20 @@ class Diplomacy_Press:
   @gen.coroutine
   def send_message(self, sender, recipient):
     # number of messages is not exceed limitation (e.g. 6 per phases) and the last message is replied by this recipient or never send to this recipient
-    if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
-      msg_list = yield self.get_all_possible_message(sender, recipient)
-      message  = yield self.player.get_message(self.game, msg_list, sender, recipient)
-      if message:
-        msg = Message(sender=sender,
-             recipient=recipient,
-             message=message,
-             phase=self.game.get_current_phase())
-              
-        # sender sent message to recipient and recipient received message from sender
-        self.sent[sender][recipient] = message
-        self.received[recipient][sender] = message
-        self.new_message(msg)
-        self.number_sent_msg[sender] += 1
+    # if self.number_sent_msg[sender] <  self.number_msg_limitation and self.sent[sender][recipient]==None:
+    msg_list = yield self.get_all_possible_message(sender, recipient)
+    message  = yield self.player.get_message(self.game, msg_list, sender, recipient)
+    if message:
+      msg = Message(sender=sender,
+            recipient=recipient,
+            message=message,
+            phase=self.game.get_current_phase())
+            
+      # sender sent message to recipient and recipient received message from sender
+      self.sent[sender][recipient] = message
+      self.received[recipient][sender] = message
+      self.new_message(msg)
+      self.number_sent_msg[sender] += 1
 #     else:
 #         print("number of sent messages exceeds")
         
@@ -237,21 +237,22 @@ class Diplomacy_Press_Player:
       # msg_list['sender_move'] = self.filter_message(game, msg_list['sender_move'], sender, ['attack']) #censor aggressiv move
       sender_move_str = [' ( FCT ( '+order+' ) )' for order in msg_list['sender_move']]
       sender_move_str = ''.join(sender_move_str)
-      message_str += 'power_move: '+ sender_move_str
+      message_str += 'AND '+ sender_move_str
+    message_str = 'stance['+sender+']['+recipient +']=' +str(self.stance[sender][recipient]) + message_str
     # join string for proposal
     # AND (PRP (order1)) ((FCT (order2))) ..
-    if msg_list['sender_proposal']:
-      # msg_list['sender_proposal'] = self.filter_message(game, msg_list['sender_proposal'], recipient, ['attack']) #censor aggressiv movezzz
-      sender_proposal_str = [' ( XDO ( '+order+' ) )' for order in msg_list['sender_proposal']]
-      sender_proposal_str = ''.join(sender_proposal_str)
-      message_str += ' power_proposal: ' +sender_proposal_str
+    # if msg_list['sender_proposal']:
+    #   # msg_list['sender_proposal'] = self.filter_message(game, msg_list['sender_proposal'], recipient, ['attack']) #censor aggressiv movezzz
+    #   sender_proposal_str = [' ( XDO ( '+order+' ) )' for order in msg_list['sender_proposal']]
+    #   sender_proposal_str = ''.join(sender_proposal_str)
+    #   message_str += ' power_proposal: ' +sender_proposal_str
     
-    # message from other power that you want to share (agent already select specific power)
-    if msg_list['power_message']:
-      # expect (1) sender move (2) proposal (3) moves of other power, for now sharing only (1)
-      message_split = msg_list['power_message'].split(':') 
-      if message_split[0] == 'power_move':
-       message_str += ' other_info: ' +message_split[1]
+    # # message from other power that you want to share (agent already select specific power)
+    # if msg_list['power_message']:
+    #   # expect (1) sender move (2) proposal (3) moves of other power, for now sharing only (1)
+    #   message_split = msg_list['power_message'].split(':') 
+    #   if message_split[0] == 'power_move':
+    #    message_str += ' other_info: ' +message_split[1]
     
     if len(message_str)==0:
       return None
