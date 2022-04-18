@@ -20,7 +20,7 @@ from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 
 MAX_EPISODES = 10
 EPISODES_BEFORE_TRAIN = 2
-EVAL_EPISODES = 1
+TEST_EPISODES = 1
 EVAL_INTERVAL = 2
 
 # roll out n steps
@@ -236,7 +236,7 @@ def save_to_json(name, ep, eval_i, game, bot_type):
         
 # @gen.coroutine
 def main():    
-    for i in range(10):
+    for i in range(TEST_EPISODES):
         start_io_loop(test)
   
         
