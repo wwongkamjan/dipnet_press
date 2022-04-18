@@ -91,7 +91,7 @@ def test():
             break
     last_ep_index = 0
 
-    while not dip_game.game.is_game_done and dip_step < ROLL_OUT_N_STEPS:
+    while not dip_game.game.is_game_done:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
             for sender in dip_game.powers:
@@ -181,7 +181,7 @@ def test():
         print('%s: %d centers' %(power, centers_id[id]))
     
     # maa2c.save_model('diplomacy', 'ep_{}_v1'.format(str(maa2c.n_episodes)))
-    save_to_json(hist_name, maa2c.n_episodes, i, dip_game, dip_player.bot_type)
+    save_to_json(hist_name, dip_game, dip_player.bot_type)
     EVAL_REWARDS = rewards
     stop_io_loop()
 
@@ -204,8 +204,8 @@ def orders_of_generated_game(current_game, player, power):
     return orders
 
 
-def save_to_json(name, ep, eval_i, game, bot_type):
-    game_history_name = name + '_eval_episode_' +str(ep)+ '_'+str(eval_i)
+def save_to_json(name, game, bot_type):
+    game_history_name = name + '_with_baseline_bots_2RLvs5Transparent' 
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:
