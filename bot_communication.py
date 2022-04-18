@@ -308,7 +308,7 @@ class Diplomacy_Press_Player:
              
   def get_order_type(self, game, order, power_sub, power_obj):
     order_token = get_order_tokens(order)
-    if order_token[0] =='A' or order_token[0] =='F':
+    if order_token[0][0] =='A' or order_token[0][0] =='F':
       # this is message about orders
       if order_token[1] == 'S':
         return 'support'
@@ -319,7 +319,7 @@ class Diplomacy_Press_Player:
       else:
         #move/retreat or attack 
         #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
-        order_unit = order_token[0]+' '+order_token[2]
+        order_unit = order_token[0][0] + order_token[1][1:]
         if order_unit in game.powers[power_obj].units:
           return 'attack'
         else:
