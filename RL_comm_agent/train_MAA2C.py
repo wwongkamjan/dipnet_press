@@ -294,7 +294,7 @@ def evaluation():
 
 @gen.coroutine  
 def orders_of_generated_game(current_game, player, power):
-    generated_game = current_game.__deepcopy__() 
+    generated_game = current_game.__deepcopy__(None) 
 
     centers = {power: len(generated_game.game.get_centers(power)) for power in generated_game.powers}    # rank powers by current supply center
     centers[power] = -1 # set itself to has least supply centers 
