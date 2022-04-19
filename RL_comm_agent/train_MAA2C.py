@@ -296,7 +296,7 @@ def evaluation():
 def orders_of_generated_game(current_game, player, power):
     generated_game = current_game.__deepcopy__(None) 
 
-    centers = {power: len(generated_game.game.get_centers(power)) for power in generated_game.powers}    # rank powers by current supply center
+    centers = {power: len(generated_game.get_centers(power)) for power in generated_game.powers}    # rank powers by current supply center
     centers[power] = -1 # set itself to has least supply centers 
     sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1], reverse=True)]
     
