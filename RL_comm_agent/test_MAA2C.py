@@ -20,7 +20,7 @@ from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 
 MAX_EPISODES = 10
 EPISODES_BEFORE_TRAIN = 2
-TEST_EPISODES = 1
+TEST_EPISODES = 10
 EVAL_INTERVAL = 2
 
 # roll out n steps
@@ -72,7 +72,7 @@ def test():
             episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
             critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
 
-    maa2c.load_model('models/sac_actor_diplomacy_ep_9_v1', 'models/sac_critic_diplomacy_ep_9_v1')
+    maa2c.load_model('models/a2c_actor_diplomacy_ep_9_v1', 'models/a2c_critic_diplomacy_ep_9_v1')
 
     dip_step = 0
 
@@ -90,10 +90,10 @@ def test():
                 for recipient in dip_game.powers:
                     share_order_list = []
                     if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
-                        orders = yield dip_player.get_orders(dip_game.game, sender)
                         if dip_player.bot_type[sender] == 'transparent':
                             yield dip_game.send_message(sender, recipient)
                         elif dip_player.bot_type[sender] == 'RL':
+                            orders = yield dip_player.get_orders(dip_game.game, sender)
                             stance = dip_player.stance[sender][recipient] 
                             n = len(orders)
                             env.set_power_state(sender, stance)
