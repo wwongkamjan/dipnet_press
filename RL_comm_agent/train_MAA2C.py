@@ -41,6 +41,9 @@ MAX_GRAD_NORM = None
 EPSILON_START = 0.99
 EPSILON_END = 0.05
 EPSILON_DECAY = 500
+AGENT_VERSION = "v2" 
+# v1=train comm agents but no press tactics for the orders 
+# v2=train comm agents with press tactics for the orders 
 
 RANDOM_SEED = 2017
 N_AGENTS = 7
@@ -69,8 +72,7 @@ def interact():
                 epsilon_start=EPSILON_START, epsilon_end=EPSILON_END,
                 epsilon_decay=EPSILON_DECAY, max_grad_norm=MAX_GRAD_NORM,
                 episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
-                critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)
-        print('this msg print once')     
+                critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
     else:
         maa2c = AGENT   
         maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
@@ -105,12 +107,14 @@ def interact():
                         dip_game.received[recipient][sender] = share_order_list
                         env.reset_power_state(sender, recipient)
 
-        #generating an imagined world from received messages
-        # new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+        #generating an imagined world from received messages
+        if AGENT_VERSION == 'v2':
+            new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
         
-        # print('new_orders: ', new_orders)
-        # print('orders: ', orders)
+            print('new_orders: ', new_orders)
+            print('orders: ', orders)
+            orders =new_orders
 
         for power_name, power_orders in orders.items():
             dip_game.game.set_orders(power_name, power_orders)
@@ -236,7 +240,12 @@ def evaluation():
                             dip_game.new_message(msg)
               
             orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
-
+            if AGENT_VERSION == 'v2':
+                new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
+            
+                print('new_orders: ', new_orders)
+                print('orders: ', orders)
+                orders =new_orders
             for power_name, power_orders in orders.items():
                 dip_game.game.set_orders(power_name, power_orders)
 
