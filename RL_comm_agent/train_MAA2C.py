@@ -308,7 +308,7 @@ def orders_of_generated_game(current_game, player, power):
         if other_power_orders:
             generated_game.set_orders(other_power, other_power_orders)
 
-    generated_game.game_process()
+    generated_game.process()
 
     orders = yield player.get_orders(generated_game, power)
     return orders
