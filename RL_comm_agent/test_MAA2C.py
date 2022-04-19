@@ -163,12 +163,12 @@ def orders_of_generated_game(current_game, player, power):
     sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1], reverse=True)]
     
     sorted_powers.pop() # remove last index or itself from a sorted list
-    print('we are: ', power)
+    # print('we are: ', power)
     
     for other_power in sorted_powers:
         other_power_orders = current_game.received[power][other_power]
-        print('considering shared orders: ', other_power)
-        print(other_power_orders)
+        # print('considering shared orders: ', other_power)
+        # print(other_power_orders)
         if other_power_orders:
             generated_game.set_orders(other_power, other_power_orders)
             has_shared_orders = True
