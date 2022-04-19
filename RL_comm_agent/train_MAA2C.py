@@ -290,7 +290,8 @@ def evaluation():
         for power,id in env.power_mapping.items():
             print('%s: %d centers' %(power, centers_id[id]))
         
-        maa2c.save_model('diplomacy', 'ep_{}_v1'.format(str(maa2c.n_episodes)))
+        
+        maa2c.save_model(actor_path='models/a2c_actor_diplomacy_ep_{}_v2'.format(str(maa2c.n_episodes)), critic_path = 'models/a2c_critic_diplomacy_ep_{}_v2'.format(str(maa2c.n_episodes)))
         if AGENT_VERSION == 'v1':
             save_to_json(hist_name, maa2c.n_episodes, i, dip_game, None)
         else:
@@ -315,10 +316,11 @@ def orders_of_generated_game(current_game, player, power):
         if other_power_orders:
             generated_game.set_orders(other_power, other_power_orders)
             has_shared_orders = True
-
+    curr_phase = current_game.get_current_phase()
     if has_shared_orders:
         generated_game.process()
-
+        generated_game.set_current_phase(curr_phase)
+        
     orders = yield player.get_orders(generated_game, power)
     return orders
 

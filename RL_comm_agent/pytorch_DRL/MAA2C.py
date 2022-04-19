@@ -257,7 +257,7 @@ class MAA2C(Agent):
 
 
         # Save model parameters
-    def save_model(self, env_name, suffix="", actor_path=None, critic_path=None):
+    def save_model(self, env_name="", suffix="", actor_path=None, critic_path=None):
         if not os.path.exists('models/'):
             os.makedirs('models/')
 
