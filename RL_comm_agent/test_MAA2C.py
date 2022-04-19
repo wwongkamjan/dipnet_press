@@ -73,7 +73,7 @@ def test():
             episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
             critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
 
-    maa2c.load_model('models/a2c_actor_diplomacy_ep_9_v2', 'models/a2c_critic_diplomacy_ep_9_v2')
+    maa2c.load_model('models/a2c_actor_diplomacy_ep_9_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_ep_9_{}'.format(AGENT_VERSION))
 
     dip_step = 0
 
