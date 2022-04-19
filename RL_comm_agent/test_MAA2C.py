@@ -130,14 +130,9 @@ def test():
         if AGENT_VERSION == 'v2':
             new_orders = yield {power_name: orders_of_generated_game(dip_game, dip_player, power_name) for power_name in dip_game.powers}
         
-            # print('new_orders: ', new_orders)
-            # print('orders: ', orders)
             order_game_memo[dip_game.game._phase_wrapper_type(dip_game.game.current_short_phase)] = orders
             orders =new_orders
         
-        # print('new_orders: ', new_orders)
-        # print('orders: ', orders)
-
         for power_name, power_orders in orders.items():
             dip_game.game.set_orders(power_name, power_orders)
 
@@ -151,8 +146,10 @@ def test():
     for power in dip_game.powers:
         print('%s: %d centers' % (power, centers_power[power]))
     
-    # maa2c.save_model('diplomacy', 'ep_{}_v1'.format(str(maa2c.n_episodes)))
-    save_to_json(hist_name, dip_game, dip_player.bot_type, order_game_memo)
+    if AGENT_VERSION == 'v2':
+        save_to_json(hist_name, dip_game, dip_player.bot_type, order_game_memo)
+    else:
+        save_to_json(hist_name, dip_game, dip_player.bot_type, None)
     EVAL_REWARDS = rewards
     stop_io_loop()
 
@@ -166,10 +163,12 @@ def orders_of_generated_game(current_game, player, power):
     sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1], reverse=True)]
     
     sorted_powers.pop() # remove last index or itself from a sorted list
-    # print('we are: ', power)
-    # print('considering shared orders: ', sorted_powers)
+    print('we are: ', power)
+    
     for other_power in sorted_powers:
         other_power_orders = current_game.received[power][other_power]
+        print('considering shared orders: ', other_power)
+        print(other_power_orders)
         if other_power_orders:
             generated_game.set_orders(other_power, other_power_orders)
             has_shared_orders = True
