@@ -21,6 +21,7 @@ from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 MAX_EPISODES = 10
 EPISODES_BEFORE_TRAIN = 2
 TEST_EPISODES = 10
+EPISODE = 0
 EVAL_INTERVAL = 2
 
 # roll out n steps
@@ -181,7 +182,7 @@ def orders_of_generated_game(current_game, player, power):
     return orders
 
 def save_to_json(name, game, bot_type, order_game_memo):
-    game_history_name = name + '_with_baseline_bots_2RLvs5Transparent' 
+    game_history_name = name + '_with_baseline_bots_2RLvs5Transparent_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:
@@ -215,8 +216,10 @@ def save_to_json(name, game, bot_type, order_game_memo):
         
 # @gen.coroutine
 def main():    
+    global EPISODE
     for i in range(TEST_EPISODES):
         start_io_loop(test)
+        EPISODE +=1
   
         
 if __name__ == '__main__':
