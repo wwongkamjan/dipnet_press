@@ -316,7 +316,7 @@ def orders_of_generated_game(current_game, player, power):
         if other_power_orders:
             generated_game.set_orders(other_power, other_power_orders)
             has_shared_orders = True
-    curr_phase = current_game.get_current_phase()
+    curr_phase = current_game.game.get_current_phase()
     if has_shared_orders:
         generated_game.process()
         generated_game.set_current_phase(curr_phase)
