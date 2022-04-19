@@ -342,17 +342,15 @@ def save_to_json(name, ep, eval_i, game, order_game_memo):
     for phase in game_data:
         if count == 0:
             # Writing headers of CSV file
-            header = phase.keys()
             if AGENT_VERSION == 'v2':
-                header.append('order_current_world')
+                phase['current_state_order'] = order_game_memo
+            header = phase.keys()
+
             csv_writer.writerow(header)
             count += 1
 
         # Writing data of CSV file
-        row = phase.values() 
-        if AGENT_VERSION == 'v2':
-            row.append(order_game_memo[row[name]])
-        csv_writer.writerow(row)
+        csv_writer.writerow(phase.values())
 
     data_file.close()
         
