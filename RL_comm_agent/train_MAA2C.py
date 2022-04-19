@@ -194,7 +194,7 @@ def interact():
 @gen.coroutine   
 def evaluation():
     global EVAL_REWARDS
-    hist_name = 'comm_agent'
+    hist_name = 'comm_agent_{}'.format(AGENT_VERSION)
     env = DiplomacyEnv()
     rewards = []
     maa2c = AGENT
