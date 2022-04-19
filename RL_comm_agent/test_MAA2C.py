@@ -41,6 +41,7 @@ MAX_GRAD_NORM = None
 EPSILON_START = 0.99
 EPSILON_END = 0.05
 EPSILON_DECAY = 500
+AGENT_VERSION = "v2" 
 
 RANDOM_SEED = 2017
 N_AGENTS = 7
@@ -52,7 +53,7 @@ EVAL_REWARDS = None
 def test():
     global EVAL_REWARDS
     global AGENT
-    hist_name = 'comm_agent'
+    hist_name = 'comm_agent_{}'.format(AGENT_VERSION)
     env = DiplomacyEnv()
     rewards = []
     
@@ -72,7 +73,7 @@ def test():
             episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
             critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
 
-    maa2c.load_model('models/a2c_actor_diplomacy_ep_9_v1', 'models/a2c_critic_diplomacy_ep_9_v1')
+    maa2c.load_model('models/a2c_actor_diplomacy_ep_9_v2', 'models/a2c_critic_diplomacy_ep_9_v2')
 
     dip_step = 0
 
@@ -82,7 +83,7 @@ def test():
     random.shuffle(bot_type)
     dip_player.bot_type = {power: b for b,power in zip(bot_type, dip_game.powers)}
     id = 0
-
+    order_game_memo= {}
     while not dip_game.game.is_game_done:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
@@ -126,6 +127,13 @@ def test():
         #generating an imagined world from received messages
         # new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+        if AGENT_VERSION == 'v2':
+            new_orders = yield {power_name: orders_of_generated_game(dip_game, dip_player, power_name) for power_name in dip_game.powers}
+        
+            # print('new_orders: ', new_orders)
+            # print('orders: ', orders)
+            order_game_memo[dip_game.game._phase_wrapper_type(dip_game.game.current_short_phase)] = orders
+            orders =new_orders
         
         # print('new_orders: ', new_orders)
         # print('orders: ', orders)
@@ -144,12 +152,36 @@ def test():
         print('%s: %d centers' % (power, centers_power[power]))
     
     # maa2c.save_model('diplomacy', 'ep_{}_v1'.format(str(maa2c.n_episodes)))
-    save_to_json(hist_name, dip_game, dip_player.bot_type)
+    save_to_json(hist_name, dip_game, dip_player.bot_type, order_game_memo)
     EVAL_REWARDS = rewards
     stop_io_loop()
 
+@gen.coroutine  
+def orders_of_generated_game(current_game, player, power):
+    has_shared_orders = False
+    generated_game = current_game.game.__deepcopy__(None) 
 
-def save_to_json(name, game, bot_type):
+    centers = {power: len(generated_game.get_centers(power)) for power in generated_game.powers}    # rank powers by current supply center
+    centers[power] = -1 # set itself to has least supply centers 
+    sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1], reverse=True)]
+    
+    sorted_powers.pop() # remove last index or itself from a sorted list
+    # print('we are: ', power)
+    # print('considering shared orders: ', sorted_powers)
+    for other_power in sorted_powers:
+        other_power_orders = current_game.received[power][other_power]
+        if other_power_orders:
+            generated_game.set_orders(other_power, other_power_orders)
+            has_shared_orders = True
+    curr_phase = current_game.game.get_current_phase()
+    if has_shared_orders:
+        generated_game.process()
+        generated_game.set_current_phase(curr_phase)
+        
+    orders = yield player.get_orders(generated_game, power)
+    return orders
+
+def save_to_json(name, game, bot_type, order_game_memo):
     game_history_name = name + '_with_baseline_bots_2RLvs5Transparent' 
     exp = game_history_name
     game_history_name += '.json'
@@ -170,6 +202,9 @@ def save_to_json(name, game, bot_type):
     for phase in game_data:
         if count == 0:
             # Writing headers of CSV file
+            header = phase.keys()
+            if AGENT_VERSION == 'v2':
+                phase['current_state_order'] = order_game_memo
             header = phase.keys()
             csv_writer.writerow(header)
             count += 1
