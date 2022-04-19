@@ -110,7 +110,7 @@ def interact():
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         #generating an imagined world from received messages
         if AGENT_VERSION == 'v2':
-            new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power_name) for power_name in dip_game.powers}
+            new_orders = yield {power_name: orders_of_generated_game(dip_game, dip_player, power_name) for power_name in dip_game.powers}
         
             print('new_orders: ', new_orders)
             print('orders: ', orders)
