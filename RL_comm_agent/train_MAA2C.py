@@ -241,7 +241,7 @@ def evaluation():
               
             orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
             if AGENT_VERSION == 'v2':
-                new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
+                new_orders = yield {power_name: orders_of_generated_game(dip_game, dip_player, power) for power_name in dip_game.powers}
             
                 print('new_orders: ', new_orders)
                 print('orders: ', orders)
@@ -294,7 +294,7 @@ def evaluation():
 
 @gen.coroutine  
 def orders_of_generated_game(current_game, player, power):
-    generated_game = current_game.__deepcopy__(None) 
+    generated_game = current_game.game.__deepcopy__(None) 
 
     centers = {power: len(generated_game.get_centers(power)) for power in generated_game.powers}    # rank powers by current supply center
     centers[power] = -1 # set itself to has least supply centers 
@@ -304,7 +304,7 @@ def orders_of_generated_game(current_game, player, power):
     print('we are: ', power)
     print('considering shared orders: ', sorted_powers)
     for other_power in sorted_powers:
-        other_power_orders = generated_game.received[power][other_power]
+        other_power_orders = current_game.received[power][other_power]
         if other_power_orders:
             generated_game.set_orders(other_power, other_power_orders)
 
