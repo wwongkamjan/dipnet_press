@@ -112,8 +112,8 @@ def interact():
         if AGENT_VERSION == 'v2':
             new_orders = yield {power_name: orders_of_generated_game(dip_game, dip_player, power_name) for power_name in dip_game.powers}
         
-            print('new_orders: ', new_orders)
-            print('orders: ', orders)
+            # print('new_orders: ', new_orders)
+            # print('orders: ', orders)
             orders =new_orders
 
         for power_name, power_orders in orders.items():
@@ -203,7 +203,7 @@ def evaluation():
         dip_game = env.dip_game
         dip_player = env.dip_player
         last_ep_index = 0
-        
+        order_game_memo= {}
         while not dip_game.game.is_game_done:
             if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
                 centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
@@ -226,7 +226,8 @@ def evaluation():
                                 # if action=share, we add it to the list
                                 if action_dict[env.power_mapping[sender]]==1:
                                     share_order_list.append(order)
-                                
+
+                            dip_game.received[recipient][sender] = share_order_list    
                             env.reset_power_state(sender, recipient) 
                             message = [' ( FCT ( '+order+' ) )' for order in share_order_list]
                             message = ''.join(message)
@@ -238,13 +239,15 @@ def evaluation():
                                         message=message,
                                         phase=dip_game.game.get_current_phase())
                             dip_game.new_message(msg)
+
               
             orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
             if AGENT_VERSION == 'v2':
                 new_orders = yield {power_name: orders_of_generated_game(dip_game, dip_player, power) for power_name in dip_game.powers}
             
-                print('new_orders: ', new_orders)
-                print('orders: ', orders)
+                # print('new_orders: ', new_orders)
+                # print('orders: ', orders)
+                order_game_memo[dip_game.game._phase_wrapper_type(dip_game.game.current_short_phase)] = orders
                 orders =new_orders
             for power_name, power_orders in orders.items():
                 dip_game.game.set_orders(power_name, power_orders)
@@ -288,12 +291,16 @@ def evaluation():
             print('%s: %d centers' %(power, centers_id[id]))
         
         maa2c.save_model('diplomacy', 'ep_{}_v1'.format(str(maa2c.n_episodes)))
-        save_to_json(hist_name, maa2c.n_episodes, i, dip_game)
+        if AGENT_VERSION == 'v1':
+            save_to_json(hist_name, maa2c.n_episodes, i, dip_game, None)
+        else:
+            save_to_json(hist_name, maa2c.n_episodes, i, dip_game, order_game_memo)
     EVAL_REWARDS = rewards
     stop_io_loop()
 
 @gen.coroutine  
 def orders_of_generated_game(current_game, player, power):
+    has_shared_orders = False
     generated_game = current_game.game.__deepcopy__(None) 
 
     centers = {power: len(generated_game.get_centers(power)) for power in generated_game.powers}    # rank powers by current supply center
@@ -301,20 +308,22 @@ def orders_of_generated_game(current_game, player, power):
     sorted_powers = [power for power,n in sorted(centers.items(), key=lambda item: item[1], reverse=True)]
     
     sorted_powers.pop() # remove last index or itself from a sorted list
-    print('we are: ', power)
-    print('considering shared orders: ', sorted_powers)
+    # print('we are: ', power)
+    # print('considering shared orders: ', sorted_powers)
     for other_power in sorted_powers:
         other_power_orders = current_game.received[power][other_power]
         if other_power_orders:
             generated_game.set_orders(other_power, other_power_orders)
+            has_shared_orders = True
 
-    generated_game.process()
+    if has_shared_orders:
+        generated_game.process()
 
     orders = yield player.get_orders(generated_game, power)
     return orders
 
 
-def save_to_json(name, ep, eval_i, game):
+def save_to_json(name, ep, eval_i, game, order_game_memo):
     game_history_name = name + '_eval_episode_' +str(ep)+ '_'+str(eval_i)
     exp = game_history_name
     game_history_name += '.json'
@@ -334,11 +343,16 @@ def save_to_json(name, ep, eval_i, game):
         if count == 0:
             # Writing headers of CSV file
             header = phase.keys()
+            if AGENT_VERSION == 'v2':
+                header.append('order_current_world')
             csv_writer.writerow(header)
             count += 1
 
         # Writing data of CSV file
-        csv_writer.writerow(phase.values())
+        row = phase.values() 
+        if AGENT_VERSION == 'v2':
+            row.append(order_game_memo[row[name]])
+        csv_writer.writerow(row)
 
     data_file.close()
         
