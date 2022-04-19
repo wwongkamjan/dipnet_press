@@ -125,8 +125,8 @@ class Diplomacy_Press:
             phase=self.game.get_current_phase())
             
       # sender sent message to recipient and recipient received message from sender
-      self.sent[sender][recipient] = msg_list
-      self.received[recipient][sender] = msg_list
+      self.sent[sender][recipient] = msg_list['sender_move']
+      self.received[recipient][sender] = msg_list['sender_move']
       self.new_message(msg)
       # self.number_sent_msg[sender] += 1
 #     else:
