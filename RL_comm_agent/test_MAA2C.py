@@ -42,7 +42,7 @@ MAX_GRAD_NORM = None
 EPSILON_START = 0.99
 EPSILON_END = 0.05
 EPSILON_DECAY = 500
-AGENT_VERSION = "v1" 
+AGENT_VERSION = "v2" 
 
 RANDOM_SEED = 2017
 N_AGENTS = 7
@@ -80,7 +80,7 @@ def test():
 
     dip_game = env.dip_game
     dip_player = env.dip_player
-    bot_type = ['RL', 'RL', 'transparent', 'transparent', 'transparent', 'transparent', 'transparent']
+    bot_type = ['RL', 'transparent', 'transparent', 'transparent', 'transparent', 'transparent', 'transparent']
     random.shuffle(bot_type)
     dip_player.bot_type = {power: b for b,power in zip(bot_type, dip_game.powers)}
     id = 0
@@ -182,7 +182,7 @@ def orders_of_generated_game(current_game, player, power):
     return orders
 
 def save_to_json(name, game, bot_type, order_game_memo):
-    game_history_name = name + '_with_baseline_bots_2RLvs5Transparent_{}'.format(EPISODE+1) 
+    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:
