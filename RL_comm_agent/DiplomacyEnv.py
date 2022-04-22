@@ -115,18 +115,19 @@ class DiplomacyEnv(gym.Env):
       if one_hot_order[i] ==1.:
         index.append(i)
     index[1] -=4
-    index[2] -=9
+    for key, ind in self.order_type_mapping.items():
+      if ind ==index[1]:
+        index[1] = key
+    if index[1] != 'hold':
+      index[2] -=9
     if r_type=='int':
       return index
     else:
       for key, ind in self.power_type_mapping.items():
         if ind ==index[0]:
           index[0] = key
-        if ind ==index[2]:
+        if index[1] != 'hold' and ind ==index[2]:
           index[2] = key
-      for key, ind in self.order_type_mapping.items():
-        if ind ==index[1]:
-          index[1] = key
       return index
       
 
