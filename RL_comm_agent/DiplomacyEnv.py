@@ -122,7 +122,7 @@ class DiplomacyEnv(gym.Env):
       for key, ind in self.power_type_mapping.items():
         if ind ==index[0]:
           index[0] = key
-        if ind ==index[3]:
+        if ind ==index[2]:
           index[2] = key
       for key, ind in self.order_type_mapping.items():
         if ind ==index[1]:
