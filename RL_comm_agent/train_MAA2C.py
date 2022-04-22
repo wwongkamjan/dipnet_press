@@ -22,6 +22,7 @@ MAX_EPISODES = 10
 EPISODES_BEFORE_TRAIN = 2
 EVAL_EPISODES = 1
 EVAL_INTERVAL = 2
+DISCOUNT_ALLY_REWARD = 0.7
 
 # roll out n steps
 ROLL_OUT_N_STEPS = 20
@@ -132,11 +133,11 @@ def interact():
                 state, sender, recipient, one_hot_order = env.ep_info[i]
                 #reward = self + ally supply center
                 #find all allies 
-                sender_reward = 0
+                sender_reward = len(dip_game.game.get_centers(sender)) - centers[sender]
                 sender_stance =  dip_player.stance[sender]
                 for power in sender_stance:
-                    if sender_stance[power] > 1 or power==sender:
-                        sender_reward += len(dip_game.game.get_centers(power)) - centers[power]
+                    if sender_stance[power] > 1:
+                        sender_reward += (len(dip_game.game.get_centers(power)) - centers[power]) * DISCOUNT_ALLY_REWARD
                 if state=='no_more_order':
                     env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                 if state=='censoring': #update stance of next states of states = share order/do not share order
@@ -291,11 +292,12 @@ def evaluation():
             print('%s: %d centers' %(power, centers_id[id]))
         
         
-        maa2c.save_model(actor_path='models/a2c_actor_diplomacy_ep_{}_v2'.format(str(maa2c.n_episodes)), critic_path = 'models/a2c_critic_diplomacy_ep_{}_v2'.format(str(maa2c.n_episodes)))
+        
         if AGENT_VERSION == 'v1':
             save_to_json(hist_name, maa2c.n_episodes, i, dip_game, None)
         else:
             save_to_json(hist_name, maa2c.n_episodes, i, dip_game, order_game_memo)
+    maa2c.save_model(actor_path='models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
     EVAL_REWARDS = rewards
     stop_io_loop()
 
