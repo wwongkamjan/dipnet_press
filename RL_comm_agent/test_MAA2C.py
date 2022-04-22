@@ -74,7 +74,7 @@ def test():
             episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
             critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
 
-    maa2c.load_model('models/a2c_actor_diplomacy_ep_9_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_ep_9_{}'.format(AGENT_VERSION))
+    maa2c.load_model('models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
 
     dip_step = 0
 
@@ -84,7 +84,7 @@ def test():
     random.shuffle(bot_type)
     dip_player.bot_type = {power: b for b,power in zip(bot_type, dip_game.powers)}
     id = 0
-    order_game_memo= {}
+    # order_game_memo= {}
     while not dip_game.game.is_game_done:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
@@ -131,7 +131,7 @@ def test():
         if AGENT_VERSION == 'v2':
             new_orders = yield {power_name: orders_of_generated_game(dip_game, dip_player, power_name) for power_name in dip_game.powers}
         
-            order_game_memo[dip_game.game._phase_wrapper_type(dip_game.game.current_short_phase)] = orders
+            # order_game_memo[dip_game.game._phase_wrapper_type(dip_game.game.current_short_phase)] = orders
             orders =new_orders
         
         for power_name, power_orders in orders.items():
@@ -203,8 +203,8 @@ def save_to_json(name, game, bot_type, order_game_memo):
         if count == 0:
             # Writing headers of CSV file
             header = phase.keys()
-            if AGENT_VERSION == 'v2':
-                phase['current_state_order'] = order_game_memo
+            # if AGENT_VERSION == 'v2':
+            #     phase['current_state_order'] = order_game_memo
             header = phase.keys()
             csv_writer.writerow(header)
             count += 1

@@ -107,7 +107,29 @@ class DiplomacyEnv(gym.Env):
     if self.dip_player.stance[power_a][power_b] > 1:
       return 'ally'
     return 'neutral'
-    
+
+  def index_order(self, one_hot_order,r_type='int'):
+    #4,5,4
+    index = []
+    for i in range (len(one_hot_order)):
+      if one_hot_order[i] ==1.:
+        index.append(i)
+    index[1] -=4
+    index[2] -=9
+    if r_type=='int':
+      return index
+    else:
+      for key, ind in self.power_type_mapping.items():
+        if ind ==index[0]:
+          index[0] = key
+        if ind ==index[3]:
+          index[2] = key
+      for key, ind in self.order_type_mapping.items():
+        if ind ==index[1]:
+          index[1] = key
+      return index
+      
+
   def one_hot_order(self, order, sender):
     order_token = get_order_tokens(order)
     # print('token: ', order_token)
