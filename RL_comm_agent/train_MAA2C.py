@@ -23,6 +23,7 @@ EPISODES_BEFORE_TRAIN = 2
 EVAL_EPISODES = 1
 EVAL_INTERVAL = 2
 DISCOUNT_ALLY_REWARD = 0.7
+DISCOUNT_ENEMY_PENALTY = 0.3
 
 # roll out n steps
 ROLL_OUT_N_STEPS = 20
@@ -136,8 +137,10 @@ def interact():
                 sender_reward = len(dip_game.game.get_centers(sender)) - centers[sender]
                 sender_stance =  dip_player.stance[sender]
                 for power in sender_stance:
-                    if sender_stance[power] > 1:
+                    if sender_stance[power] > 1 and power!=sender:
                         sender_reward += (len(dip_game.game.get_centers(power)) - centers[power]) * DISCOUNT_ALLY_REWARD
+                    if sender_stance[power] < -1 and power!=sender and one_hot_order[0]==1. and one_hot_order[7]==1. and one_hot_order[12]==1.: # if power is the enemy, penalty if send self attack order to enemy [0,3,3]
+                        sender_reward -= (len(dip_game.game.get_centers(power)) - centers[power]) * DISCOUNT_ENEMY_PENALTY
                 if state=='no_more_order':
                     env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                 if state=='censoring': #update stance of next states of states = share order/do not share order
