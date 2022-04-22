@@ -147,10 +147,10 @@ def test():
     for power in dip_game.powers:
         print('%s: %d centers' % (power, centers_power[power]))
     
-    if AGENT_VERSION == 'v2':
-        save_to_json(hist_name, dip_game, dip_player.bot_type, order_game_memo)
-    else:
-        save_to_json(hist_name, dip_game, dip_player.bot_type, None)
+    # if AGENT_VERSION == 'v2':
+    #     save_to_json(hist_name, dip_game, dip_player.bot_type, None)
+    # else:
+    save_to_json(hist_name, dip_game, dip_player.bot_type, None)
     EVAL_REWARDS = rewards
     stop_io_loop()
 
