@@ -118,7 +118,7 @@ class DiplomacyEnv(gym.Env):
     for key, ind in self.order_type_mapping.items():
       if ind ==index[1]:
         index[1] = key
-    if index[1] != 'hold':
+    if index[1] != 'hold' and index[1] != 'move':
       index[2] -=9
     if r_type=='int':
       return index
@@ -126,7 +126,7 @@ class DiplomacyEnv(gym.Env):
       for key, ind in self.power_type_mapping.items():
         if ind ==index[0]:
           index[0] = key
-        if index[1] != 'hold' and ind ==index[2]:
+        if index[1] != 'hold' and index[1] != 'move' and ind ==index[2]:
           index[2] = key
       return index
       
