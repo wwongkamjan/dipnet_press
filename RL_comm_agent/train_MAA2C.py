@@ -141,6 +141,7 @@ def interact():
                         sender_reward += (len(dip_game.game.get_centers(power)) - centers[power]) * DISCOUNT_ALLY_REWARD
                     if sender_stance[power] < -1 and power!=sender and one_hot_order:
                         order_info = env.index_order(one_hot_order, 'str') # if power is the enemy, penalty if send self attack order to enemy [0,3,3]
+                        print(order_info)
                         if order_info[0]=='self' and order_info[1]=='attack' and order_info[2]=='enemy':
                             sender_reward -= len(dip_game.game.get_centers(power))* DISCOUNT_ORDER_REWARD
                         if order_info[0]=='self' and order_info[1]=='support' and order_info[2]=='ally':
