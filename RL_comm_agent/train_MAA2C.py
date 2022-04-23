@@ -26,7 +26,7 @@ DISCOUNT_ALLY_REWARD = 0.7
 DISCOUNT_ORDER_REWARD = 0.3
 
 # roll out n steps
-ROLL_OUT_N_STEPS = 20
+ROLL_OUT_N_STEPS = 40
 # only remember the latest 2 ROLL_OUT_N_STEPS
 MEMORY_CAPACITY = 10*ROLL_OUT_N_STEPS
 # only use the latest 2 ROLL_OUT_N_STEPS for training A2C
@@ -139,13 +139,14 @@ def interact():
                 for power in sender_stance:
                     if sender_stance[power] > 1 and power!=sender:
                         sender_reward += (len(dip_game.game.get_centers(power)) - centers[power]) * DISCOUNT_ALLY_REWARD
+                        if order_info[0]=='self' and order_info[1]=='support' and order_info[2]=='ally':
+                            sender_reward += len(dip_game.game.get_centers(power)) * DISCOUNT_ORDER_REWARD
                     if sender_stance[power] < -1 and power!=sender and one_hot_order:
                         order_info = env.index_order(one_hot_order, 'str') # if power is the enemy, penalty if send self attack order to enemy [0,3,3]
                         # print(order_info)
                         if order_info[0]=='self' and order_info[1]=='attack' and order_info[2]=='enemy':
                             sender_reward -= len(dip_game.game.get_centers(power))* DISCOUNT_ORDER_REWARD
-                        if order_info[0]=='self' and order_info[1]=='support' and order_info[2]=='ally':
-                            sender_reward += len(dip_game.game.get_centers(power)) * DISCOUNT_ORDER_REWARD
+ 
                 if state=='no_more_order':
                     env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                 if state=='censoring': #update stance of next states of states = share order/do not share order
