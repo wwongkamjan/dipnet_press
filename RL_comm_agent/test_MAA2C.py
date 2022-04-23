@@ -85,6 +85,7 @@ def test():
     dip_player.bot_type = {power: b for b,power in zip(bot_type, dip_game.powers)}
     id = 0
     # order_game_memo= {}
+    dict_stat = {'attack': {'ally': 0, 'neutral':0, 'enemy':0}, 'move': {'ally': 0, 'neutral':0, 'enemy':0}, 'support': {'ally': 0, 'neutral':0, 'enemy':0} }
     while not dip_game.game.is_game_done:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
@@ -109,6 +110,9 @@ def test():
                                 # if action=share, we add it to the list
                                 if action_dict[env.power_mapping[sender]]==1:
                                     share_order_list.append(order)
+                                    order_info = env.index_order(env.one_hot_order(order), 'str')
+                                    if order_info[0]=='self' and order_info[1] in ('attack', 'move', 'support'):
+                                        dict_stat[order_info[1]][env.get_power_type(sender,recipient)]+=1
 
                             dip_game.received[recipient][sender] = share_order_list
 
@@ -150,7 +154,7 @@ def test():
     # if AGENT_VERSION == 'v2':
     #     save_to_json(hist_name, dip_game, dip_player.bot_type, None)
     # else:
-    save_to_json(hist_name, dip_game, dip_player.bot_type, None)
+    save_to_json(hist_name, dip_game, dip_player.bot_type, dict_stat)
     EVAL_REWARDS = rewards
     stop_io_loop()
 
@@ -181,10 +185,12 @@ def orders_of_generated_game(current_game, player, power):
     orders = yield player.get_orders(generated_game, power)
     return orders
 
-def save_to_json(name, game, bot_type, order_game_memo):
+def save_to_json(name, game, bot_type, dict_stat):
     game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
+    with open(exp+'_dict_stat.json', 'w') as file:
+        file.write(json.dumps(dict_stat))
     with open(game_history_name, 'w') as file:
         file.write(json.dumps(to_saved_game_format(game.game)))
     
