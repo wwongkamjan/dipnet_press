@@ -175,6 +175,7 @@ def interact():
     #tranform s,a,r from dict to arr
     #wrong -> env.* = array of dict
     # next_states = arr_dict_to_arr(env.ep_n_states, N_AGENTS)
+    print(env.ep_rewards)
     rewards = arr_dict_to_arr(env.ep_rewards, N_AGENTS)
     # dones = arr_dict_to_arr(env.ep_dones, N_AGENTS)
     actions = arr_dict_to_arr(env.ep_actions, N_AGENTS)
@@ -384,7 +385,7 @@ def main():
             print('evaluate')
             start_io_loop(evaluation)
             rewards = EVAL_REWARDS
-            print(rewards)
+            # print(rewards)
             rewards_mu, rewards_std = ma_agg_double_list(rewards)
             
             for agent_id in range (N_AGENTS):
