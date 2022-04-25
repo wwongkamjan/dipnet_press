@@ -190,8 +190,9 @@ def interact():
         
     # print('check actions: ', actions[-10:])
     rewards = np.array(rewards)
-    print(rewards[:,0])
+
     for agent_id in range(maa2c.n_agents):
+        print('{} reward: {}'.format(agent_id, np.sum(rewards[:,agent_id])))
         rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
     rewards = rewards.tolist()
     # print('check rewards: ', rewards[-10:])
