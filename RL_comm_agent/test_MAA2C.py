@@ -111,8 +111,8 @@ def test():
                                 # if action=share, we add it to the list
                                 if action_dict[env.power_mapping[sender]]==1:
                                     share_order_list.append(order)
-                                    order_info = env.translate_order(order)
-                                    dict_stat.append([sender, recipient, order_info[0],order_info[1],order_info[2] if len(order_info)>2 else None, env.get_power_type(sender,recipient)])
+                                order_info = env.translate_order(order)
+                                dict_stat.append([sender, recipient, action_dict[env.power_mapping[sender]], order_info[0],order_info[1],order_info[2] if len(order_info)>2 else None, env.get_power_type(sender,recipient)])
 
                             dip_game.received[recipient][sender] = share_order_list
 
@@ -218,7 +218,7 @@ def save_to_json(name, game, bot_type, dict_stat):
 
     data_file.close()
 
-    dict_stat_header = ['sender', 'recipient','power1', 'order_type','power2' 'stance of recipient']
+    dict_stat_header = ['sender', 'recipient','share','power1', 'order_type','power2' 'stance of recipient']
     data_file = open(exp + '_stat.csv', 'w')
     csv_writer = csv.writer(data_file)
     csv_writer.writerow(dict_stat_header)
