@@ -193,6 +193,8 @@ class Diplomacy_Press_Player:
     previous_order = game.get_orders()
     for other_power in self.stance:
       if power_name != other_power:
+        if self.stance[power_name][other_power] < -1:
+          self.stance[power_name][other_power] +=1
         for order in previous_order[other_power]:
           # print(order)
           if self.get_order_type(game, order, other_power,power_name) =='attack':
