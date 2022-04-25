@@ -175,11 +175,11 @@ def interact():
     #tranform s,a,r from dict to arr
     #wrong -> env.* = array of dict
     # next_states = arr_dict_to_arr(env.ep_n_states, N_AGENTS)
-    print(env.ep_rewards)
     rewards = arr_dict_to_arr(env.ep_rewards, N_AGENTS)
     # dones = arr_dict_to_arr(env.ep_dones, N_AGENTS)
     actions = arr_dict_to_arr(env.ep_actions, N_AGENTS)
     states = arr_dict_to_arr(env.ep_states, N_AGENTS)
+
 
     # print('check states: ', states[-10:])
     
@@ -190,6 +190,7 @@ def interact():
         
     # print('check actions: ', actions[-10:])
     rewards = np.array(rewards)
+    print(rewards[:,0])
     for agent_id in range(maa2c.n_agents):
         rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
     rewards = rewards.tolist()
