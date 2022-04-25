@@ -155,8 +155,10 @@ def test():
                             bool_propose = True
                         if bool_propose:
                             proposal_order_list.append(order)
+                    print('RL')
                 if dip_player.bot_type[sender] == 'transparent':
                     proposal_order_list = dip_player.get_proposal(dip_game.game, sender, recipient)
+                    print('tran')
                 if len(proposal_order_list):
                     dip_game.proposal_received[recipient][sender] = proposal_order_list
                     message = [' ( PRP ( '+order+' ) )' for order in proposal_order_list]
@@ -169,6 +171,7 @@ def test():
                                 message=message,
                                 phase=dip_game.game.get_current_phase())
                     dip_game.new_message(msg)
+                    print('proposal sent')
                     
         
         # proposal process
