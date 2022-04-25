@@ -24,6 +24,7 @@ EVAL_EPISODES = 1
 EVAL_INTERVAL = 2
 DISCOUNT_ALLY_REWARD = 0.7
 DISCOUNT_ORDER_REWARD = 0.3
+LOAD_MODEL = True
 
 # roll out n steps
 ROLL_OUT_N_STEPS = 40
@@ -74,7 +75,9 @@ def interact():
                 epsilon_start=EPSILON_START, epsilon_end=EPSILON_END,
                 epsilon_decay=EPSILON_DECAY, max_grad_norm=MAX_GRAD_NORM,
                 episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
-                critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
+                critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True) 
+        if LOAD_MODEL: 
+            maa2c.load_model('models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
     else:
         maa2c = AGENT   
         maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)

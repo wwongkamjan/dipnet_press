@@ -37,6 +37,8 @@ class Diplomacy_Press:
   def __init__(self, Game=None, Player=None, powers=None, number_msg_limitation=6):
     self.sent = {}
     self.received = {}
+    self.proposal_sent = {}
+    self.proposal_received = {}
     self.game = Game
     self.game.remove_rule('NO_PRESS')
     self.player = Player
@@ -50,6 +52,8 @@ class Diplomacy_Press:
     for power in self.powers:
       self.sent[power] = {power_name: None for power_name in self.powers}
       self.received[power] = {power_name: None for power_name in self.powers}
+      self.proposal_sent[power] = {power_name: None for power_name in self.powers}
+      self.proposal_received[power] = {power_name: None for power_name in self.powers}
       self.number_sent_msg[power] = 0
     
   def get_power_messages(self, power_name):
@@ -164,6 +168,8 @@ class Diplomacy_Press:
     for power in self.powers:
       self.sent[power] = {power_name: None for power_name in self.powers}
       self.received[power] = {power_name: None for power_name in self.powers}
+      self.proposal_sent[power] = {power_name: None for power_name in self.powers}
+      self.proposal_received[power] = {power_name: None for power_name in self.powers}
     self.game.process()
 
 class Diplomacy_Press_Player:

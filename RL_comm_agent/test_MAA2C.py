@@ -132,11 +132,19 @@ def test():
         #generating an imagined world from received messages
         # new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+
+        # # proposal
+        # for sender in dip_game.powers:
+        #     for recipient in dip_game.powers:
+        #         dip_player.bot_type[power] == 'sender':
+
+
+
         if AGENT_VERSION == 'v2':
-            new_orders = yield {power_name: orders_of_generated_game(dip_game, dip_player, power_name) for power_name in dip_game.powers}
-        
-            # order_game_memo[dip_game.game._phase_wrapper_type(dip_game.game.current_short_phase)] = orders
-            orders =new_orders
+            for power in dip_game.powers:
+                if dip_player.bot_type[power] =='RL':
+                    orders[power] = yield orders_of_generated_game(dip_game.game, dip_player, power)
+
         
         for power_name, power_orders in orders.items():
             dip_game.game.set_orders(power_name, power_orders)
@@ -157,6 +165,7 @@ def test():
     save_to_json(hist_name, dip_game, dip_player.bot_type, dict_stat)
     EVAL_REWARDS = rewards
     stop_io_loop()
+
 
 @gen.coroutine  
 def orders_of_generated_game(current_game, player, power):
