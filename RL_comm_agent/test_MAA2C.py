@@ -133,17 +133,38 @@ def test():
         # new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
 
-        # # proposal
+        # proposal
+
         # for sender in dip_game.powers:
         #     for recipient in dip_game.powers:
-        #         dip_player.bot_type[power] == 'sender':
+        #         proposal_order_list = []
+        #         if dip_player.bot_type[sender] == 'RL':
+        #         # scan through list of dipnet order
+        #             rep_orders = orders[recipient] 
+        #             for order in rep_orders:
+        #                 order_info = env.translate_order(order)
+        #                 bool_propose = False
+        #                 # if they have order that supporting sender, propose this
+        #                 if order_info[1] == 'support' and order_info[2]==sender:
+        #                     bool_propose = True
+        #                 # if they have order that attacking enemy of sender, propose this
+        #                 if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
+        #                     bool_propose = True
+        #                 if bool_propose:
+        #                     proposal_order_list.append(order)
+        #         if dip_player.bot_type[sender] == 'transparent':
+        #             proposal_order_list = dip_player.get_proposal(dip_game, sender, recipient)
+        #         dip_game.proposal_received[recipient][sender] = proposal_order_list
+        
+        # proposal process
+
 
 
 
         if AGENT_VERSION == 'v2':
             for power in dip_game.powers:
                 if dip_player.bot_type[power] =='RL':
-                    orders[power] = yield orders_of_generated_game(dip_game.game, dip_player, power)
+                    orders[power] = yield orders_of_generated_game(dip_game, dip_player, power)
 
         
         for power_name, power_orders in orders.items():
