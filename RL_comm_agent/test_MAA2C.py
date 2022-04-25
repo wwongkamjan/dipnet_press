@@ -156,7 +156,7 @@ def test():
                         if bool_propose:
                             proposal_order_list.append(order)
                 if dip_player.bot_type[sender] == 'transparent':
-                    proposal_order_list = dip_player.get_proposal(dip_game, sender, recipient)
+                    proposal_order_list = dip_player.get_proposal(dip_game.game, sender, recipient)
                 if len(proposal_order_list):
                     dip_game.proposal_received[recipient][sender] = proposal_order_list
                     message = [' ( PRP ( '+order+' ) )' for order in proposal_order_list]
