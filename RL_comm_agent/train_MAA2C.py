@@ -311,7 +311,7 @@ def evaluation():
             save_to_json(hist_name, maa2c.n_episodes, i, dip_game, None)
         else:
             save_to_json(hist_name, maa2c.n_episodes, i, dip_game, order_game_memo)
-    maa2c.save_model(actor_path='models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
+    # maa2c.save_model(actor_path='models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
     EVAL_REWARDS = rewards
     stop_io_loop()
 
@@ -382,6 +382,7 @@ def main():
         if AGENT.n_episodes >= EPISODES_BEFORE_TRAIN:
             print('train')
             AGENT.train()
+            AGENT.save_model(actor_path='models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             print('evaluate')
             # start_io_loop(evaluation)
