@@ -155,10 +155,10 @@ def test():
                             bool_propose = True
                         if bool_propose:
                             proposal_order_list.append(order)
-                    print('RL')
+                    # print('RL')
                 if dip_player.bot_type[sender] == 'transparent':
                     proposal_order_list = dip_player.get_proposal(dip_game.game, sender, recipient) if dip_player.get_proposal(dip_game.game, sender, recipient) else []
-                    print('tran')
+                    # print('tran')
                 if len(proposal_order_list):
                     dip_game.proposal_received[recipient][sender] = proposal_order_list
                     message = [' ( PRP ( '+order+' ) )' for order in proposal_order_list]
@@ -171,7 +171,7 @@ def test():
                                 message=message,
                                 phase=dip_game.game.get_current_phase())
                     dip_game.new_message(msg)
-                    print('proposal sent')
+                    # print('proposal sent')
                     
         
         # proposal process
@@ -287,7 +287,7 @@ def orders_of_generated_game(current_game, player, power):
     return orders
 
 def save_to_json(name, game, bot_type, dict_stat, rewards):
-    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_{}'.format(EPISODE+1) 
+    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_proposal_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:
