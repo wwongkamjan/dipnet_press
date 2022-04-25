@@ -18,10 +18,10 @@ from diplomacy.engine.message import Message
 from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 
-MAX_EPISODES = 50
-EPISODES_BEFORE_TRAIN = 2
+MAX_EPISODES = 2
+EPISODES_BEFORE_TRAIN = 0
 EVAL_EPISODES = 1
-EVAL_INTERVAL = 10
+EVAL_INTERVAL = 1
 DISCOUNT_ALLY_REWARD = 0.7
 DISCOUNT_ORDER_REWARD = 0.3
 LOAD_MODEL = True
@@ -384,7 +384,9 @@ def main():
             print('evaluate')
             start_io_loop(evaluation)
             rewards = EVAL_REWARDS
+            print(rewards)
             rewards_mu, rewards_std = ma_agg_double_list(rewards)
+            
             for agent_id in range (N_AGENTS):
                 print("Episode %d, Agent %d, Average Reward %.2f" % (AGENT.n_episodes+1, agent_id, rewards_mu[agent_id]))
             episodes.append(AGENT.n_episodes+1)
