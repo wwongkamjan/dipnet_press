@@ -192,7 +192,7 @@ class Diplomacy_Press_Player:
           if self.get_order_type(game, order, other_power,power_name) =='attack':
             self.stance[power_name][other_power] = -10.0
             # print('update stance [{}][{}]= {}'.format(power_name,other_power,self.stance[power_name][other_power]))
-          elif self.get_order_type(game, order, other_power,power_name) =='support' and not self.stance[power_name][other_power] <-1:
+          elif self.get_order_type(game, order, other_power,power_name) =='support' and self.stance[power_name][other_power] >-1:
               self.stance[power_name][other_power] = 10.0
               # print('update stance [{}][{}]= {}'.format(power_name,other_power,self.stance[power_name][other_power]))
          

@@ -159,12 +159,54 @@ class DiplomacyEnv(gym.Env):
         order_unit = order_token[0][0] + order_token[1][1:]
         # print(order_unit)
         power2 =self.get_unit_power(order_unit)
-        if power2:
+        if power2 and power1!=power2:
           order_type= 'attack'
           return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + self.one_hot(self.order_type_mapping[order_type],5) + self.one_hot(self.power_type_mapping[self.get_power_type(sender, power2)], 4)
         else:
           order_type = 'move'
           return self.one_hot(self.power_type_mapping[self.get_power_type(sender, power1)], 4) + self.one_hot(self.order_type_mapping[order_type],5) + [0.0]*4
+
+  def translate_order(self, order):
+    order_info= []
+    order_token = get_order_tokens(order)
+    # print('token: ', order_token)
+    if order_token[0][0] =='A' or order_token[0][0] =='F':
+      # this is message about orders
+      power1 = self.get_unit_power(order_token[0])
+      order_info.append(power1)
+      if order_token[1] == 'S':
+        order_type = 'support'
+        order_info.append(order_type)
+        order_unit = order_token[2]
+        power2 =self.get_unit_power(order_unit)
+        order_info.append(power2)
+        
+      elif order_token[1] == 'H':
+        order_type = 'hold'
+        order_info.append(order_type)
+
+        
+      elif order_token[1] == 'C':
+        order_type = 'convoy'
+        order_info.append(order_type)
+        order_unit = order_token[2]
+        power2 =self.get_unit_power(order_unit)
+        order_info.append(power2)
+        
+      else:
+        #move/retreat or attack 
+        #get location - add order_token[0] ('A' or 'F') at front to check if it collides with other powers' units
+        order_unit = order_token[0][0] + order_token[1][1:]
+        # print(order_unit)
+        power2 =self.get_unit_power(order_unit)
+        if power2 and power1!=power2:
+          order_type= 'attack'
+          order_info.append(order_type)
+          order_info.append(power2)
+        else:
+          order_type = 'move'
+          order_info.append(order_type)
+    return order_info
         
   def get_unit_power(self, unit):
     for power in self.dip_game.powers:
