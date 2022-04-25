@@ -148,13 +148,14 @@ def test():
                         order_info = env.translate_order(order)
                         bool_propose = False
                         # if they have order that supporting sender, propose this
-                        if order_info[1] == 'support' and order_info[2]==sender:
-                            bool_propose = True
-                        # if they have order that attacking enemy of sender, propose this
-                        if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
-                            bool_propose = True
-                        if bool_propose:
-                            proposal_order_list.append(order)
+                        if len(order_info)>2:
+                            if order_info[1] == 'support' and order_info[2]==sender:
+                                bool_propose = True
+                            # if they have order that attacking enemy of sender, propose this
+                            if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
+                                bool_propose = True
+                            if bool_propose:
+                                proposal_order_list.append(order)
                     # print('RL')
                 if dip_player.bot_type[sender] == 'transparent':
                     proposal_order_list = dip_player.get_proposal(dip_game.game, sender, recipient) if dip_player.get_proposal(dip_game.game, sender, recipient) else []
