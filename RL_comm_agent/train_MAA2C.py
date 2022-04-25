@@ -374,8 +374,7 @@ def save_to_json(name, ep, eval_i, game, order_game_memo):
         
 # @gen.coroutine
 def main():    
-    episodes =[]
-    eval_rewards =[]
+
     while AGENT==None or AGENT.n_episodes < MAX_EPISODES:
         print('interact')
         start_io_loop(interact)
