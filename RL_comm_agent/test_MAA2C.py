@@ -76,7 +76,7 @@ def test():
             episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
             critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
 
-    maa2c.load_model('models/a2c_actor_diplomacy_test_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_test_{}'.format(AGENT_VERSION))
+    maa2c.load_model('models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
 
     dip_step = 0
 
@@ -88,6 +88,7 @@ def test():
     id = 0
     # order_game_memo= {}
     last_ep_index = 0
+    RLagent_id = [env.power_mapping[power] for power, bot_type in dip_player.bot_type.items() if bot_type =='RL' ]
     dict_stat = []
     while not dip_game.game.is_game_done:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
@@ -239,14 +240,13 @@ def test():
     if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
     
         centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
-        final_r = [0.0] * maa2c.n_agents
-        for power in dip_game.powers:
-            final_r[env.power_mapping[power]] = centers[power]
+        env.ep_rewards.append({id: centers[power] if id ==env.power_mapping[sender] else 0. for id in env.agent_id}) 
         maa2c.n_episodes += 1
         maa2c.episode_done = True
 
     rewards = arr_dict_to_arr(env.ep_rewards, N_AGENTS)
     rewards = np.array(rewards)
+    rewards = rewards[:,RLagent_id]
     
     # if AGENT_VERSION == 'v2':
     #     save_to_json(hist_name, dip_game, dip_player.bot_type, None)
@@ -284,7 +284,7 @@ def orders_of_generated_game(current_game, player, power):
     return orders
 
 def save_to_json(name, game, bot_type, dict_stat, rewards):
-    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_test_{}'.format(EPISODE+1) 
+    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:
@@ -324,10 +324,8 @@ def save_to_json(name, game, bot_type, dict_stat, rewards):
     data_file.close()
     
 
-    dict_rew_header = ['agent0', 'agent1','agent2','agent3', 'agent4','agent5','agent6']
     data_file = open(exp + '_reward.csv', 'w')
     csv_writer = csv.writer(data_file)
-    csv_writer.writerow(dict_rew_header)
     csv_writer.writerows(rewards)
     data_file.close()
 # @gen.coroutine
