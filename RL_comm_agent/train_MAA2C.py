@@ -3,6 +3,7 @@ from pytorch_DRL.common.utils import ma_agg_double_list, dict_to_arr, arr_dict_t
 from tornado import gen
 import ujson as json
 import csv
+from test_MAA2C import test
 
 import sys
 import os
@@ -24,7 +25,7 @@ EVAL_EPISODES = 1
 EVAL_INTERVAL = 1
 DISCOUNT_ALLY_REWARD = 0.7
 DISCOUNT_ORDER_REWARD = 0.3
-LOAD_MODEL = True
+LOAD_MODEL = False
 
 # roll out n steps
 ROLL_OUT_N_STEPS = 40
@@ -77,7 +78,7 @@ def interact():
                 episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
                 critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True) 
         if LOAD_MODEL: 
-            maa2c.load_model('models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
+            maa2c.load_model('models/a2c_actor_diplomacy_test_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_test_{}'.format(AGENT_VERSION))
     else:
         maa2c = AGENT   
         maa2c.env_state = dict_to_arr(env.reset(), N_AGENTS)
@@ -192,7 +193,7 @@ def interact():
     rewards = np.array(rewards)
 
     for agent_id in range(maa2c.n_agents):
-        print('{} reward: {}'.format(agent_id, np.sum(rewards[:,agent_id])))
+        # print('{} reward: {}'.format(agent_id, np.sum(rewards[:,agent_id])))
         rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
     rewards = rewards.tolist()
     # print('check rewards: ', rewards[-10:])
@@ -306,13 +307,11 @@ def evaluation():
         for power,id in env.power_mapping.items():
             print('%s: %d centers' %(power, centers_id[id]))
         
-        
-        
         if AGENT_VERSION == 'v1':
             save_to_json(hist_name, maa2c.n_episodes, i, dip_game, None)
         else:
             save_to_json(hist_name, maa2c.n_episodes, i, dip_game, order_game_memo)
-    # maa2c.save_model(actor_path='models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
+    maa2c.save_model(actor_path='models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
     EVAL_REWARDS = rewards
     stop_io_loop()
 
@@ -385,15 +384,16 @@ def main():
             AGENT.train()
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             print('evaluate')
-            start_io_loop(evaluation)
-            rewards = EVAL_REWARDS
+            # start_io_loop(evaluation)
+            # rewards = EVAL_REWARDS
             # print(rewards)
-            rewards_mu, rewards_std = ma_agg_double_list(rewards)
+            # rewards_mu, rewards_std = ma_agg_double_list(rewards)
             
-            for agent_id in range (N_AGENTS):
-                print("Episode %d, Agent %d, Average Reward %.2f" % (AGENT.n_episodes+1, agent_id, rewards_mu[agent_id]))
-            episodes.append(AGENT.n_episodes+1)
-            eval_rewards.append(rewards_mu)
+            # for agent_id in range (N_AGENTS):
+            #     print("Episode %d, Agent %d, Average Reward %.2f" % (AGENT.n_episodes+1, agent_id, rewards_mu[agent_id]))
+            # episodes.append(AGENT.n_episodes+1)
+            # eval_rewards.append(rewards_mu)
+            start_io_loop(test)
   
         
 if __name__ == '__main__':

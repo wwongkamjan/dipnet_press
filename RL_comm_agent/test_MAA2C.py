@@ -23,6 +23,8 @@ EPISODES_BEFORE_TRAIN = 2
 TEST_EPISODES = 10
 EPISODE = 0
 EVAL_INTERVAL = 2
+DISCOUNT_ALLY_REWARD = 0.7
+DISCOUNT_ORDER_REWARD = 0.3
 
 # roll out n steps
 ROLL_OUT_N_STEPS = 20
@@ -74,7 +76,7 @@ def test():
             episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
             critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
 
-    maa2c.load_model('models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
+    maa2c.load_model('models/a2c_actor_diplomacy_test_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_test_{}'.format(AGENT_VERSION))
 
     dip_step = 0
 
@@ -85,7 +87,7 @@ def test():
     dip_player.bot_type = {power: b for b,power in zip(bot_type, dip_game.powers)}
     id = 0
     # order_game_memo= {}
-
+    last_ep_index = 0
     dict_stat = []
     while not dip_game.game.is_game_done:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
@@ -135,61 +137,61 @@ def test():
 
         # proposal
 
-        for sender in dip_game.powers:
-            for recipient in dip_game.powers:
-                proposal_order_list = []
-                if dip_player.bot_type[sender] == 'RL':
-                # scan through list of dipnet order
-                    rep_orders = orders[recipient] 
-                    for order in rep_orders:
-                        order_info = env.translate_order(order)
-                        bool_propose = False
-                        # if they have order that supporting sender, propose this
-                        if order_info[1] == 'support' and order_info[2]==sender:
-                            bool_propose = True
-                        # if they have order that attacking enemy of sender, propose this
-                        if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
-                            bool_propose = True
-                        if bool_propose:
-                            proposal_order_list.append(order)
-                if dip_player.bot_type[sender] == 'transparent':
-                    proposal_order_list = dip_player.get_proposal(dip_game, sender, recipient)
-                if len(proposal_order_list):
-                    dip_game.proposal_received[recipient][sender] = proposal_order_list
-                    message = [' ( PRP ( '+order+' ) )' for order in proposal_order_list]
-                    message = ''.join(message)
-                    if len(message):
-                        message = 'AND' + message
-                    message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
-                    msg = Message(sender=sender,
-                                recipient=recipient,
-                                message=message,
-                                phase=dip_game.game.get_current_phase())
-                    dip_game.new_message(msg)
+        # for sender in dip_game.powers:
+        #     for recipient in dip_game.powers:
+        #         proposal_order_list = []
+        #         if dip_player.bot_type[sender] == 'RL':
+        #         # scan through list of dipnet order
+        #             rep_orders = orders[recipient] 
+        #             for order in rep_orders:
+        #                 order_info = env.translate_order(order)
+        #                 bool_propose = False
+        #                 # if they have order that supporting sender, propose this
+        #                 if order_info[1] == 'support' and order_info[2]==sender:
+        #                     bool_propose = True
+        #                 # if they have order that attacking enemy of sender, propose this
+        #                 if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
+        #                     bool_propose = True
+        #                 if bool_propose:
+        #                     proposal_order_list.append(order)
+        #         if dip_player.bot_type[sender] == 'transparent':
+        #             proposal_order_list = dip_player.get_proposal(dip_game, sender, recipient)
+        #         if len(proposal_order_list):
+        #             dip_game.proposal_received[recipient][sender] = proposal_order_list
+        #             message = [' ( PRP ( '+order+' ) )' for order in proposal_order_list]
+        #             message = ''.join(message)
+        #             if len(message):
+        #                 message = 'AND' + message
+        #             message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
+        #             msg = Message(sender=sender,
+        #                         recipient=recipient,
+        #                         message=message,
+        #                         phase=dip_game.game.get_current_phase())
+        #             dip_game.new_message(msg)
                     
         
-        # proposal process
-        #if not enemy, I will follow your order + my own
+        # # proposal process
+        # #if not enemy, I will follow your order + my own
 
-        for recipient in dip_game.powers:
-            for sender in dip_game.powers:
-                answer = 'REJ'
-                if env.get_power_type(recipient,sender)!='enemy':
-                    answer = 'YES'
+        # for recipient in dip_game.powers:
+        #     for sender in dip_game.powers:
+        #         answer = 'REJ'
+        #         if env.get_power_type(recipient,sender)!='enemy':
+        #             answer = 'YES'
 
-                message = [' ( {} ( '+order+' ) )'.format(answer) for order in dip_game.proposal_received[recipient][sender]]
-                message = ''.join(message)
-                if len(message):
-                    message = 'AND' + message
-                message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
-                msg = Message(sender=sender,
-                            recipient=recipient,
-                            message=message,
-                            phase=dip_game.game.get_current_phase())
-                dip_game.new_message(msg)
+        #         message = [' ( {} ( '+order+' ) )'.format(answer) for order in dip_game.proposal_received[recipient][sender]]
+        #         message = ''.join(message)
+        #         if len(message):
+        #             message = 'AND' + message
+        #         message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
+        #         msg = Message(sender=sender,
+        #                     recipient=recipient,
+        #                     message=message,
+        #                     phase=dip_game.game.get_current_phase())
+        #         dip_game.new_message(msg)
 
-                if answer =='YES':
-                    orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
+        #         if answer =='YES':
+        #             orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
 
 
         if AGENT_VERSION == 'v2':
@@ -205,16 +207,51 @@ def test():
             dip_player.update_stance(dip_game.game, power)
 
         dip_game.game_process()
+        if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
+            for i in range (last_ep_index, len(env.ep_states)):
+                state, sender, recipient, one_hot_order = env.ep_info[i]
+                #reward = self + ally supply center
+                #find all allies 
+                sender_reward = len(dip_game.game.get_centers(sender)) - centers[sender]
+                sender_stance =  dip_player.stance[sender]
+                for power in sender_stance:
+                    if sender_stance[power] > 1 and power!=sender:
+                        sender_reward += (len(dip_game.game.get_centers(power)) - centers[power]) * DISCOUNT_ALLY_REWARD
+                        if order_info[0]=='self' and order_info[1]=='support' and order_info[2]=='ally':
+                            sender_reward += len(dip_game.game.get_centers(power)) * DISCOUNT_ORDER_REWARD
+                    if sender_stance[power] < -1 and power!=sender and one_hot_order:
+                        order_info = env.index_order(one_hot_order, 'str') # if power is the enemy, penalty if send self attack order to enemy [0,3,3]
+                        # print(order_info)
+                        if order_info[0]=='self' and order_info[1]=='attack' and order_info[2]=='enemy':
+                            sender_reward -= len(dip_game.game.get_centers(power))* DISCOUNT_ORDER_REWARD
+ 
+                if state=='no_more_order':
+                    env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
+                if state=='censoring': #update stance of next states of states = share order/do not share order
+                    # env.ep_n_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
+                    if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
+                        env.ep_rewards.append({id: sender_reward*1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
+                    else:
+                        env.ep_rewards.append({id: 0. for id in env.agent_id})   
+                    
+            last_ep_index = len(env.ep_states)
 
-    centers_power = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
-    print('evaluation result: ' )
-    for power in dip_game.powers:
-        print('%s: %d centers' % (power, centers_power[power]))
+    if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
+    
+        centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
+        final_r = [0.0] * maa2c.n_agents
+        for power in dip_game.powers:
+            final_r[env.power_mapping[power]] = centers[power]
+        maa2c.n_episodes += 1
+        maa2c.episode_done = True
+
+    rewards = arr_dict_to_arr(env.ep_rewards, N_AGENTS)
+    rewards = np.array(rewards)
     
     # if AGENT_VERSION == 'v2':
     #     save_to_json(hist_name, dip_game, dip_player.bot_type, None)
     # else:
-    save_to_json(hist_name, dip_game, dip_player.bot_type, dict_stat)
+    save_to_json(hist_name, dip_game, dip_player.bot_type, dict_stat, rewards)
     EVAL_REWARDS = rewards
     stop_io_loop()
 
@@ -246,8 +283,8 @@ def orders_of_generated_game(current_game, player, power):
     orders = yield player.get_orders(generated_game, power)
     return orders
 
-def save_to_json(name, game, bot_type, dict_stat):
-    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_level0_{}'.format(EPISODE+1) 
+def save_to_json(name, game, bot_type, dict_stat, rewards):
+    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_test_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:
@@ -270,7 +307,7 @@ def save_to_json(name, game, bot_type, dict_stat):
             header = phase.keys()
             # if AGENT_VERSION == 'v2':
             #     phase['current_state_order'] = order_game_memo
-            header = phase.keys()
+            # header = phase.keys()
             csv_writer.writerow(header)
             count += 1
 
@@ -285,7 +322,14 @@ def save_to_json(name, game, bot_type, dict_stat):
     csv_writer.writerow(dict_stat_header)
     csv_writer.writerows(dict_stat)
     data_file.close()
-        
+    
+
+    dict_rew_header = ['agent0', 'agent1','agent2','agent3', 'agent4','agent5','agent6']
+    data_file = open(exp + '_reward.csv', 'w')
+    csv_writer = csv.writer(data_file)
+    csv_writer.writerow(dict_rew_header)
+    csv_writer.writerows(rewards)
+    data_file.close()
 # @gen.coroutine
 def main():    
     global EPISODE
