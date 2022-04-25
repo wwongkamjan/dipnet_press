@@ -135,30 +135,61 @@ def test():
 
         # proposal
 
-        # for sender in dip_game.powers:
-        #     for recipient in dip_game.powers:
-        #         proposal_order_list = []
-        #         if dip_player.bot_type[sender] == 'RL':
-        #         # scan through list of dipnet order
-        #             rep_orders = orders[recipient] 
-        #             for order in rep_orders:
-        #                 order_info = env.translate_order(order)
-        #                 bool_propose = False
-        #                 # if they have order that supporting sender, propose this
-        #                 if order_info[1] == 'support' and order_info[2]==sender:
-        #                     bool_propose = True
-        #                 # if they have order that attacking enemy of sender, propose this
-        #                 if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
-        #                     bool_propose = True
-        #                 if bool_propose:
-        #                     proposal_order_list.append(order)
-        #         if dip_player.bot_type[sender] == 'transparent':
-        #             proposal_order_list = dip_player.get_proposal(dip_game, sender, recipient)
-        #         dip_game.proposal_received[recipient][sender] = proposal_order_list
+        for sender in dip_game.powers:
+            for recipient in dip_game.powers:
+                proposal_order_list = []
+                if dip_player.bot_type[sender] == 'RL':
+                # scan through list of dipnet order
+                    rep_orders = orders[recipient] 
+                    for order in rep_orders:
+                        order_info = env.translate_order(order)
+                        bool_propose = False
+                        # if they have order that supporting sender, propose this
+                        if order_info[1] == 'support' and order_info[2]==sender:
+                            bool_propose = True
+                        # if they have order that attacking enemy of sender, propose this
+                        if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
+                            bool_propose = True
+                        if bool_propose:
+                            proposal_order_list.append(order)
+                if dip_player.bot_type[sender] == 'transparent':
+                    proposal_order_list = dip_player.get_proposal(dip_game, sender, recipient)
+                if len(proposal_order_list):
+                    dip_game.proposal_received[recipient][sender] = proposal_order_list
+                    message = [' ( PRP ( '+order+' ) )' for order in proposal_order_list]
+                    message = ''.join(message)
+                    if len(message):
+                        message = 'AND' + message
+                    message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
+                    msg = Message(sender=sender,
+                                recipient=recipient,
+                                message=message,
+                                phase=dip_game.game.get_current_phase())
+                    dip_game.new_message(msg)
+                    
         
         # proposal process
+        #if not enemy, I will follow your order + my own
 
+        for recipient in dip_game.powers:
+            for sender in dip_game.powers:
+                answer = 'REJ'
+                if env.get_power_type(recipient,sender)!='enemy':
+                    answer = 'YES'
 
+                message = [' ( {} ( '+order+' ) )'.format(answer) for order in dip_game.proposal_received[recipient][sender]]
+                message = ''.join(message)
+                if len(message):
+                    message = 'AND' + message
+                message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
+                msg = Message(sender=sender,
+                            recipient=recipient,
+                            message=message,
+                            phase=dip_game.game.get_current_phase())
+                dip_game.new_message(msg)
+
+                if answer =='YES':
+                    orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
 
 
         if AGENT_VERSION == 'v2':
@@ -248,7 +279,7 @@ def save_to_json(name, game, bot_type, dict_stat):
 
     data_file.close()
 
-    dict_stat_header = ['sender', 'recipient','share','power1', 'order_type','power2' 'stance of recipient']
+    dict_stat_header = ['sender', 'recipient','share','power1', 'order_type','power2','stance of recipient']
     data_file = open(exp + '_stat.csv', 'w')
     csv_writer = csv.writer(data_file)
     csv_writer.writerow(dict_stat_header)
