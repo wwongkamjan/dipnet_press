@@ -176,23 +176,24 @@ def test():
 
         for recipient in dip_game.powers:
             for sender in dip_game.powers:
-                answer = 'REJ'
-                if env.get_power_type(recipient,sender)!='enemy':
-                    answer = 'YES'
+                if dip_game.proposal_received[recipient][sender]:
+                    answer = 'REJ'
+                    if env.get_power_type(recipient,sender)!='enemy':
+                        answer = 'YES'
+                    
+                    message = [' ( {} ( '+order+' ) )'.format(answer) for order in dip_game.proposal_received[recipient][sender]]
+                    message = ''.join(message)
+                    if len(message):
+                        message = 'AND' + message
+                    message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
+                    msg = Message(sender=sender,
+                                recipient=recipient,
+                                message=message,
+                                phase=dip_game.game.get_current_phase())
+                    dip_game.new_message(msg)
 
-                message = [' ( {} ( '+order+' ) )'.format(answer) for order in dip_game.proposal_received[recipient][sender]]
-                message = ''.join(message)
-                if len(message):
-                    message = 'AND' + message
-                message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
-                msg = Message(sender=sender,
-                            recipient=recipient,
-                            message=message,
-                            phase=dip_game.game.get_current_phase())
-                dip_game.new_message(msg)
-
-                if answer =='YES':
-                    orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
+                    if answer =='YES':
+                        orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
 
 
         if AGENT_VERSION == 'v2':
