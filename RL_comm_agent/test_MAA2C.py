@@ -157,7 +157,7 @@ def test():
                             proposal_order_list.append(order)
                     print('RL')
                 if dip_player.bot_type[sender] == 'transparent':
-                    proposal_order_list = dip_player.get_proposal(dip_game.game, sender, recipient)
+                    proposal_order_list = dip_player.get_proposal(dip_game.game, sender, recipient) if dip_player.get_proposal(dip_game.game, sender, recipient) else []
                     print('tran')
                 if len(proposal_order_list):
                     dip_game.proposal_received[recipient][sender] = proposal_order_list
