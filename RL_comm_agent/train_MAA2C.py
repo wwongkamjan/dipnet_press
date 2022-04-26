@@ -137,7 +137,7 @@ def interact():
                 state, sender, recipient, one_hot_order = env.ep_info[i]
                 #reward = self + ally supply center
                 #find all allies 
-                sender_reward = len(dip_game.game.get_centers(sender)) - centers[sender]
+                sender_reward = 0 #len(dip_game.game.get_centers(sender)) - centers[sender]
                 sender_stance =  dip_player.stance[sender]
                 for power in sender_stance:
                     if sender_stance[power] > 1 and power!=sender:
@@ -157,7 +157,7 @@ def interact():
                     if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
                         env.ep_rewards.append({id: sender_reward*1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
                     else:
-                        env.ep_rewards.append({id: 0. for id in env.agent_id})   
+                        env.ep_rewards.append({id: sender_reward*-1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
                     
             last_ep_index = len(env.ep_states)
         dip_step +=1
@@ -380,7 +380,7 @@ def main():
         if AGENT.n_episodes >= EPISODES_BEFORE_TRAIN:
             print('train')
             AGENT.train()
-            AGENT.save_model(actor_path='models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
+            AGENT.save_model(actor_path='models/a2c_actor_diplomacy_reward4action_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_reward4action_{}'.format(AGENT_VERSION))
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             print('evaluate')
             # start_io_loop(evaluation)
