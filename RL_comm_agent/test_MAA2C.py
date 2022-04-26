@@ -56,6 +56,7 @@ EVAL_REWARDS = None
 def test():
     global EVAL_REWARDS
     global AGENT
+    global EPISODE
     hist_name = 'comm_agent_{}'.format(AGENT_VERSION)
     env = DiplomacyEnv()
     rewards = []
@@ -257,6 +258,7 @@ def test():
     # else:
     save_to_json(hist_name, dip_game, dip_player.bot_type, dict_stat, rewards)
     EVAL_REWARDS = rewards
+    EPISODE+=1
     stop_io_loop()
 
 
