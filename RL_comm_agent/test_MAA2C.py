@@ -179,6 +179,12 @@ def test():
         # proposal process
         #if not enemy, I will follow your order + my own
 
+        
+        if AGENT_VERSION == 'v2':
+            for power in dip_game.powers:
+                if dip_player.bot_type[power] =='RL':
+                    orders[power] = yield orders_of_generated_game(dip_game, dip_player, power)
+
         for recipient in dip_game.powers:
             for sender in dip_game.powers:
                 if dip_game.proposal_received[recipient][sender]:
@@ -199,12 +205,6 @@ def test():
 
                     if answer =='YES':
                         orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
-
-
-        if AGENT_VERSION == 'v2':
-            for power in dip_game.powers:
-                if dip_player.bot_type[power] =='RL':
-                    orders[power] = yield orders_of_generated_game(dip_game, dip_player, power)
 
         
         for power_name, power_orders in orders.items():
