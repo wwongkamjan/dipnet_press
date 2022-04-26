@@ -25,8 +25,7 @@ EVAL_EPISODES = 1
 EVAL_INTERVAL = 4
 DISCOUNT_ALLY_REWARD = 0.7
 DISCOUNT_ORDER_REWARD = 0.3
-LOAD_MODEL = True
-
+LOAD_MODEL = False
 # roll out n steps
 ROLL_OUT_N_STEPS = 40
 # only remember the latest 2 ROLL_OUT_N_STEPS
@@ -381,7 +380,7 @@ def main():
         if AGENT.n_episodes >= EPISODES_BEFORE_TRAIN:
             print('train')
             AGENT.train()
-            AGENT.save_model(actor_path='models/a2c_actor_diplomacy_test_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_test_{}'.format(AGENT_VERSION))
+            AGENT.save_model(actor_path='models/a2c_actor_diplomacy_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_{}'.format(AGENT_VERSION))
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             print('evaluate')
             # start_io_loop(evaluation)
