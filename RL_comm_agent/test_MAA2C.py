@@ -246,7 +246,7 @@ def test():
     if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
     
         centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
-        env.ep_rewards.append({id: centers[power] if id ==env.power_mapping[sender] else 0. for id in env.agent_id}) 
+        env.ep_rewards.append({id: centers[power] for power,id in env.power_mapping.items()}) 
         maa2c.n_episodes += 1
         maa2c.episode_done = True
 
