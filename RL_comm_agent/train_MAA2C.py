@@ -19,7 +19,7 @@ from diplomacy.engine.message import Message
 from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 
-MAX_EPISODES = 40
+MAX_EPISODES = 20
 EPISODES_BEFORE_TRAIN = 0
 EVAL_EPISODES = 1
 EVAL_INTERVAL = 4
