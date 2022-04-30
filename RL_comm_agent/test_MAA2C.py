@@ -282,7 +282,6 @@ def test():
     # else:
     save_to_json(hist_name, dip_game, dip_player.bot_type, proposal_stat, stance_rewards)
     EVAL_REWARDS = rewards
-    EPISODE+=1
     stop_io_loop()
 
 
