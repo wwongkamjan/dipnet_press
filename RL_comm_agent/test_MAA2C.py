@@ -96,6 +96,7 @@ def test():
     RL_power = [power for power, bot_type in dip_player.bot_type.items() if bot_type =='RL' ]
     dict_stat = []
     while not dip_game.game.is_game_done:
+        orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
             for power in dip_game.powers:
@@ -112,8 +113,6 @@ def test():
                             enemy += centers[power2]
                             enemy_power += power2 + ' '
                 stance_rewards.append([dip_step, dip_player.bot_type[power], power, centers[power], ally_power, ally, enemy_power, enemy])
-
-
 
             for sender in dip_game.powers:
                 for recipient in dip_game.powers:
@@ -154,85 +153,80 @@ def test():
                                         phase=dip_game.game.get_current_phase())
                             dip_game.new_message(msg)
 
-        #generating an imagined world from received messages
-        # new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
-        orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
+            #generating an imagined world from received messages
+            # new_orders = yield {power_name: orders_of_generated_game(dip_game.game, dip_player, power) for power_name in dip_game.powers}
+            if AGENT_VERSION == 'v2':
+                for power in dip_game.powers:
+                    if dip_player.bot_type[power] =='RL':
+                        orders[power] = yield orders_of_generated_game(dip_game, dip_player, power)
 
-        # proposal
-
-        for sender in dip_game.powers:
-            for recipient in dip_game.powers:
-                stance = dip_player.stance[sender][recipient] 
-                proposal_order_list = []
-                if dip_player.bot_type[sender] == 'RL':
-                # scan through list of dipnet order
-                    rep_orders = orders[recipient] 
-                    for order in rep_orders:
-                        order_info = env.translate_order(order)
-                        bool_propose = False
-                        # if they have order that supporting sender, propose this
-                        if len(order_info)>2:
-                            if order_info[1] == 'support' and order_info[2]==sender:
-                                bool_propose = True
-                            # if they have order that attacking enemy of sender, propose this
-                            if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
-                                bool_propose = True
-                            if bool_propose:
-                                proposal_order_list.append(order)
-                    # print('RL')
-                if dip_player.bot_type[sender] == 'transparent':
-                    proposal_order_list = dip_player.get_proposal(dip_game.game, sender, recipient) if dip_player.get_proposal(dip_game.game, sender, recipient) else []
-                    # print('tran')
-                if len(proposal_order_list):
-                    dip_game.proposal_received[recipient][sender] = proposal_order_list
-                    message = [' ( PRP ( '+order+' ) )' for order in proposal_order_list]
-                    message = ''.join(message)
-                    if len(message):
-                        message = 'AND' + message
-                    message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
-                    msg = Message(sender=sender,
-                                recipient=recipient,
-                                message=message,
-                                phase=dip_game.game.get_current_phase())
-                    dip_game.new_message(msg)
-                    # print('proposal sent')
-                    
-        
-        # proposal process
-        #if not enemy, I will follow your order + my own
-
-        
-        if AGENT_VERSION == 'v2':
-            for power in dip_game.powers:
-                if dip_player.bot_type[power] =='RL':
-                    orders[power] = yield orders_of_generated_game(dip_game, dip_player, power)
-        proposal_stat = []
-        for recipient in dip_game.powers:
+            # proposal
             for sender in dip_game.powers:
-                stance = dip_player.stance[recipient][sender] 
-                if dip_game.proposal_received[recipient][sender]:
-                    answer = 'REJ'
-                    if env.get_power_type(recipient,sender)!='enemy':
-                        answer = 'YES'
-                    
-                    message = [' ( {} ( '.format(answer) +order+' ) )'for order in dip_game.proposal_received[recipient][sender]]
-                    message = ''.join(message)
-                    if len(message):
-                        message = 'AND' + message
-                    message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
-                    msg = Message(sender=recipient,
-                                recipient=sender,
-                                message=message,
-                                phase=dip_game.game.get_current_phase())
-                    dip_game.new_message(msg)
+                for recipient in dip_game.powers:
+                    stance = dip_player.stance[sender][recipient] 
+                    proposal_order_list = []
+                    if dip_player.bot_type[sender] == 'RL':
+                    # scan through list of dipnet order
+                        rep_orders = orders[recipient] 
+                        for order in rep_orders:
+                            order_info = env.translate_order(order)
+                            bool_propose = False
+                            # if they have order that supporting sender, propose this
+                            if len(order_info)>2:
+                                if order_info[1] == 'support' and order_info[2]==sender:
+                                    bool_propose = True
+                                # if they have order that attacking enemy of sender, propose this
+                                if order_info[1] == 'attack' and env.get_power_type(sender,order_info[2]) =='enemy':
+                                    bool_propose = True
+                                if bool_propose:
+                                    proposal_order_list.append(order)
+                        # print('RL')
+                    if dip_player.bot_type[sender] == 'transparent':
+                        proposal_order_list = dip_player.get_proposal(dip_game.game, sender, recipient) if dip_player.get_proposal(dip_game.game, sender, recipient) else []
+                        # print('tran')
+                    if len(proposal_order_list):
+                        dip_game.proposal_received[recipient][sender] = proposal_order_list
+                        message = [' ( PRP ( '+order+' ) )' for order in proposal_order_list]
+                        message = ''.join(message)
+                        if len(message):
+                            message = 'AND' + message
+                        message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
+                        msg = Message(sender=sender,
+                                    recipient=recipient,
+                                    message=message,
+                                    phase=dip_game.game.get_current_phase())
+                        dip_game.new_message(msg)
+                        # print('proposal sent')   
+                           
+            # proposal process
+            #if not enemy, I will follow your order + my own
+           
+            proposal_stat = []
+            for recipient in dip_game.powers:
+                for sender in dip_game.powers:
+                    stance = dip_player.stance[recipient][sender] 
+                    if dip_game.proposal_received[recipient][sender]:
+                        answer = 'REJ'
+                        if env.get_power_type(recipient,sender)!='enemy':
+                            answer = 'YES'
+                        
+                        message = [' ( {} ( '.format(answer) +order+' ) )'for order in dip_game.proposal_received[recipient][sender]]
+                        message = ''.join(message)
+                        if len(message):
+                            message = 'AND' + message
+                        message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
+                        msg = Message(sender=recipient,
+                                    recipient=sender,
+                                    message=message,
+                                    phase=dip_game.game.get_current_phase())
+                        dip_game.new_message(msg)
 
-                    if answer =='YES':
-                        orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
-                        proposal_stat.append([dip_step, dip_player.bot_type[sender], sender, recipient, 1, centers[sender], centers[recipient]])
-                    else:
-                        proposal_stat.append([dip_step, dip_player.bot_type[sender], sender, recipient, 0, centers[sender], centers[recipient]])
-
-
+                        if answer =='YES':
+                            orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
+                            proposal_stat.append([dip_step, dip_player.bot_type[sender], sender, recipient, 1, centers[sender], centers[recipient]])
+                        else:
+                            proposal_stat.append([dip_step, dip_player.bot_type[sender], sender, recipient, 0, centers[sender], centers[recipient]])
+        
         
         for power_name, power_orders in orders.items():
             dip_game.game.set_orders(power_name, power_orders)
