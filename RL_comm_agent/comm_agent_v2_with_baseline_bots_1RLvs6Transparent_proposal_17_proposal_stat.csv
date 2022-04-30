@@ -1,0 +1,25 @@
+step,bot type,sender,recipient,accept?,number of sender sc,number of recipient sc
+58,transparent,AUSTRIA,ENGLAND,1,0,1
+58,transparent,ENGLAND,ENGLAND,1,1,1
+58,transparent,GERMANY,ENGLAND,1,15,1
+58,transparent,ITALY,ENGLAND,1,17,1
+58,transparent,RUSSIA,ENGLAND,1,1,1
+58,transparent,TURKEY,ENGLAND,1,0,1
+58,transparent,AUSTRIA,GERMANY,1,0,15
+58,transparent,ENGLAND,GERMANY,1,1,15
+58,transparent,GERMANY,GERMANY,1,15,15
+58,transparent,ITALY,GERMANY,0,17,15
+58,transparent,RUSSIA,GERMANY,1,1,15
+58,transparent,TURKEY,GERMANY,1,0,15
+58,transparent,AUSTRIA,ITALY,1,0,17
+58,transparent,ENGLAND,ITALY,0,1,17
+58,transparent,GERMANY,ITALY,0,15,17
+58,transparent,ITALY,ITALY,1,17,17
+58,transparent,RUSSIA,ITALY,1,1,17
+58,transparent,TURKEY,ITALY,1,0,17
+58,transparent,AUSTRIA,RUSSIA,1,0,1
+58,transparent,ENGLAND,RUSSIA,1,1,1
+58,transparent,GERMANY,RUSSIA,1,15,1
+58,transparent,ITALY,RUSSIA,0,17,1
+58,transparent,RUSSIA,RUSSIA,1,1,1
+58,transparent,TURKEY,RUSSIA,1,0,1
