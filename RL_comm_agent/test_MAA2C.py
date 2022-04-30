@@ -62,6 +62,7 @@ def test():
     env = DiplomacyEnv()
     rewards = []
     stance_rewards = []
+    proposal_stat = []
     random.seed(RANDOM_SEED+random.randint(0, 999))
     
     state_dim = env.observation_space.shape[0]
@@ -201,7 +202,7 @@ def test():
             # proposal process
             #if not enemy, I will follow your order + my own
            
-            proposal_stat = []
+            
             for recipient in dip_game.powers:
                 for sender in dip_game.powers:
                     stance = dip_player.stance[recipient][sender] 
