@@ -121,12 +121,12 @@ def test():
                         if dip_player.bot_type[sender] == 'transparent':
                             yield dip_game.send_message(sender, recipient)
                         elif power in RL_power:
-                            orders = yield dip_player.get_orders(dip_game.game, sender)
+                            power_orders = orders[power]
                             stance = dip_player.stance[sender][recipient] 
                             n = len(orders)
                             env.set_power_state(sender, stance)
                             # print('sender: ', sender + ' recipient: ', recipient)
-                            for order in orders[:min(K_ORDERS,n)]:
+                            for order in power_orders[:min(K_ORDERS,n)]:
                                 # print('consider: ', order)
                                 maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                 action = maa2c.exploration_action(maa2c.env_state)
