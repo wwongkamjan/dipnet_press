@@ -162,6 +162,7 @@ def test():
 
         for sender in dip_game.powers:
             for recipient in dip_game.powers:
+                stance = dip_player.stance[sender][recipient] 
                 proposal_order_list = []
                 if dip_player.bot_type[sender] == 'RL':
                 # scan through list of dipnet order
@@ -208,6 +209,7 @@ def test():
         proposal_stat = []
         for recipient in dip_game.powers:
             for sender in dip_game.powers:
+                stance = dip_player.stance[recipient][sender] 
                 if dip_game.proposal_received[recipient][sender]:
                     answer = 'REJ'
                     if env.get_power_type(recipient,sender)!='enemy':
