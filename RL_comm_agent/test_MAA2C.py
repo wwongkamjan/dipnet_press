@@ -21,7 +21,7 @@ from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 
 MAX_EPISODES = 10
 EPISODES_BEFORE_TRAIN = 2
-TEST_EPISODES = 10
+TEST_EPISODES = 40
 EPISODE = 0
 EVAL_INTERVAL = 2
 DISCOUNT_ALLY_REWARD = 0.7
