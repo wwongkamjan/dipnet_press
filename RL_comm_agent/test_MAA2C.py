@@ -3,6 +3,7 @@ from pytorch_DRL.common.utils import ma_agg_double_list, dict_to_arr, arr_dict_t
 from tornado import gen
 import ujson as json
 import csv
+import random
 
 import sys
 import os
@@ -46,7 +47,7 @@ EPSILON_END = 0.05
 EPSILON_DECAY = 500
 AGENT_VERSION = "v2" 
 
-RANDOM_SEED = 2017
+RANDOM_SEED = 1000
 N_AGENTS = 7
 K_ORDERS = 5
 AGENT = None
@@ -60,6 +61,8 @@ def test():
     hist_name = 'comm_agent_{}'.format(AGENT_VERSION)
     env = DiplomacyEnv()
     rewards = []
+    stance_rewards = []
+    random.seed(RANDOM_SEED+random.randint(0, 999))
     
     state_dim = env.observation_space.shape[0]
     if len(env.action_space.shape) > 1:
@@ -77,7 +80,7 @@ def test():
             episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
             critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
 
-    maa2c.load_model('models/a2c_actor_diplomacy_reward4action_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_reward4action_{}'.format(AGENT_VERSION))
+    maa2c.load_model('models/a2c_actor_diplomacy_proposal_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_proposal_{}'.format(AGENT_VERSION))
 
     dip_step = 0
 
@@ -90,17 +93,35 @@ def test():
     # order_game_memo= {}
     last_ep_index = 0
     # RLagent_id = [env.power_mapping[power] for power, bot_type in dip_player.bot_type.items() if bot_type =='RL' ]
+    RL_power = [power for power, bot_type in dip_player.bot_type.items() if bot_type =='RL' ]
     dict_stat = []
     while not dip_game.game.is_game_done:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
+            for power in dip_game.powers:
+                ally_power = ''
+                enemy_power = ''
+                ally = 0
+                enemy = 0
+                for power2 in dip_game.powers:
+                    if power != power2:
+                        if dip_player.stance[power][power2] > 1:
+                            ally += centers[power2]
+                            ally_power += power2 + ' '
+                        elif dip_player.stance[power][power2] < -1:
+                            enemy += centers[power2]
+                            enemy_power += power2 + ' '
+                stance_rewards.append([dip_step, dip_player.bot_type[power], power, centers[power], ally_power, ally, enemy_power, enemy])
+
+
+
             for sender in dip_game.powers:
                 for recipient in dip_game.powers:
                     share_order_list = []
                     if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
                         if dip_player.bot_type[sender] == 'transparent':
                             yield dip_game.send_message(sender, recipient)
-                        elif dip_player.bot_type[sender] == 'RL':
+                        elif power in RL_power:
                             orders = yield dip_player.get_orders(dip_game.game, sender)
                             stance = dip_player.stance[sender][recipient] 
                             n = len(orders)
@@ -184,7 +205,7 @@ def test():
             for power in dip_game.powers:
                 if dip_player.bot_type[power] =='RL':
                     orders[power] = yield orders_of_generated_game(dip_game, dip_player, power)
-
+        proposal_stat = []
         for recipient in dip_game.powers:
             for sender in dip_game.powers:
                 if dip_game.proposal_received[recipient][sender]:
@@ -192,19 +213,23 @@ def test():
                     if env.get_power_type(recipient,sender)!='enemy':
                         answer = 'YES'
                     
-                    message = [' ( {} ( '+order+' ) )'.format(answer) for order in dip_game.proposal_received[recipient][sender]]
+                    message = [' ( {} ( '.format(answer) +order+' ) )'for order in dip_game.proposal_received[recipient][sender]]
                     message = ''.join(message)
                     if len(message):
                         message = 'AND' + message
                     message = 'stance['+sender+']['+recipient +']=' +str(stance) + message
-                    msg = Message(sender=sender,
-                                recipient=recipient,
+                    msg = Message(sender=recipient,
+                                recipient=sender,
                                 message=message,
                                 phase=dip_game.game.get_current_phase())
                     dip_game.new_message(msg)
 
                     if answer =='YES':
                         orders[recipient]= dip_game.proposal_received[recipient][sender] + orders[recipient]
+                        proposal_stat.append([dip_step, dip_player.bot_type[sender], sender, recipient, 1, centers[sender], centers[recipient]])
+                    else:
+                        proposal_stat.append([dip_step, dip_player.bot_type[sender], sender, recipient, 0, centers[sender], centers[recipient]])
+
 
         
         for power_name, power_orders in orders.items():
@@ -221,17 +246,20 @@ def test():
                 #find all allies 
                 sender_reward = len(dip_game.game.get_centers(sender)) - centers[sender]
                 sender_stance =  dip_player.stance[sender]
+                ally_reward = 0
+
                 for power in sender_stance:
                     if sender_stance[power] > 1 and power!=sender:
-                        sender_reward += (len(dip_game.game.get_centers(power)) - centers[power]) * DISCOUNT_ALLY_REWARD
-                        if order_info[0]=='self' and order_info[1]=='support' and order_info[2]=='ally':
-                            sender_reward += len(dip_game.game.get_centers(power)) * DISCOUNT_ORDER_REWARD
-                    if sender_stance[power] < -1 and power!=sender and one_hot_order:
-                        order_info = env.index_order(one_hot_order, 'str') # if power is the enemy, penalty if send self attack order to enemy [0,3,3]
-                        # print(order_info)
-                        if order_info[0]=='self' and order_info[1]=='attack' and order_info[2]=='enemy':
-                            sender_reward -= len(dip_game.game.get_centers(power))* DISCOUNT_ORDER_REWARD
- 
+                        ally_reward += (len(dip_game.game.get_centers(power)) - centers[power]) 
+                        # if order_info[0]=='self' and order_info[1]=='support' and order_info[2]=='ally':
+                        #     sender_reward += len(dip_game.game.get_centers(power)) * DISCOUNT_ORDER_REWARD
+                    # if sender_stance[power] < -1 and power!=sender and one_hot_order:
+                    #     order_info = env.index_order(one_hot_order, 'str') # if power is the enemy, penalty if send self attack order to enemy [0,3,3]
+                    #     # print(order_info)
+                    #     if order_info[0]=='self' and order_info[1]=='attack' and order_info[2]=='enemy':
+                    #         sender_reward -= len(dip_game.game.get_centers(power))* DISCOUNT_ORDER_REWARD
+
+                sender_reward += ally_reward * DISCOUNT_ALLY_REWARD
                 if state=='no_more_order':
                     env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                 if state=='censoring': #update stance of next states of states = share order/do not share order
@@ -242,8 +270,8 @@ def test():
                         env.ep_rewards.append({id: 0. for id in env.agent_id})   
                     
             last_ep_index = len(env.ep_states)
-
-    if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
+        dip_step +=1
+    if dip_game.game.is_game_done:
     
         centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
         env.ep_rewards.append({id: centers[power] for power,id in env.power_mapping.items()}) 
@@ -256,7 +284,7 @@ def test():
     # if AGENT_VERSION == 'v2':
     #     save_to_json(hist_name, dip_game, dip_player.bot_type, None)
     # else:
-    save_to_json(hist_name, dip_game, dip_player.bot_type, dict_stat, rewards)
+    save_to_json(hist_name, dip_game, dip_player.bot_type, proposal_stat, stance_rewards)
     EVAL_REWARDS = rewards
     EPISODE+=1
     stop_io_loop()
@@ -289,7 +317,7 @@ def orders_of_generated_game(current_game, player, power):
     orders = yield player.get_orders(generated_game, power)
     return orders
 
-def save_to_json(name, game, bot_type, dict_stat, rewards):
+def save_to_json(name, game, bot_type, proposal_stat, stance_rewards):
     game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_reward4action_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
@@ -322,18 +350,36 @@ def save_to_json(name, game, bot_type, dict_stat, rewards):
 
     data_file.close()
 
-    dict_stat_header = ['sender', 'recipient','share','power1', 'order_type','power2','stance of recipient']
-    data_file = open(exp + '_stat.csv', 'w')
-    csv_writer = csv.writer(data_file)
-    csv_writer.writerow(dict_stat_header)
-    csv_writer.writerows(dict_stat)
-    data_file.close()
+    # dict_stat_header = ['sender', 'recipient','share','power1', 'order_type','power2','stance of recipient']
+    # data_file = open(exp + '_stat.csv', 'w')
+    # csv_writer = csv.writer(data_file)
+    # csv_writer.writerow(dict_stat_header)
+    # csv_writer.writerows(dict_stat)
+    # data_file.close()
     
 
-    data_file = open(exp + '_reward.csv', 'w')
+    # data_file = open(exp + '_reward.csv', 'w')
+    # csv_writer = csv.writer(data_file)
+    # csv_writer.writerows(rewards)
+    # data_file.close()
+
+    # [dip_step, dip_player.bot_type[sender], sender, recipient, 0, centers[sender], centers[recipient]]
+    proposal_stat_header = ['step', 'bot type', 'sender', 'recipient', 'accept?', 'number of sender sc', 'number of recipient sc']
+    data_file = open(exp + '_proposal_stat.csv', 'w')
     csv_writer = csv.writer(data_file)
-    csv_writer.writerows(rewards)
+    csv_writer.writerow(proposal_stat_header)
+    csv_writer.writerows(proposal_stat)
     data_file.close()
+
+
+    # [dip_step, dip_player.bot_type[power], power, centers[power], ally_power, ally, enemy_power, enemy]
+    stance_rewards_header = ['step', 'bot type','power','number of sc', 'ally power','number of ally sc','enemy power','number of enemy sc']
+    data_file = open(exp + '_phase_rewards.csv', 'w')
+    csv_writer = csv.writer(data_file)
+    csv_writer.writerow(stance_rewards_header)
+    csv_writer.writerows(stance_rewards)
+    data_file.close()
+
 # @gen.coroutine
 def main():    
     global EPISODE

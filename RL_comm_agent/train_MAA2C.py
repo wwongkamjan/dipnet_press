@@ -48,7 +48,7 @@ AGENT_VERSION = "v2"
 # v1=train comm agents but no press tactics for the orders 
 # v2=train comm agents with press tactics for the orders 
 
-RANDOM_SEED = 2017
+RANDOM_SEED = 2020
 N_AGENTS = 7
 K_ORDERS = 5
 AGENT = None
