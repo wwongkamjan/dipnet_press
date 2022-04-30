@@ -208,7 +208,7 @@ def test():
                     stance = dip_player.stance[recipient][sender] 
                     if dip_game.proposal_received[recipient][sender]:
                         answer = 'REJ'
-                        if env.stance[recipient][sender]>=0:
+                        if dip_player.stance[recipient][sender]>=0:
                             answer = 'YES'
                         
                         message = [' ( {} ( '.format(answer) +order+' ) )'for order in dip_game.proposal_received[recipient][sender]]
