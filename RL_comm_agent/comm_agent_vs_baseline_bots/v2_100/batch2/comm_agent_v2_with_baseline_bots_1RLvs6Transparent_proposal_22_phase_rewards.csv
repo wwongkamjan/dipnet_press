@@ -1,0 +1,155 @@
+step,bot type,power,number of sc,ally power,number of ally sc,enemy power,number of enemy sc
+0,transparent,AUSTRIA,3,,0,,0
+0,RL,ENGLAND,3,,0,,0
+0,transparent,FRANCE,3,,0,,0
+0,transparent,GERMANY,3,,0,,0
+0,transparent,ITALY,3,,0,,0
+0,transparent,RUSSIA,4,,0,,0
+0,transparent,TURKEY,3,,0,,0
+1,transparent,AUSTRIA,3,,0,,0
+1,RL,ENGLAND,3,,0,,0
+1,transparent,FRANCE,3,,0,,0
+1,transparent,GERMANY,3,,0,,0
+1,transparent,ITALY,3,,0,,0
+1,transparent,RUSSIA,4,,0,,0
+1,transparent,TURKEY,3,,0,,0
+3,transparent,AUSTRIA,4,,0,RUSSIA ,6
+3,RL,ENGLAND,4,,0,,0
+3,transparent,FRANCE,5,,0,,0
+3,transparent,GERMANY,5,,0,,0
+3,transparent,ITALY,4,,0,,0
+3,transparent,RUSSIA,6,,0,,0
+3,transparent,TURKEY,4,,0,,0
+5,transparent,AUSTRIA,4,,0,ITALY RUSSIA ,10
+5,RL,ENGLAND,4,,0,FRANCE ,5
+5,transparent,FRANCE,5,,0,,0
+5,transparent,GERMANY,5,,0,,0
+5,transparent,ITALY,4,,0,,0
+5,transparent,RUSSIA,6,,0,AUSTRIA TURKEY ,8
+5,transparent,TURKEY,4,AUSTRIA ,4,,0
+7,transparent,AUSTRIA,3,TURKEY ,5,RUSSIA ,5
+7,RL,ENGLAND,4,,0,FRANCE ,6
+7,transparent,FRANCE,6,,0,ENGLAND GERMANY ,10
+7,transparent,GERMANY,6,,0,FRANCE ,6
+7,transparent,ITALY,5,,0,AUSTRIA ,3
+7,transparent,RUSSIA,5,,0,ITALY ,5
+7,transparent,TURKEY,5,AUSTRIA ,3,RUSSIA ,5
+9,transparent,AUSTRIA,3,,0,ITALY TURKEY ,10
+9,RL,ENGLAND,4,,0,FRANCE ,6
+9,transparent,FRANCE,6,,0,ENGLAND GERMANY ,10
+9,transparent,GERMANY,6,,0,FRANCE ,6
+9,transparent,ITALY,5,,0,TURKEY ,5
+9,transparent,RUSSIA,5,,0,AUSTRIA ,3
+9,transparent,TURKEY,5,AUSTRIA ,3,ITALY RUSSIA ,10
+11,transparent,AUSTRIA,2,,0,RUSSIA ,6
+11,RL,ENGLAND,3,,0,FRANCE GERMANY ,13
+11,transparent,FRANCE,6,,0,ENGLAND GERMANY ,10
+11,transparent,GERMANY,7,,0,FRANCE ,6
+11,transparent,ITALY,6,,0,AUSTRIA RUSSIA ,8
+11,transparent,RUSSIA,6,,0,ITALY TURKEY ,10
+11,transparent,TURKEY,4,AUSTRIA ,2,,0
+13,transparent,AUSTRIA,2,,0,RUSSIA ,6
+13,RL,ENGLAND,3,,0,FRANCE GERMANY ,13
+13,transparent,FRANCE,6,,0,ENGLAND GERMANY ,10
+13,transparent,GERMANY,7,,0,FRANCE ,6
+13,transparent,ITALY,6,,0,AUSTRIA RUSSIA TURKEY ,12
+13,transparent,RUSSIA,6,,0,ITALY TURKEY ,10
+13,transparent,TURKEY,4,AUSTRIA ,2,RUSSIA ,6
+16,transparent,AUSTRIA,2,,0,,0
+16,RL,ENGLAND,3,,0,FRANCE GERMANY ,13
+16,transparent,FRANCE,5,,0,GERMANY ,8
+16,transparent,GERMANY,8,,0,FRANCE ,5
+16,transparent,ITALY,5,,0,AUSTRIA RUSSIA TURKEY ,13
+16,transparent,RUSSIA,7,,0,ITALY ,5
+16,transparent,TURKEY,4,AUSTRIA ,2,ITALY ,5
+18,transparent,AUSTRIA,2,,0,ITALY RUSSIA ,12
+18,RL,ENGLAND,3,,0,GERMANY ,8
+18,transparent,FRANCE,5,,0,GERMANY ,8
+18,transparent,GERMANY,8,,0,FRANCE ,5
+18,transparent,ITALY,5,,0,TURKEY ,4
+18,transparent,RUSSIA,7,,0,,0
+18,transparent,TURKEY,4,AUSTRIA ,2,ITALY ,5
+21,transparent,AUSTRIA,0,,0,,0
+21,RL,ENGLAND,3,,0,FRANCE GERMANY ,13
+21,transparent,FRANCE,5,,0,,0
+21,transparent,GERMANY,8,,0,,0
+21,transparent,ITALY,6,,0,RUSSIA TURKEY ,12
+21,transparent,RUSSIA,9,,0,ITALY ,6
+21,transparent,TURKEY,3,AUSTRIA ,0,ITALY ,6
+23,transparent,AUSTRIA,0,,0,,0
+23,RL,ENGLAND,3,,0,FRANCE ,5
+23,transparent,FRANCE,5,,0,GERMANY ,8
+23,transparent,GERMANY,8,,0,,0
+23,transparent,ITALY,6,,0,RUSSIA ,9
+23,transparent,RUSSIA,9,,0,ITALY ,6
+23,transparent,TURKEY,3,AUSTRIA ,0,ITALY ,6
+26,transparent,AUSTRIA,0,,0,,0
+26,RL,ENGLAND,2,,0,FRANCE ,5
+26,transparent,FRANCE,5,,0,,0
+26,transparent,GERMANY,8,,0,RUSSIA ,11
+26,transparent,ITALY,5,,0,RUSSIA ,11
+26,transparent,RUSSIA,11,,0,ITALY ,5
+26,transparent,TURKEY,3,AUSTRIA ,0,ITALY RUSSIA ,16
+28,transparent,AUSTRIA,0,,0,,0
+28,RL,ENGLAND,2,,0,FRANCE GERMANY ,13
+28,transparent,FRANCE,5,,0,GERMANY ,8
+28,transparent,GERMANY,8,,0,RUSSIA ,11
+28,transparent,ITALY,5,,0,RUSSIA ,11
+28,transparent,RUSSIA,11,,0,GERMANY ITALY ,13
+28,transparent,TURKEY,3,AUSTRIA ,0,RUSSIA ,11
+31,transparent,AUSTRIA,0,,0,,0
+31,RL,ENGLAND,1,,0,FRANCE GERMANY ,13
+31,transparent,FRANCE,7,,0,GERMANY ,6
+31,transparent,GERMANY,6,,0,RUSSIA ,13
+31,transparent,ITALY,4,,0,,0
+31,transparent,RUSSIA,13,,0,GERMANY ITALY ,10
+31,transparent,TURKEY,3,AUSTRIA ,0,RUSSIA ,13
+33,transparent,AUSTRIA,0,,0,,0
+33,RL,ENGLAND,1,,0,FRANCE GERMANY ,13
+33,transparent,FRANCE,7,,0,,0
+33,transparent,GERMANY,6,,0,FRANCE RUSSIA ,20
+33,transparent,ITALY,4,,0,RUSSIA ,13
+33,transparent,RUSSIA,13,,0,GERMANY ITALY ,10
+33,transparent,TURKEY,3,AUSTRIA ,0,ITALY RUSSIA ,17
+36,transparent,AUSTRIA,0,,0,,0
+36,RL,ENGLAND,1,,0,,0
+36,transparent,FRANCE,8,,0,,0
+36,transparent,GERMANY,5,,0,RUSSIA ,15
+36,transparent,ITALY,2,GERMANY ,5,RUSSIA ,15
+36,transparent,RUSSIA,15,,0,FRANCE ITALY ,10
+36,transparent,TURKEY,3,AUSTRIA ,0,RUSSIA ,15
+38,transparent,AUSTRIA,0,,0,,0
+38,RL,ENGLAND,1,,0,,0
+38,transparent,FRANCE,8,,0,,0
+38,transparent,GERMANY,5,,0,FRANCE RUSSIA ,23
+38,transparent,ITALY,2,GERMANY ,5,,0
+38,transparent,RUSSIA,15,,0,TURKEY ,3
+38,transparent,TURKEY,3,AUSTRIA ,0,,0
+41,transparent,AUSTRIA,0,,0,,0
+41,RL,ENGLAND,1,,0,,0
+41,transparent,FRANCE,9,,0,,0
+41,transparent,GERMANY,5,,0,FRANCE RUSSIA ,25
+41,transparent,ITALY,1,GERMANY ,5,RUSSIA ,16
+41,transparent,RUSSIA,16,,0,FRANCE ,9
+41,transparent,TURKEY,2,AUSTRIA ,0,,0
+42,transparent,AUSTRIA,0,,0,,0
+42,RL,ENGLAND,1,,0,,0
+42,transparent,FRANCE,9,,0,GERMANY RUSSIA ,21
+42,transparent,GERMANY,5,,0,FRANCE RUSSIA ,25
+42,transparent,ITALY,1,GERMANY ,5,RUSSIA ,16
+42,transparent,RUSSIA,16,,0,FRANCE ITALY ,10
+42,transparent,TURKEY,2,AUSTRIA ,0,,0
+44,transparent,AUSTRIA,0,,0,,0
+44,RL,ENGLAND,1,,0,,0
+44,transparent,FRANCE,9,,0,GERMANY RUSSIA ,21
+44,transparent,GERMANY,4,,0,FRANCE RUSSIA ,26
+44,transparent,ITALY,1,GERMANY ,4,,0
+44,transparent,RUSSIA,17,,0,FRANCE ITALY ,10
+44,transparent,TURKEY,2,AUSTRIA ,0,RUSSIA ,17
+45,transparent,AUSTRIA,0,,0,,0
+45,RL,ENGLAND,1,,0,,0
+45,transparent,FRANCE,9,,0,RUSSIA ,17
+45,transparent,GERMANY,4,,0,FRANCE RUSSIA ,26
+45,transparent,ITALY,1,GERMANY ,4,RUSSIA ,17
+45,transparent,RUSSIA,17,,0,FRANCE ITALY ,10
+45,transparent,TURKEY,2,AUSTRIA ,0,RUSSIA ,17
