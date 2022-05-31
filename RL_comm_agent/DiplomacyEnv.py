@@ -223,7 +223,7 @@ class DiplomacyEnv(gym.Env):
     input:  action=dictionary of agent action where action = Discrete(2) or 0 or 1, 
             power_a = sender, 
             power_b = receiver, 
-            order = order we're considering censor
+            order = order we're considering 
     """
 
     

@@ -88,9 +88,11 @@ def interact():
     dip_game = env.dip_game
     dip_player = env.dip_player
     last_ep_index = 0
+    share_data = False
     while not dip_game.game.is_game_done and dip_step < ROLL_OUT_N_STEPS:
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
+            share_data = True
             for sender in dip_game.powers:
                 for recipient in dip_game.powers:
                     share_order_list = []
@@ -132,7 +134,7 @@ def interact():
         # update next state list and get reward from result of the phase 
 
 
-        if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
+        if share_data:
             for i in range (last_ep_index, len(env.ep_states)):
                 state, sender, recipient, one_hot_order = env.ep_info[i]
                 #reward = self + ally supply center
@@ -160,6 +162,7 @@ def interact():
                         env.ep_rewards.append({id: sender_reward*-1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
                     
             last_ep_index = len(env.ep_states)
+            share_data = False
         dip_step +=1
         
     if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
