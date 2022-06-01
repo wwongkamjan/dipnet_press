@@ -96,9 +96,11 @@ def test():
     # RLagent_id = [env.power_mapping[power] for power, bot_type in dip_player.bot_type.items() if bot_type =='RL' ]
     RL_power = [power for power, bot_type in dip_player.bot_type.items() if bot_type =='RL' ]
     dict_stat = []
+    share_data = False
     while not dip_game.game.is_game_done:
         orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
         if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
+            share_data = True
             centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
             for power in dip_game.powers:
                 ally_power = ''
@@ -236,7 +238,7 @@ def test():
             dip_player.update_stance(dip_game.game, power)
 
         dip_game.game_process()
-        if dip_game.game.phase_type != 'A' and dip_game.game.phase_type != 'R':
+        if share_data:
             for i in range (last_ep_index, len(env.ep_states)):
                 state, sender, recipient, one_hot_order = env.ep_info[i]
                 #reward = self + ally supply center
@@ -267,6 +269,7 @@ def test():
                         env.ep_rewards.append({id: 0. for id in env.agent_id})   
                     
             last_ep_index = len(env.ep_states)
+            share_data = False
         dip_step +=1
     if dip_game.game.is_game_done:
     

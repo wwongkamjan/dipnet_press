@@ -23,10 +23,10 @@ from bots.pushover_bot import PushoverBot
 from bots.random_no_press import RandomNoPress
 from bots.dipnet.no_press_bot import NoPressDipBot
 
-MAX_EPISODES = 20
+MAX_EPISODES = 5
 EPISODES_BEFORE_TRAIN = 0
 EVAL_EPISODES = 1
-EVAL_INTERVAL = 4
+EVAL_INTERVAL = 2
 DISCOUNT_ALLY_REWARD = 0.7
 DISCOUNT_ORDER_REWARD = 0.3
 LOAD_MODEL = False
