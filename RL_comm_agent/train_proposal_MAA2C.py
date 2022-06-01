@@ -119,7 +119,16 @@ def interact():
                     rcvd_messages = [msg for _,msg in rcvd_messages]
 
                     p_bot = bot_instance[sender]
-                    p_bot(rcvd_messages)
+                    return_obj = p_bot(rcvd_messages)
+                    for msg in return_obj['messages']:
+                            msg_obj = Message(
+                                sender=sender,
+                                recipient=msg['recipient'],
+                                message=msg['message'],
+                                phase=dip_game.game.get_current_phase(),
+                            )
+                            dip_game.game.add_message(message=msg_obj)
+
 
                 elif dip_player.bot_type[sender] == 'RL':
                     propose_data = True
@@ -140,15 +149,17 @@ def interact():
                                 # if action=propose, we add it to the list
                                 if action_dict[env.power_mapping[sender]]==1:
                                     proposal_list.append(order)
+                                    print("proposal:", order)
                             # dip_game.received[recipient][sender] = proposal_list
-                            suggested_orders = ORR([XDO(order) for order in proposal_list])
-                            msg_obj = Message(
-                                sender=sender,
-                                recipient=recipient,
-                                message=str(suggested_orders),
-                                phase=dip_game.game.get_current_phase(),
-                            )
-                            dip_game.game.add_message(message=msg_obj)
+                            if len(proposal_list)>0:
+                                suggested_orders = ORR([XDO(order) for order in proposal_list])
+                                msg_obj = Message(
+                                    sender=sender,
+                                    recipient=recipient,
+                                    message=str(suggested_orders),
+                                    phase=dip_game.game.get_current_phase(),
+                                )
+                                dip_game.game.add_message(message=msg_obj)
                             env.reset_power_state(sender, recipient)
 
         orders = {}

@@ -8,6 +8,7 @@ import random
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append("../..")
 sys.path.append("../../baseline_bots")
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,9 +20,9 @@ from diplomacy.engine.message import Message
 from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 from DAIDE import ORR, XDO
-from bots.pushover_bot import PushoverBot
-from bots.random_no_press import RandomNoPress
-from bots.dipnet.no_press_bot import NoPressDipBot
+from baseline_bots.bots.pushover_bot import PushoverBot
+from baseline_bots.bots.random_no_press import RandomNoPressBot
+from baseline_bots.bots.dipnet.no_press_bot import NoPressDipBot
 
 
 MAX_EPISODES = 10
@@ -103,7 +104,7 @@ def test():
             elif  bot == 'dipnet':
                 bot_instance[power] = NoPressDipBot(power,dip_game.game)
             elif  bot == 'random':
-                bot_instance[power] = RandomNoPress(power,dip_game.game)
+                bot_instance[power] = RandomNoPressBot(power,dip_game.game)
 
     last_ep_index = 0
     
@@ -122,9 +123,18 @@ def test():
                     rcvd_messages = dip_game.game.filter_messages(messages=dip_game.game.messages, game_role=sender)
                     rcvd_messages = list(rcvd_messages.items())
                     rcvd_messages.sort()
+                    rcvd_messages = [msg for _,msg in rcvd_messages]
 
                     p_bot = bot_instance[sender]
-                    p_bot(rcvd_messages)
+                    return_obj = p_bot(rcvd_messages)
+                    for msg in return_obj['messages']:
+                            msg_obj = Message(
+                                sender=sender,
+                                recipient=msg['recipient'],
+                                message=msg['message'],
+                                phase=dip_game.game.get_current_phase(),
+                            )
+                            dip_game.game.add_message(message=msg_obj)
 
                 elif dip_player.bot_type[sender] == 'RL':
                     propose_data = True
