@@ -120,7 +120,7 @@ def interact():
 
                     p_bot = bot_instance[sender]
                     return_obj = p_bot(rcvd_messages)
-                    print(return_obj)
+                    # print(return_obj)
                     for msg in return_obj['messages']:
                             msg_obj = Message(
                                 sender=sender,
