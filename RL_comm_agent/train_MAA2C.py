@@ -383,7 +383,7 @@ def main():
         if AGENT.n_episodes >= EPISODES_BEFORE_TRAIN:
             print('train')
             AGENT.train()
-            AGENT.save_model(actor_path='models/a2c_actor_diplomacy_reward4action_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_reward4action_{}'.format(AGENT_VERSION))
+            AGENT.save_model(actor_path='models/a2c_actor_diplomacy_test4delete_{}'.format(AGENT_VERSION), critic_path = 'models/a2c_critic_diplomacy_test4delete_{}'.format(AGENT_VERSION))
         if AGENT.episode_done and ((AGENT.n_episodes+1)%EVAL_INTERVAL == 0):
             print('evaluate')
             # start_io_loop(evaluation)
