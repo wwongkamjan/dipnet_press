@@ -155,25 +155,25 @@ def test():
                                 # if action=propose, we add it to the list
                                 if action_dict[env.power_mapping[sender]]==1:
                                     proposal_list.append(order)
-
-                            suggested_random_orders = ORR([XDO(order) for order in suggested_random_orders])
-                            msg_obj = Message(
-                                sender=sender,
-                                recipient=recipient,
-                                message=str(suggested_random_orders),
-                                phase=dip_game.game.get_current_phase(),
-                            )
-                            dip_game.game.add_message(message=msg_obj)
+                            if len(proposal_list)>0:
+                                suggested_orders = ORR([XDO(order) for order in proposal_list])
+                                msg_obj = Message(
+                                    sender=sender,
+                                    recipient=recipient,
+                                    message=str(suggested_orders),
+                                    phase=dip_game.game.get_current_phase(),
+                                )
+                                dip_game.game.add_message(message=msg_obj)
                             env.reset_power_state(sender, recipient)
 
-        order = {}
+        orders = {}
         for power,bot in dip_player.bot_type.items():
             if bot == 'RL':
-                order[power] = yield dip_player.get_orders(dip_game.game, power)
+                orders[power] = yield dip_player.get_orders(dip_game.game, power)
             elif bot == 'dipnet':
-                order[power] = yield bot_instance[power].gen_orders()
+                orders[power] = yield bot_instance[power].gen_orders()
             else:
-                order[power] = bot_instance[power].gen_orders()
+                orders[power] = bot_instance[power].gen_orders()
                         
         for power_name, power_orders in orders.items():
             dip_game.game.set_orders(power_name, power_orders)
