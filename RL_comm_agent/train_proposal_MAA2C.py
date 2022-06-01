@@ -102,7 +102,7 @@ def interact():
             elif  bot == 'dipnet':
                 bot_instance[power] = NoPressDipBot(power,dip_game.game)
             elif  bot == 'random':
-                bot_instance[power] = RandomNoPress(power,dip_game.game)
+                bot_instance[power] = RandomNoPressBot(power,dip_game.game)
                 
     last_ep_index = 0
     propose_data = False
