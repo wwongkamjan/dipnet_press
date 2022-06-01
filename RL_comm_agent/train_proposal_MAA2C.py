@@ -9,6 +9,7 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append("../..")
+sys.path.append("../../baseline_bots")
 import numpy as np
 import matplotlib.pyplot as plt
 import random
