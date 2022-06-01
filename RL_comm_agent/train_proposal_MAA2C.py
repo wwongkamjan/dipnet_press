@@ -3,7 +3,7 @@ from pytorch_DRL.common.utils import ma_agg_double_list, dict_to_arr, arr_dict_t
 from tornado import gen
 import ujson as json
 import csv
-from test_MAA2C import test
+from test_proposal_MAA2C import test
 
 import sys
 import os
