@@ -81,7 +81,7 @@ def test():
             episodes_before_train=EPISODES_BEFORE_TRAIN, training_strategy="centralized",
             critic_loss=CRITIC_LOSS, actor_parameter_sharing=True, critic_parameter_sharing=True)  
 
-    maa2c.load_model('models/a2c_actor_diplomacy_proposal_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_proposal_{}'.format(AGENT_VERSION))
+    maa2c.load_model('models/a2c_actor_diplomacy_test4delete_{}'.format(AGENT_VERSION), 'models/a2c_critic_diplomacy_test4delete_{}'.format(AGENT_VERSION))
 
     dip_step = 0
 
@@ -314,7 +314,7 @@ def orders_of_generated_game(current_game, player, power):
     return orders
 
 def save_to_json(name, game, bot_type, proposal_stat, stance_rewards):
-    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_proposal_{}'.format(EPISODE+1) 
+    game_history_name = name + '_with_baseline_bots_1RLvs6Transparent_test4delete_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:
