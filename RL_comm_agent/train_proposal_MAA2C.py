@@ -113,8 +113,10 @@ def interact():
                 if  dip_player.bot_type[sender] == 'pushover':
                     # Retrieve messages
                     rcvd_messages = dip_game.game.filter_messages(messages=dip_game.game.messages, game_role=sender)
-                    # rcvd_messages = list(rcvd_messages.items())
-                    # rcvd_messages.sort()
+                    rcvd_messages = list(rcvd_messages.items())
+                    rcvd_messages.sort()
+                    print(rcvd_messages[0])
+                    rcvd_messages = [msg for _,msg in rcvd_messages]
 
                     p_bot = bot_instance[sender]
                     p_bot(rcvd_messages)
