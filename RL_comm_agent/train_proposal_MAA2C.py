@@ -120,6 +120,7 @@ def interact():
 
                     p_bot = bot_instance[sender]
                     return_obj = p_bot(rcvd_messages)
+                    print(return_obj)
                     for msg in return_obj['messages']:
                             msg_obj = Message(
                                 sender=sender,
@@ -149,7 +150,7 @@ def interact():
                                 # if action=propose, we add it to the list
                                 if action_dict[env.power_mapping[sender]]==1:
                                     proposal_list.append(order)
-                                    print("proposal:", order)
+                                    # print("proposal:", order)
                             # dip_game.received[recipient][sender] = proposal_list
                             if len(proposal_list)>0:
                                 suggested_orders = ORR([XDO(order) for order in proposal_list])
