@@ -8,7 +8,7 @@ from test_MAA2C import test
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.append("../../baseline_bots")
+sys.path.append("../..")
 import numpy as np
 import matplotlib.pyplot as plt
 import random
@@ -19,9 +19,9 @@ from diplomacy.engine.message import Message
 from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 from DAIDE import ORR, XDO
-from bots.pushover_bot import PushoverBot
-from bots.random_no_press import RandomNoPress
-from bots.dipnet.no_press_bot import NoPressDipBot
+from baseline_bots.bots.pushover_bot import PushoverBot
+from baseline_bots.bots.random_no_press import RandomNoPress
+from baseline_bots.bots.dipnet.no_press_bot import NoPressDipBot
 
 MAX_EPISODES = 5
 EPISODES_BEFORE_TRAIN = 0
