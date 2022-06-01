@@ -251,7 +251,7 @@ def orders_of_generated_game(current_game, player, power):
     return orders
 
 def save_to_json(name, game, bot_type):
-    game_history_name = name + '_proposer_with_baseline_bots_{}'.format(EPISODE+1) 
+    game_history_name = name + '_with_baseline_bots_{}'.format(EPISODE+1) 
     exp = game_history_name
     game_history_name += '.json'
     with open(game_history_name, 'w') as file:

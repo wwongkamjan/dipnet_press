@@ -24,10 +24,10 @@ from baseline_bots.bots.pushover_bot import PushoverBot
 from baseline_bots.bots.random_no_press import RandomNoPressBot
 from baseline_bots.bots.dipnet.no_press_bot import NoPressDipBot
 
-MAX_EPISODES = 5
+MAX_EPISODES = 20
 EPISODES_BEFORE_TRAIN = 0
 EVAL_EPISODES = 1
-EVAL_INTERVAL = 2
+EVAL_INTERVAL = 5
 DISCOUNT_ALLY_REWARD = 0.7
 DISCOUNT_ORDER_REWARD = 0.3
 LOAD_MODEL = False
