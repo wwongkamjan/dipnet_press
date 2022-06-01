@@ -21,7 +21,7 @@ from diplomacy.utils.export import to_saved_game_format
 from diplomacy_research.utils.cluster import start_io_loop, stop_io_loop
 from DAIDE import ORR, XDO
 from baseline_bots.bots.pushover_bot import PushoverBot
-from baseline_bots.bots.random_no_press import RandomNoPress
+from baseline_bots.bots.random_no_press import RandomNoPressBot
 from baseline_bots.bots.dipnet.no_press_bot import NoPressDipBot
 
 MAX_EPISODES = 5
