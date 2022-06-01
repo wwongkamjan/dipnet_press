@@ -139,11 +139,11 @@ def interact():
                                 if action_dict[env.power_mapping[sender]]==1:
                                     proposal_list.append(order)
                             # dip_game.received[recipient][sender] = proposal_list
-                            suggested_random_orders = ORR([XDO(order) for order in suggested_random_orders])
+                            suggested_orders = ORR([XDO(order) for order in proposal_list])
                             msg_obj = Message(
                                 sender=sender,
                                 recipient=recipient,
-                                message=str(suggested_random_orders),
+                                message=str(suggested_orders),
                                 phase=dip_game.game.get_current_phase(),
                             )
                             dip_game.game.add_message(message=msg_obj)
