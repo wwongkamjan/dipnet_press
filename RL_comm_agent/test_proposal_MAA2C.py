@@ -68,6 +68,7 @@ def test():
     hist_name = 'proposer_agent'
     env = DiplomacyEnv()
     env.n_agents = N_AGENTS
+    env.agent_id = [id for id in range(env.n_agents)]
     rewards = []
     stance_rewards = []
     proposal_stat = []
