@@ -27,7 +27,7 @@ from baseline_bots.bots.dipnet.no_press_bot import NoPressDipBot
 
 MAX_EPISODES = 100
 EPISODES_BEFORE_TRAIN = 2
-TEST_EPISODES = 10
+TEST_EPISODES = 100
 EPISODE = 0
 EVAL_INTERVAL = 2
 DISCOUNT_ALLY_REWARD = 0.7
