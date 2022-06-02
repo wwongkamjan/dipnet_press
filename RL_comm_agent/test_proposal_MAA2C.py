@@ -67,6 +67,7 @@ def test():
     global EPISODE
     hist_name = 'proposer_agent'
     env = DiplomacyEnv()
+    env.n_agents = N_AGENTS
     rewards = []
     stance_rewards = []
     proposal_stat = []
@@ -96,7 +97,7 @@ def test():
     dip_player = env.dip_player
     dip_player.bot_type = {power: b for b,power in zip(BOTS, dip_game.powers)}
     bot_instance = {power: None for power in dip_game.powers}
-
+    agent_id = 0
     for power,bot in dip_player.bot_type.items():
         if bot != 'RL':
             if  bot== 'pushover':
@@ -105,6 +106,9 @@ def test():
                 bot_instance[power] = NoPressDipBot(power,dip_game.game)
             elif  bot == 'random':
                 bot_instance[power] = RandomNoPressBot(power,dip_game.game)
+        else:
+            env.power_mapping[power] = agent_id
+            agent_id += 1
 
     last_ep_index = 0
     

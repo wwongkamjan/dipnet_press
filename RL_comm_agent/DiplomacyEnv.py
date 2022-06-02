@@ -64,7 +64,7 @@ class DiplomacyEnv(gym.Env):
     self.dip_player =  Diplomacy_Press_Player(bot_type=['RL','RL','RL','RL','RL','RL','RL'], Player=DipNetRLPlayer())
     self.dip_game =  Diplomacy_Press(Game=Game(), Player=self.dip_player)
     self.dip_player.init_communication(self.dip_game.powers)
-    self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
+    # self.power_mapping = {power: id for power,id in zip(self.dip_game.powers,self.agent_id)}
     self.episode_len = 0
     # initial state = neutral for any power and no order OR having not assigned sender, recipient yet
     self.cur_obs = self.reset_cur_obs() 
