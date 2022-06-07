@@ -107,7 +107,7 @@ def interact():
         else:
             env.power_mapping[power] = agent_id
             agent_id += 1
-
+    print(env.power_mapping)
     last_ep_index = 0
     propose_data = False
     while not dip_game.game.is_game_done and dip_step < ROLL_OUT_N_STEPS:
