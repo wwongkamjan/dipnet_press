@@ -66,7 +66,8 @@ def interact():
 
     env = DiplomacyEnv()
     global AGENT
-
+    env.n_agents = N_AGENTS
+    env.agent_id = [id for id in range(env.n_agents)]
     state_dim = env.observation_space.shape[0]
     if len(env.action_space.shape) > 1:
         action_dim = env.action_space.shape[0]
@@ -94,7 +95,7 @@ def interact():
     dip_player = env.dip_player
     dip_player.bot_type = {power: b for b,power in zip(BOTS, dip_game.powers)}
     bot_instance = {power: None for power in dip_game.powers}
-
+    agent_id = 0
     for power,bot in dip_player.bot_type.items():
         if bot != 'RL':
             if  bot== 'pushover':
@@ -103,7 +104,10 @@ def interact():
                 bot_instance[power] = NoPressDipBot(power,dip_game.game)
             elif  bot == 'random':
                 bot_instance[power] = RandomNoPressBot(power,dip_game.game)
-                
+        else:
+            env.power_mapping[power] = agent_id
+            agent_id += 1
+
     last_ep_index = 0
     propose_data = False
     while not dip_game.game.is_game_done and dip_step < ROLL_OUT_N_STEPS:
@@ -195,13 +199,15 @@ def interact():
  
                 if state=='no_more_order':
                     env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
-                if state=='censoring': #update stance of next states of states = share order/do not share order
+                    env.ep_rewards.append({id: 0. for id in env.agent_id})
+                elif state=='censoring': #update stance of next states of states = share order/do not share order
                     # env.ep_n_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
                     if env.ep_actions[i][env.power_mapping[sender]]==1:# set reward for sharing order 
                         env.ep_rewards.append({id: sender_reward*1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
                     else:
                         env.ep_rewards.append({id: sender_reward*-1. if id ==env.power_mapping[sender] else 0. for id in env.agent_id})   
-                    
+                else:
+                    env.ep_rewards.append({id: 0. for id in env.agent_id})
             last_ep_index = len(env.ep_states)
             propose_data = False
         dip_step +=1
@@ -224,6 +230,9 @@ def interact():
     # dones = arr_dict_to_arr(env.ep_dones, N_AGENTS)
     actions = arr_dict_to_arr(env.ep_actions, N_AGENTS)
     states = arr_dict_to_arr(env.ep_states, N_AGENTS)
+    print(len(rewards))
+    print(len(actions))
+    print(len(states))
 
 
     # print('check states: ', states[-10:])
