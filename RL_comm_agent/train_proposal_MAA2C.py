@@ -94,6 +94,7 @@ def interact():
     dip_game = env.dip_game
     dip_player = env.dip_player
     dip_player.bot_type = {power: b for b,power in zip(BOTS, dip_game.powers)}
+    print(dip_player.bot_type)
     bot_instance = {power: None for power in dip_game.powers}
     agent_id = 0
     for power,bot in dip_player.bot_type.items():
