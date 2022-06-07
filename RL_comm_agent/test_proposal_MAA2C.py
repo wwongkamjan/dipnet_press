@@ -181,8 +181,8 @@ def test():
                 orders[power] = bot_instance[power].gen_orders()
                         
         for power_name, power_orders in orders.items():
-            print(power_name)
-            print(power_orders)
+            # print(power_name)
+            # print(power_orders)
             dip_game.game.set_orders(power_name, power_orders)
 
         for power in dip_game.powers:
