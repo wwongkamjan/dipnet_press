@@ -231,10 +231,6 @@ def interact():
     # dones = arr_dict_to_arr(env.ep_dones, N_AGENTS)
     actions = arr_dict_to_arr(env.ep_actions, N_AGENTS)
     states = arr_dict_to_arr(env.ep_states, N_AGENTS)
-    print(len(rewards))
-    print(len(actions))
-    print(len(states))
-
 
     # print('check states: ', states[-10:])
     
