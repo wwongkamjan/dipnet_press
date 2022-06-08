@@ -54,7 +54,7 @@ EPSILON_DECAY = 500
 # v2=train comm agents with press tactics for the orders 
 
 RANDOM_SEED = 2020
-BOTS = ['RL', 'pushover', 'pushover', 'pushover', 'dipnet', 'random', 'random']
+BOTS = ['RL', 'pushover', 'pushover', 'pushover', 'pushover', 'dipnet', 'random']
 N_AGENTS = 1 # relative to number of 'RL' bots in BOTS
 K_ORDERS = 5
 AGENT = None
@@ -141,19 +141,30 @@ def interact():
                     for recipient in dip_game.powers:
                         proposal_list = []
                         if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
-                            orders = yield dip_player.get_orders(dip_game.game, recipient)
+                            possible_orders = dip_game.game.get_all_possible_orders()
+                            orders = [random.choice([ord for ord in possible_orders[loc]]) for loc in
+                             dip_game.game.get_orderable_locations(recipient) if possible_orders[loc]]
+                            # orders = yield dip_player.get_orders(dip_game.game, recipient)
                             stance = dip_player.stance[sender][recipient] 
                             n = len(orders)
                             env.set_power_state(sender, stance)
                             # print('sender: ', sender + ' recipient: ', recipient)
                             for order in orders[:min(K_ORDERS,n)]:
-                                # print('consider: ', order)
+
+                                #state = no order in consideation
+                                maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
+                                action = maa2c.exploration_action(maa2c.env_state)
+                                action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                env.step(action_dict, sender, recipient, order)
+
+                                #state = considering order
                                 maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                 action = maa2c.exploration_action(maa2c.env_state)
                                 action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                                 env.step(action_dict, sender, recipient, order)
                                 # if action=propose, we add it to the list
                                 if action_dict[env.power_mapping[sender]]==1:
+                                    env.step(action_dict, sender, recipient, order)
                                     proposal_list.append(order)
                                     # print("proposal:", order)
                             # dip_game.received[recipient][sender] = proposal_list
@@ -231,7 +242,9 @@ def interact():
     # dones = arr_dict_to_arr(env.ep_dones, N_AGENTS)
     actions = arr_dict_to_arr(env.ep_actions, N_AGENTS)
     states = arr_dict_to_arr(env.ep_states, N_AGENTS)
-
+    print(len(rewards))
+    print(len(actions))
+    print(len(states))
     # print('check states: ', states[-10:])
     
     for i in range (len(actions)):

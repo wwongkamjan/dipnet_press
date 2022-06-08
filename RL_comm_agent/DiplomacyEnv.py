@@ -247,7 +247,7 @@ class DiplomacyEnv(gym.Env):
       self.cur_obs[agent_id][-13:] = one_hot_order 
       self.ep_n_states.append(self.cur_obs)
       # print('new obs: ', self.cur_obs)
-      self.step(action, power_a, power_b, order)
+      # self.step(action, power_a, power_b, order)
       
     elif self.state == 'censoring':
       if action[agent_id] ==0:
@@ -259,7 +259,7 @@ class DiplomacyEnv(gym.Env):
         self.state = 'share_order'
         self.cur_obs[agent_id][1] = 1.0
         self.ep_n_states.append(self.cur_obs)
-        self.step(action, power_a, power_b, order)
+        # self.step(action, power_a, power_b, order)
     else:
       # if state==no sender
       self.state = 'no_order'
