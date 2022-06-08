@@ -149,7 +149,7 @@ def test():
                     rcvd_messages = list(rcvd_messages.items())
                     rcvd_messages.sort()
                     return_obj = yield bot_instance[sender].gen_messages(rcvd_messages)
-                    for msg in return_obj['messages']:
+                    for msg in return_obj:
                         msg_obj = Message(
                             sender=sender,
                             recipient=msg['recipient'],
