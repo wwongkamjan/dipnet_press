@@ -146,27 +146,30 @@ def test():
                     for recipient in dip_game.powers:
                         proposal_list = []
                         if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
-                            orders = yield dip_player.get_orders(dip_game.game, recipient)
+                            possible_orders = dip_game.game.get_all_possible_orders()
+                            orders_location = {loc: possible_orders[loc] for loc in
+                             dip_game.game.get_orderable_locations(recipient) if possible_orders[loc]}
                             stance = dip_player.stance[sender][recipient] 
-                            n = len(orders)
                             env.set_power_state(sender, stance)
-
-                            for order in orders[:min(K_ORDERS,n)]:
-                                #state = no order in consideation
-                                maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
-                                action = maa2c.exploration_action(maa2c.env_state)
-                                action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
-                                env.step(action_dict, sender, recipient, order)
-
-                                #state = considering order
-                                maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
-                                action = maa2c.exploration_action(maa2c.env_state)
-                                action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
-                                env.step(action_dict, sender, recipient, order)
-                                # if action=propose, we add it to the list
-                                if action_dict[env.power_mapping[sender]]==1:
+                            for loc, orders in orders_location.items():
+                                n = len(orders)
+                                for order in orders[:min(K_ORDERS,n)]:
+                                    #state = no order in consideation
+                                    maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
+                                    action = maa2c.exploration_action(maa2c.env_state)
+                                    action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                                     env.step(action_dict, sender, recipient, order)
-                                    proposal_list.append(order)
+
+                                    #state = considering order
+                                    maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
+                                    action = maa2c.exploration_action(maa2c.env_state)
+                                    action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                    env.step(action_dict, sender, recipient, order)
+                                    # if action=propose, we add it to the list
+                                    if action_dict[env.power_mapping[sender]]==1:
+                                        env.step(action_dict, sender, recipient, order)
+                                        proposal_list.append(order)
+                                        break
                             if len(proposal_list)>0:
                                 suggested_orders = ORR([XDO(order) for order in proposal_list])
                                 msg_obj = Message(
