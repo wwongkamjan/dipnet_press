@@ -23,6 +23,7 @@ from DAIDE import ORR, XDO
 from baseline_bots.bots.pushover_bot import PushoverBot
 from baseline_bots.bots.random_no_press import RandomNoPressBot
 from baseline_bots.bots.dipnet.no_press_bot import NoPressDipBot
+from baseline_bots.bots.dipnet.RealPolitik import RealPolitik
 
 
 MAX_EPISODES = 100
@@ -54,7 +55,7 @@ EPSILON_DECAY = 500
 # AGENT_VERSION = "v2" 
 
 RANDOM_SEED = 1000
-BOTS = ['dipnet', 'dipnet', 'dipnet','RL', 'pushover', 'dipnet', 'dipnet']
+BOTS = ['dipnet', 'dipnet', 'dipnet','RL', 'rplt', 'dipnet', 'dipnet']
 N_AGENTS = 1
 K_ORDERS = 5
 AGENT = None
@@ -107,6 +108,8 @@ def test():
                 bot_instance[power] = NoPressDipBot(power,dip_game.game)
             elif  bot == 'random':
                 bot_instance[power] = RandomNoPressBot(power,dip_game.game)
+            elif  bot == 'rplt':
+                bot_instance[power] = RealPolitik(power,dip_game.game)
         else:
             env.power_mapping[power] = agent_id
             agent_id += 1
@@ -140,7 +143,20 @@ def test():
                                 phase=dip_game.game.get_current_phase(),
                             )
                             dip_game.game.add_message(message=msg_obj)
-
+                elif dip_player.bot_type[sender] == 'rplt':
+                    # Retrieve messages
+                    rcvd_messages = dip_game.game.filter_messages(messages=dip_game.game.messages, game_role=sender)
+                    rcvd_messages = list(rcvd_messages.items())
+                    rcvd_messages.sort()
+                    return_obj = bot_instance[sender].get_messages(rcvd_messages)
+                    for msg in return_obj['messages']:
+                        msg_obj = Message(
+                            sender=sender,
+                            recipient=msg['recipient'],
+                            message=msg['message'],
+                            phase=dip_game.game.get_current_phase(),
+                        )
+                        dip_game.game.add_message(message=msg_obj)
                 elif dip_player.bot_type[sender] == 'RL':
                     propose_data = True
                     for recipient in dip_game.powers:
@@ -185,7 +201,7 @@ def test():
         for power,bot in dip_player.bot_type.items():
             if bot == 'RL':
                 orders[power] = yield dip_player.get_orders(dip_game.game, power)
-            elif bot == 'dipnet':
+            elif bot == 'dipnet' or bot == 'rplt':
                 orders[power] = yield bot_instance[power].gen_orders()
             else:
                 orders[power] = bot_instance[power].gen_orders()

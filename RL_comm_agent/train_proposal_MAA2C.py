@@ -135,7 +135,6 @@ def interact():
                             )
                             dip_game.game.add_message(message=msg_obj)
 
-
                 elif dip_player.bot_type[sender] == 'RL':
                     propose_data = True
                     for recipient in dip_game.powers:
