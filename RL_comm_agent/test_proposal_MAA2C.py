@@ -152,13 +152,20 @@ def test():
                             env.set_power_state(sender, stance)
 
                             for order in orders[:min(K_ORDERS,n)]:
+                                #state = no order in consideation
+                                maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
+                                action = maa2c.exploration_action(maa2c.env_state)
+                                action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                env.step(action_dict, sender, recipient, order)
 
+                                #state = considering order
                                 maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                 action = maa2c.exploration_action(maa2c.env_state)
                                 action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                                 env.step(action_dict, sender, recipient, order)
                                 # if action=propose, we add it to the list
                                 if action_dict[env.power_mapping[sender]]==1:
+                                    env.step(action_dict, sender, recipient, order)
                                     proposal_list.append(order)
                             if len(proposal_list)>0:
                                 suggested_orders = ORR([XDO(order) for order in proposal_list])
