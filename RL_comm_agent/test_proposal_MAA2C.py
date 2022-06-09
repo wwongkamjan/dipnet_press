@@ -244,7 +244,7 @@ def test():
     if dip_game.game.is_game_done:
     
         centers_id = {id: len(dip_game.game.get_centers(power)) for power, id in env.power_mapping.items()}
-        env.ep_rewards.append({id: centers_id[id]*1. for id in RL_agent_id}) 
+        env.ep_rewards.append({id: centers_id[id]*1. if id in RL_agent_id else 0. for id in env.agent_id}) 
         maa2c.n_episodes += 1
         maa2c.episode_done = True
 
