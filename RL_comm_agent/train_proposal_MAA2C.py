@@ -161,7 +161,7 @@ def interact():
                                     maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                     action = maa2c.exploration_action(maa2c.env_state)
                                     action_dict = {agent_id: action[agent_id] if agent_id == env.power_mapping[sender] else 0 for agent_id in env.agent_id}
-                                    print(action_dict)
+                                    # print(action_dict)
                                     env.step(action_dict, sender, recipient, order)
                                     # if action=propose, we add it to the list
                                     # print('internal step',env.cur_obs)
