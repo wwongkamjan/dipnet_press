@@ -180,7 +180,7 @@ def interact():
                                 )
                                 dip_game.game.add_message(message=msg_obj)
                             env.reset_power_state(sender, recipient)
-                            print('no more order for this recipient',env.cur_obs)
+                            # print('no more order for this recipient',env.cur_obs)
 
         orders = {}
         for power,bot in dip_player.bot_type.items():
