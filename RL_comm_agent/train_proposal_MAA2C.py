@@ -55,7 +55,7 @@ EPSILON_DECAY = 500
 
 RANDOM_SEED = 2020
 BOTS = ['RL', 'pushover', 'pushover', 'pushover', 'pushover', 'dipnet', 'random']
-N_AGENTS = 1 # relative to number of 'RL' bots in BOTS
+N_AGENTS = 7 # relative to number of 'RL' bots in BOTS
 K_ORDERS = 5
 AGENT = None
 EVAL_REWARDS = None
@@ -106,8 +106,10 @@ def interact():
             elif  bot == 'random':
                 bot_instance[power] = RandomNoPressBot(power,dip_game.game)
         else:
+            #get agent_id of RL agent
             env.power_mapping[power] = agent_id
-            agent_id += 1
+        agent_id += 1
+    RL_agent_id = env.power_mapping.values()
     print(env.power_mapping)
     last_ep_index = 0
     propose_data = False
@@ -151,13 +153,13 @@ def interact():
                                     #state = no order in consideation
                                     maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                     action = maa2c.exploration_action(maa2c.env_state)
-                                    action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                    action_dict = {agent_id: action[agent_id] if agent_id == env.power_mapping[sender] else 0 for agent_id in env.agent_id}
                                     env.step(action_dict, sender, recipient, order)
 
                                     #state = considering order
                                     maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                     action = maa2c.exploration_action(maa2c.env_state)
-                                    action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                    action_dict = {agent_id: action[agent_id] if agent_id == env.power_mapping[sender] else 0 for agent_id in env.agent_id}
                                     env.step(action_dict, sender, recipient, order)
                                     # if action=propose, we add it to the list
                                     if action_dict[env.power_mapping[sender]]==1:
@@ -223,7 +225,7 @@ def interact():
     if dip_game.game.is_game_done or dip_step >= ROLL_OUT_N_STEPS:
         
         centers = {power: len(dip_game.game.get_centers(power)) for power in dip_game.powers}
-        final_r = [0.0] * maa2c.n_agents
+        final_r = [0.0] * env.n_agents
         for power in dip_game.powers:
             if dip_player.bot_type[power] == 'RL':
                 final_r[env.power_mapping[power]] = centers[power]
@@ -251,7 +253,7 @@ def interact():
     # print('check actions: ', actions[-10:])
     rewards = np.array(rewards)
 
-    for agent_id in range(maa2c.n_agents):
+    for agent_id in RL_agent_id:
         # print('{} reward: {}'.format(agent_id, np.sum(rewards[:,agent_id])))
         rewards[:,agent_id] = maa2c._discount_reward(rewards[:,agent_id], final_r[agent_id])
     rewards = rewards.tolist()

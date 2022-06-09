@@ -56,7 +56,7 @@ EPSILON_DECAY = 500
 
 RANDOM_SEED = 1000
 BOTS = ['RL', 'dipnet', 'dipnet','dipnet', 'dipnet', 'dipnet', 'pushover']
-N_AGENTS = 1
+N_AGENTS = 7
 K_ORDERS = 5
 AGENT = None
 EVAL_REWARDS = None
@@ -112,8 +112,8 @@ def test():
                 bot_instance[power] = RealPolitik(power,dip_game.game)
         else:
             env.power_mapping[power] = agent_id
-            agent_id += 1
-
+        agent_id += 1
+    RL_agent_id = env.power_mapping.values()
     last_ep_index = 0
     
     propose_data = False
@@ -173,13 +173,13 @@ def test():
                                     #state = no order in consideation
                                     maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                     action = maa2c.exploration_action(maa2c.env_state)
-                                    action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                    action_dict = {agent_id: action[agent_id] if agent_id == env.power_mapping[sender] else 0 for agent_id in env.agent_id}
                                     env.step(action_dict, sender, recipient, order)
 
                                     #state = considering order
                                     maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                     action = maa2c.exploration_action(maa2c.env_state)
-                                    action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                    action_dict = {agent_id: action[agent_id] if agent_id == env.power_mapping[sender] else 0 for agent_id in env.agent_id}
                                     env.step(action_dict, sender, recipient, order)
                                     # if action=propose, we add it to the list
                                     if action_dict[env.power_mapping[sender]]==1:
@@ -244,7 +244,7 @@ def test():
     if dip_game.game.is_game_done:
     
         centers_id = {id: len(dip_game.game.get_centers(power)) for power, id in env.power_mapping.items()}
-        env.ep_rewards.append({id: centers_id[id]*1. for id in env.agent_id}) 
+        env.ep_rewards.append({id: centers_id[id]*1. for id in RL_agent_id}) 
         maa2c.n_episodes += 1
         maa2c.episode_done = True
 
