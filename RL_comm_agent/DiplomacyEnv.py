@@ -31,9 +31,9 @@ class DiplomacyEnv(gym.Env):
     stance vector of [power1][power2],  
     send? 0/1
     orders:
-            ['self', 'ally', 'neutral', 'enemy'] of unit's power, one hot 
+            ['self', 'neutral', 'ally', 'enemy'] of unit's power, one hot 
             type of order, one hot 5 [move, hold, support, attack, convoy]
-            ['self', 'ally', 'neutral', 'enemy'] of unit's power = attack whom/move to whose territory one hot 
+            ['self', 'neutral', 'ally', 'enemy'] of unit's power = attack whom/move to whose territory one hot 
     cur_obs for each agent and action for each agent
     """
     self.observation_space = gym.spaces.Box(low=np.array([-10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), 

@@ -151,7 +151,7 @@ def interact():
                                 n = len(orders)
                                 for order in orders[:min(K_ORDERS,n)]:
                                     #state = no order in consideation
-                                    print('new order', env.cur_obs)
+                                    # print('new order', env.cur_obs)
                                     maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
                                     action = maa2c.exploration_action(maa2c.env_state)
                                     action_dict = {agent_id: action[agent_id] if agent_id == env.power_mapping[sender] else 0 for agent_id in env.agent_id}
@@ -164,9 +164,10 @@ def interact():
                                     print(action_dict)
                                     env.step(action_dict, sender, recipient, order)
                                     # if action=propose, we add it to the list
-                                    print('internal step',env.cur_obs)
+                                    # print('internal step',env.cur_obs)
                                     if action_dict[env.power_mapping[sender]]==1:
                                         env.step(action_dict, sender, recipient, order)
+                                        # print('to propose', env.cur_obs)
                                         proposal_list.append(order)
                                         break
                             if len(proposal_list)>0:
