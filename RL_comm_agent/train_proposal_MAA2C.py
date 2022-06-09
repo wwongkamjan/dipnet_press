@@ -141,32 +141,29 @@ def interact():
                         proposal_list = []
                         if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
                             possible_orders = dip_game.game.get_all_possible_orders()
-                            orders = [random.choice([ord for ord in possible_orders[loc]]) for loc in
-                             dip_game.game.get_orderable_locations(recipient) if possible_orders[loc]]
-                            # orders = yield dip_player.get_orders(dip_game.game, recipient)
+                            orders_location = {loc: possible_orders[loc] for loc in
+                             dip_game.game.get_orderable_locations(recipient) if possible_orders[loc]}
                             stance = dip_player.stance[sender][recipient] 
-                            n = len(orders)
                             env.set_power_state(sender, stance)
-                            # print('sender: ', sender + ' recipient: ', recipient)
-                            for order in orders[:min(K_ORDERS,n)]:
-
-                                #state = no order in consideation
-                                maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
-                                action = maa2c.exploration_action(maa2c.env_state)
-                                action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
-                                env.step(action_dict, sender, recipient, order)
-
-                                #state = considering order
-                                maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
-                                action = maa2c.exploration_action(maa2c.env_state)
-                                action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
-                                env.step(action_dict, sender, recipient, order)
-                                # if action=propose, we add it to the list
-                                if action_dict[env.power_mapping[sender]]==1:
+                            for loc, orders in orders_location.items():
+                                n = len(orders)
+                                for order in orders[:min(K_ORDERS,n)]:
+                                    #state = no order in consideation
+                                    maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
+                                    action = maa2c.exploration_action(maa2c.env_state)
+                                    action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
                                     env.step(action_dict, sender, recipient, order)
-                                    proposal_list.append(order)
-                                    # print("proposal:", order)
-                            # dip_game.received[recipient][sender] = proposal_list
+
+                                    #state = considering order
+                                    maa2c.env_state = dict_to_arr(env.cur_obs, N_AGENTS)
+                                    action = maa2c.exploration_action(maa2c.env_state)
+                                    action_dict = {agent_id: action[agent_id] for agent_id in range(maa2c.n_agents)}
+                                    env.step(action_dict, sender, recipient, order)
+                                    # if action=propose, we add it to the list
+                                    if action_dict[env.power_mapping[sender]]==1:
+                                        env.step(action_dict, sender, recipient, order)
+                                        proposal_list.append(order)
+                                        break
                             if len(proposal_list)>0:
                                 suggested_orders = ORR([XDO(order) for order in proposal_list])
                                 msg_obj = Message(
@@ -202,11 +199,11 @@ def interact():
                 state, sender, recipient, one_hot_order = env.ep_info[i]
                 #reward = self + ally supply center
                 #find all allies 
-                sender_reward = len(dip_game.game.get_centers(sender)) - centers[sender]
+                sender_reward = len(dip_game.game.get_centers(sender)) - centers[sender] + len(dip_game.game.powers[sender].units)
                 sender_stance =  dip_player.stance[sender]
                 for power in sender_stance:
                     if sender_stance[power] > 1 and power!=sender:
-                        sender_reward += (len(dip_game.game.get_centers(power)) - centers[power]) * DISCOUNT_ALLY_REWARD
+                        sender_reward += (len(dip_game.game.get_centers(power)) - centers[power] + len(dip_game.game.powers[sender].units)) * DISCOUNT_ALLY_REWARD
  
                 if state=='no_more_order':
                     env.ep_states[i][env.power_mapping[sender]][0] = dip_player.stance[sender][recipient]
