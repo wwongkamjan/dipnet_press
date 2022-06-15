@@ -23,6 +23,7 @@ from DAIDE import ORR, XDO
 from baseline_bots.bots.pushover_bot import PushoverBot
 from baseline_bots.bots.random_no_press import RandomNoPressBot
 from baseline_bots.bots.dipnet.no_press_bot import NoPressDipBot
+from baseline_bots.bots.dipnet.pushoverdipnet import PushoverDipnet
 from baseline_bots.bots.dipnet.RealPolitik import RealPolitik
 
 
@@ -55,7 +56,7 @@ EPSILON_DECAY = 500
 # AGENT_VERSION = "v2" 
 
 RANDOM_SEED = 1000
-BOTS = ['RL', 'dipnet', 'dipnet','dipnet', 'dipnet', 'dipnet', 'pushover']
+BOTS = ['RL', 'dipnet', 'dipnet','dipnet', 'dipnet', 'dipnet', 'pushoverdipnet']
 N_AGENTS = 7
 K_ORDERS = 5
 AGENT = None
@@ -104,6 +105,8 @@ def test():
         if bot != 'RL':
             if  bot== 'pushover':
                 bot_instance[power] = PushoverBot(power,dip_game.game)
+            elif  bot== 'pushoverdipnet':
+                bot_instance[power] = PushoverDipnet(power,dip_game.game)
             elif  bot == 'dipnet':
                 bot_instance[power] = NoPressDipBot(power,dip_game.game)
             elif  bot == 'random':
@@ -143,7 +146,7 @@ def test():
                                 phase=dip_game.game.get_current_phase(),
                             )
                             dip_game.game.add_message(message=msg_obj)
-                elif dip_player.bot_type[sender] == 'rplt':
+                elif dip_player.bot_type[sender] == 'rplt' or dip_player.bot_type[sender] == 'pushoverdipnet':
                     # Retrieve messages
                     rcvd_messages = dip_game.game.filter_messages(messages=dip_game.game.messages, game_role=sender)
                     rcvd_messages = list(rcvd_messages.items())
@@ -198,7 +201,7 @@ def test():
         for power,bot in dip_player.bot_type.items():
             if bot == 'RL':
                 orders[power] = yield dip_player.get_orders(dip_game.game, power)
-            elif bot == 'dipnet' or bot == 'rplt':
+            elif bot == 'dipnet' or bot == 'rplt' or bot =='pushoverdipnet':
                 orders[power] = yield bot_instance[power].gen_orders()
             else:
                 orders[power] = bot_instance[power].gen_orders()
