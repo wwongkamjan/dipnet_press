@@ -56,7 +56,7 @@ EPSILON_DECAY = 500
 # AGENT_VERSION = "v2" 
 
 RANDOM_SEED = 1000
-BOTS = ['RL', 'dipnet', 'dipnet','dipnet', 'dipnet', 'dipnet', 'pushoverdipnet']
+BOTS = ['RL', 'rplt', 'random','dipnet', 'random', 'dipnet', 'pushoverdipnet']
 N_AGENTS = 7
 K_ORDERS = 5
 AGENT = None
@@ -74,7 +74,7 @@ def test():
     rewards = []
     stance_rewards = []
     proposal_stat = []
-    random.seed(RANDOM_SEED+random.randint(0, 999))
+    # random.seed(RANDOM_SEED+random.randint(0, 999))
     
     state_dim = env.observation_space.shape[0]
     if len(env.action_space.shape) > 1:
