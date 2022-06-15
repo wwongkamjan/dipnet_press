@@ -151,6 +151,7 @@ def test():
                     rcvd_messages = dip_game.game.filter_messages(messages=dip_game.game.messages, game_role=sender)
                     rcvd_messages = list(rcvd_messages.items())
                     rcvd_messages.sort()
+                    rcvd_messages = [msg for _,msg in rcvd_messages]
                     return_obj = yield bot_instance[sender].gen_messages(rcvd_messages)
                     for msg in return_obj:
                         msg_obj = Message(
