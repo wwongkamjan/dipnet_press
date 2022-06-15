@@ -1,0 +1,191 @@
+commit df2a72546ccca861361910bb1a1d658772321693 (HEAD -> main, master)
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 14 22:24:30 2022 -0700
+
+    test proposer with pushoverdipnet
+
+commit 3dd963517cd2f26e64aea416c0c32dfb2d770d3a
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 14 22:15:30 2022 -0700
+
+    test proposer with pushoverdipnet
+
+commit cdddeaefac7ada000fb30555d53cd366321eeefc
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 14 21:59:43 2022 -0700
+
+    file arrangement
+
+commit ff025022c10853886336b39f53836c8951200d73 (origin/master, origin/HEAD)
+Author: wwongkamjan <wwongkam@umd.edu>
+Date:   Tue Jun 14 21:58:31 2022 -0700
+
+    100 game new
+
+commit 71b068106e663465470c163d27b9406acf5dfb48
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Mon Jun 13 18:14:19 2022 -0700
+
+    train/test
+
+commit 7d6e9e313a48116f24c67cf5198475a06f842d27
+Author: wwongkamjan <wwongkam@umd.edu>
+Date:   Mon Jun 13 13:21:50 2022 -0700
+
+    results
+
+commit 502a15331b571345b483a5bb15608cdfd95c845f
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 01:14:34 2022 -0700
+
+    retrain proposer
+
+commit 73f0e9c0f2ac1c57940754dea056da3c963c4903
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 01:09:25 2022 -0700
+
+    retrain proposer
+
+commit 0696d9365b3125c9839aad674cba5adc93d19fc6
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 01:08:43 2022 -0700
+
+    retrain proposer
+
+commit 3b68e0de9daabcb525ece6eb8768ee33f4af4134
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 01:08:11 2022 -0700
+
+    retrain
+
+commit 3416e5ff40fca2f1ab4a9460ac52386b287bfc6d
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 01:02:15 2022 -0700
+
+    retrain proposer
+
+commit 1c5873867d208b92877c46adb1fcbac3688607f8
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 00:57:33 2022 -0700
+
+    new results
+
+commit daa3f8a99f8ac026e1aeaf0a77b529cf23151907
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 00:34:04 2022 -0700
+
+    new results
+
+commit 0e03edba5896cc1d5032d396faafc7c8e547390f
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 00:33:44 2022 -0700
+
+    reward modification
+
+commit d61e7700ea23955dbf9ce245e0f721f3d74e84ef
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Thu Jun 9 00:23:20 2022 -0700
+
+    new results
+
+commit 71ef898b997468ac71a929336650f9b67d8e06eb
+Author: wwongkamjan <wwongkam@umd.edu>
+Date:   Thu Jun 9 00:22:12 2022 -0700
+
+    100 games
+
+commit 404dc1a9a70c65d49a23eaacde4313712f196843
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Wed Jun 8 15:25:02 2022 -0700
+
+    delete and rearrange
+
+commit 5728a9b5d0abd8fd3da071ab59bbd583f0af1b64
+Author: wwongkamjan <wwongkam@umd.edu>
+Date:   Wed Jun 8 00:46:17 2022 -0700
+
+    test
+
+commit 5adeee39927c64ce9fa93e24e40c1d78f8807b9b
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 22:06:37 2022 -0700
+
+    proposer_test_run
+
+commit 4a9f41abc91a3076d51e54456c83e68726f4b25e
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 22:05:01 2022 -0700
+
+    proposer_test_run
+
+commit 77b178c0c76d21dcadd14fe2e2913b88f785b41d
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 22:03:42 2022 -0700
+
+    proposer_test_run
+
+commit 936a9e19c1b9d83cc33adde7958e0720eea0c46b
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 22:02:12 2022 -0700
+
+    proposer_test_run
+
+commit e6487bf55b6bdc441e856283e65d2614ee094e40
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 22:01:46 2022 -0700
+
+    proposer_test_run
+
+commit 3e9a7ab432d15e9be22f8e371f154cb6fb866286
+Author: wwongkamjan <wwongkam@umd.edu>
+Date:   Tue Jun 7 21:47:16 2022 -0700
+
+    test
+
+commit 83ed598c8a3157bd5326a6b15b224a9136f27139
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 21:33:33 2022 -0700
+
+    proposer_test_run
+
+commit bde5b5fa4ae71129e164bb864fe5c261a3c21d32
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 21:18:59 2022 -0700
+
+    rearrage result files
+
+commit 4068377bd84559e45d8a3f6c228608d81528d10c
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 20:57:38 2022 -0700
+
+    debug env
+
+commit 6a3dff0911c79a0de322f824884b47095b9b3d3c
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 19:59:18 2022 -0700
+
+    rearrage result files
+
+commit 48eb9663c639645e28ef2ea72ca42291eea34cf9
+Author: wwongkamjan <wwongkam@umd.edu>
+Date:   Tue Jun 7 19:55:59 2022 -0700
+
+    100 game proposer
+
+commit 433a9e619812e032f41ff2c1eec8b41183aebff9
+Merge: 20010c6 1ac90f9
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 16:17:15 2022 -0700
+
+    fix bugs in training RL
+
+commit 20010c6fbccdd61293da5b9ed77ccd384b78e994
+Author: wwongkamjan <w.wongkamjan@gmail.com>
+Date:   Tue Jun 7 16:17:04 2022 -0700
+
+    fix bugs in training RL
+
+commit 1ac90f90c79330bc3810f53febe058cf78d24232
+Author: wwongkamjan <wwongkam@umd.edu>
+Date:   Tue Jun 7 16:16:12 2022 -0700
+
