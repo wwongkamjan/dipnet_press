@@ -56,7 +56,7 @@ EPSILON_DECAY = 500
 # AGENT_VERSION = "v2" 
 
 RANDOM_SEED = 1000
-BOTS = ['RL', 'rplt', 'random','dipnet', 'random', 'dipnet', 'pushoverdipnet']
+BOTS = ['RL', 'RL', 'dipnet','pushoverdipnet', 'dipnet', 'dipnet', 'pushoverdipnet']
 N_AGENTS = 7
 K_ORDERS = 5
 AGENT = None
