@@ -184,7 +184,7 @@ class Diplomacy_Press_Player:
     for power in power_list:
       self.stance[power] = {power: 0.0 for power in power_list}
       self.bot_type[power]= self.bot_temp.pop()
-      print('power: '+power+' as ', self.bot_type[power])
+      # print('power: '+power+' as ', self.bot_type[power])
       
   def set_stance(self, power_name, status):
     self.stance[power_name] = status
