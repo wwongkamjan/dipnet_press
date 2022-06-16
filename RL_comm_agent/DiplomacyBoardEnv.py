@@ -2,5 +2,5 @@
 # __init__ 
 # reset (reset the whole game)
 # step (action = moves and press) -> feed these into real game
-
+#subclass of dipnet RL env with step function
 

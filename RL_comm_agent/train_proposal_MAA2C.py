@@ -30,7 +30,7 @@ EVAL_EPISODES = 1
 EVAL_INTERVAL = 5
 DISCOUNT_ALLY_REWARD = 0.7
 DISCOUNT_ORDER_REWARD = 0.3
-LOAD_MODEL = False
+LOAD_MODEL = True
 # roll out n steps
 ROLL_OUT_N_STEPS = 40
 # only remember the latest 2 ROLL_OUT_N_STEPS
@@ -54,7 +54,7 @@ EPSILON_DECAY = 500
 # v2=train comm agents with press tactics for the orders 
 
 RANDOM_SEED = 2020
-BOTS = ['RL', 'pushover', 'pushover', 'pushover', 'pushover', 'dipnet', 'random']
+BOTS = ['pushover', 'RL', 'pushover', 'random', 'dipnet', 'pushover', 'pushover']
 N_AGENTS = 7 # relative to number of 'RL' bots in BOTS
 K_ORDERS = 5
 AGENT = None
