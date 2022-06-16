@@ -26,7 +26,7 @@ from baseline_bots.bots.pushover_bot import PushoverBot
 from baseline_bots.bots.random_no_press import RandomNoPressBot
 from baseline_bots.bots.dipnet.no_press_bot import NoPressDipBot
 
-from diplomacy_research.models.order_based.v015_film_transformer_gpt.model import PolicyModel
+from diplomacy_research.models.policy.order_based.v015_film_transformer_gpt.model import PolicyModel
 from diplomacy_research.models.state_space import extract_state_proto
 from diplomacy_research.utils.tensorflow import tf
 
