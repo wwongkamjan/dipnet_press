@@ -365,12 +365,13 @@ def main():
         for recipient in dip_game.powers: 
           if sender != recipient and not dip_game.powers[sender].is_eliminated() and not dip_game.powers[recipient].is_eliminated():
             yield dip_game.reply_message(sender, recipient)
-
+    for power in dip_game.powers:
+      dip_player.update_stance(dip_game, power)
     #taking orders after messages were all sent
     orders = yield {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
 #     orders = {power_name: dip_player.get_orders(dip_game.game, power_name) for power_name in dip_game.powers}
     for power_name, power_orders in orders.items():
-       dip_game.game.set_orders(power_name, power_orders)
+      dip_game.game.set_orders(power_name, power_orders)
     dip_game.game_process()
      # Saving to disk
   game_history_name = '1vs6_press_agent_vs_transparent'
